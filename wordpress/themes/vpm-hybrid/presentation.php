@@ -2,7 +2,7 @@
 /** Presentation only: original text nodes are retained; approved navigation changes are scoped to the homepage. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-function vpm_editorial_figure( $doc, $scene ) {
+function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
     $path = 'assets/images/' . $scene . '.webp';
     if ( ! is_readable( get_theme_file_path( $path ) ) ) { return null; }
     $figure = $doc->createElement( 'figure' );
@@ -18,7 +18,7 @@ function vpm_editorial_figure( $doc, $scene ) {
     $image->setAttribute( 'sizes', '(max-width: 760px) calc(100vw - 40px), (max-width: 1240px) calc((100vw - 104px) / 2), 560px' );
     $image->setAttribute( 'width', '1200' ); $image->setAttribute( 'height', '675' );
     $image->setAttribute( 'alt', 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen' );
-    $image->setAttribute( 'loading', 'lazy' ); $image->setAttribute( 'decoding', 'async' );
+    $image->setAttribute( 'loading', $above_fold ? 'eager' : 'lazy' ); $image->setAttribute( 'decoding', 'async' );
     $figure->appendChild( $image );
     $figure->appendChild( $doc->createElement( 'figcaption', 'KI-Symbolbild · keine Anbieteraufnahme' ) );
     return $figure;
@@ -41,7 +41,7 @@ add_filter( 'the_content', function ( $html ) {
         $intro = $doc->createElement( 'div' ); $intro->setAttribute( 'class', 'alignfull vpm-subpage-intro' );
         $intro_copy = $doc->createElement( 'div' ); $intro_copy->setAttribute( 'class', 'vpm-intro-copy' ); $intro->appendChild( $intro_copy );
         $root->insertBefore( $intro, $root->firstChild );
-        $figure = vpm_editorial_figure( $doc, $scene ); if ( $figure ) { $intro->appendChild( $figure ); }
+        $figure = vpm_editorial_figure( $doc, $scene, true ); if ( $figure ) { $intro->appendChild( $figure ); }
     }
     foreach ( $nodes as $node ) {
         if ( 'valet-parken-sicherheit' === $slug && $node instanceof DOMElement && 'p' === $node->tagName && str_starts_with( trim( $node->textContent ), 'Die Angaben beruhen auf den veröffentlichten Angebotsbeschreibungen' ) ) {
@@ -119,6 +119,31 @@ add_filter( 'the_content', function ( $html ) {
             $ancestor = $provider_area->parentNode;
             while ( $ancestor instanceof DOMElement && 'section' !== $ancestor->tagName ) { $ancestor = $ancestor->parentNode; }
             if ( $ancestor instanceof DOMElement ) { $ancestor->setAttribute( 'class', $ancestor->getAttribute( 'class' ) . ' vpm-offers-section' ); }
+        }
+    }
+    $layout_xpath = new DOMXPath( $doc );
+    foreach ( $layout_xpath->query( './/div[contains(concat(" ",normalize-space(@class)," ")," vpm-editorial-grid ")]', $root ) as $layout ) {
+        $cards = $layout_xpath->query( './div[contains(concat(" ",normalize-space(@class)," ")," vpm-editorial-card ")]', $layout );
+        if ( 5 === $cards->length ) { $layout->setAttribute( 'class', $layout->getAttribute( 'class' ) . ' vpm-grid-five' ); }
+        if ( str_contains( $layout->getAttribute( 'class' ), 'vpm-process-grid' ) ) {
+            foreach ( $cards as $step ) {
+                $heading = $step->getElementsByTagName( 'h3' )->item( 0 );
+                if ( $heading && 1 === $heading->childNodes->length && preg_match( '/^(\d+)(\s+)(.+)$/u', $heading->textContent, $matches ) ) {
+                    $number = $doc->createElement( 'span', $matches[1] ); $number->setAttribute( 'class', 'vpm-step-number' );
+                    $title = $doc->createElement( 'span' ); $title->setAttribute( 'class', 'vpm-step-title' );
+                    $title->appendChild( $doc->createTextNode( $matches[3] ) );
+                    $heading->textContent = ''; $heading->appendChild( $number );
+                    $heading->appendChild( $doc->createTextNode( $matches[2] ) ); $heading->appendChild( $title );
+                }
+                // This CTA applies to the entire process, rather than the last step.
+                if ( 'startseite' === $slug ) {
+                    foreach ( iterator_to_array( $step->getElementsByTagName( 'a' ) ) as $link ) {
+                        if ( 'Verfügbare Valet-Angebote ansehen' === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
+                            $layout->parentNode->appendChild( $link->parentNode );
+                        }
+                    }
+                }
+            }
         }
     }
     foreach ( $root->getElementsByTagName( 'table' ) as $table ) {

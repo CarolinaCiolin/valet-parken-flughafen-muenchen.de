@@ -1,6 +1,8 @@
-# Aktueller Zwischenstand – Mockup-Durchgang
+# Aktueller Zwischenstand – Design- und Technikprüfung
 
-Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte und Zwischenüberschriften sind unverändert. Der freigegebene Vergleichsbutton führt zur Preisseite; der Preislink steht über den Anbieterkarten. Der mobile Header ist kompakter. Bilder sind ausdrücklich gekennzeichnete KI-Symbolbilder; keine tatsächlichen Anbieteraufnahmen. Für die Screenshots sind weder GitHub Pages noch GitHub Actions nötig.
+Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte und Zwischenüberschriften sind unverändert. Der freigegebene Vergleichsbutton führt zur Preisseite; der Preislink steht über den Anbieterkarten. Der mobile Hero nutzt nun die volle Breite; das Tabletmenü ist kompakter. Listen, Kartenraster und Ablauf wurden vereinheitlicht. Bilder sind ausdrücklich gekennzeichnete KI-Symbolbilder; keine tatsächlichen Anbieteraufnahmen. Für die Screenshots sind weder GitHub Pages noch GitHub Actions nötig.
+
+[Prüfbericht mit Ladezeiten und weiteren Empfehlungen](../docs/DESIGN-UND-TECHNIK-AUDIT.md)
 
 ## Startseite – erster Bildschirm
 
@@ -17,6 +19,20 @@ Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte un
 ## Startseite – mobiler Einstieg
 
 ![Startseite am Handy](startseite-mobil-einstieg.png)
+
+## Ablauf – fünf Schritte mit eigenem Buchungsbutton
+
+![Ablauf am Desktop](ablauf-desktop.png)
+
+## Sicherheit – einheitliche Karten und Buttons
+
+![Sicherheitskarten am Desktop](sicherheitskarten-desktop.png)
+
+[Dieselben Karten am Handy](sicherheitskarten-mobil.png)
+
+## Tabletmenü
+
+![Aufgeklapptes Menü am Tablet](tablet-menue.png)
 
 ## Bildbereich mit Über-uns-Button
 

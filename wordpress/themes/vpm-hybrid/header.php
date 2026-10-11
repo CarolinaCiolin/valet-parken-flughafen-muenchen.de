@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
             <?php endif; ?>
         </div>
         <?php if ( has_nav_menu( 'primary' ) ) : ?>
-        <button class="vpm-menu-toggle" aria-expanded="false" aria-controls="vpm-menu">Menü <span aria-hidden="true">☰</span></button>
+        <button type="button" class="vpm-menu-toggle" aria-expanded="false" aria-controls="vpm-menu">Menü <span aria-hidden="true">☰</span></button>
         <nav id="vpm-menu" class="vpm-navigation" aria-label="Hauptnavigation">
             <?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'vpm-menu', 'fallback_cb' => false, 'depth' => 2 ) ); ?>
         </nav>

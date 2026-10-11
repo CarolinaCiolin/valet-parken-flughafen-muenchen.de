@@ -8,6 +8,9 @@ with sync_playwright() as p:
  for width in [390,768,1440]:
   ctx=b.new_context(viewport={'width':width,'height':900});page=ctx.new_page();requests=[];page.on('request',lambda r:requests.append(r.url))
   page.goto(base+'/',wait_until='networkidle')
+  assert abs(page.locator('.vpm-hero').bounding_box()['width']-width)<1
+  assert page.locator('.vpm-process-grid .vpm-action').count()==0
+  assert page.locator('.vpm-step-number').all_text_contents()==['1','2','3','4','5']
   hero=page.locator('.vpm-hero-image img')
   if width<782:
    assert not hero.is_visible()

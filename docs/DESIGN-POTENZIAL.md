@@ -8,3 +8,5 @@ Die vier Vorschläge wurden nach Freigabe umgesetzt (Theme 0.3.2):
 4. **Preisorientierung früher:** „Detaillierte Preisinformationen“ steht vor dem Anbieterraster als zurückhaltender umrandeter Button. Keine neuen Preise oder Texte wurden hinzugefügt.
 
 Die Positionsvergleiche stammen aus Chromium bei 390 bzw. 1440 Pixel Breite. Es sind Gestaltungsverbesserungen, keine belegten Conversion-Steigerungen. Wirkung später mit realen Besuchen prüfen.
+
+Weitere, noch nicht umgesetzte Empfehlungen stehen im [aktuellen Design- und Technikaudit](DESIGN-UND-TECHNIK-AUDIT.md#verbleibende-conversion-hürden-und-gestaltungsvorschläge).

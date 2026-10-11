@@ -35,3 +35,7 @@ Die Chat-Umgebung bietet keinen freigegebenen Live-Preview-Port. Deshalb werden 
 ## Aktueller Designstand 0.3.0
 
 Die oben genannten Vorher-/Nachher-Werte dokumentieren den früheren Speed-Durchgang. Mit neuer Gestaltung, Wortmarke und unterschiedlichen Bildern: drei mobile Labordurchläufe, medianer LCP 888 ms, CLS jeweils 0, initiale Übertragung 95.438 Bytes. Weiterhin keine Hostinger- oder Felddaten.
+
+## Aktuelle Prüfung – Theme 0.3.3
+
+Alle vier Seiten bei 390 und 1440 Pixeln mit jeweils drei frischen Browserkontexten geprüft. Medianer mobiler LCP 0,632–0,912 s, Desktop 0,696–1,328 s, CLS in sämtlichen Läufen 0. Einstiegsbilder auf Unterseiten werden regulär geladen. Preisseite am Desktop: lokal 1,412 s vorher und 0,956 s nachher. Für die Startseite ist keine belastbare Beschleunigung nachgewiesen. Vollständige Werte und Messbedingungen in [SPEED-AUDIT.json](SPEED-AUDIT.json) und [Design-/Technikprüfung](DESIGN-UND-TECHNIK-AUDIT.md). Die übrigen Werte in diesem Dokument sind historische Messstände.
