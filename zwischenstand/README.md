@@ -1,10 +1,14 @@
 # Aktueller Zwischenstand – Mockup-Durchgang
 
-Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte, Zwischenüberschriften und Linkziele sind unverändert. Bilder sind ausdrücklich gekennzeichnete KI-Symbolbilder; keine tatsächlichen Anbieteraufnahmen. Für die Screenshots sind weder GitHub Pages noch GitHub Actions nötig.
+Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte und Zwischenüberschriften sind unverändert. Der freigegebene Vergleichsbutton führt zur Preisseite; der Preislink steht über den Anbieterkarten. Der mobile Header ist kompakter. Bilder sind ausdrücklich gekennzeichnete KI-Symbolbilder; keine tatsächlichen Anbieteraufnahmen. Für die Screenshots sind weder GitHub Pages noch GitHub Actions nötig.
 
 ## Startseite – erster Bildschirm
 
 ![Startseite am Desktop](startseite-desktop.png)
+
+## Anbieterbereich mit Preislink
+
+![Preislink vor den Anbieterkarten](anbieterbereich-desktop.png)
 
 ## Sechs Anbieter – unterschiedliche Bilder
 

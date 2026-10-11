@@ -83,3 +83,7 @@ Park Drive Fly zeigt auf der Startseite nur Parkos; sein ParkVia-Link bleibt ges
 Ein `picture` mit Desktop-Media-Source und eingebetteter leerer Bildalternative verhindert Hero-Bildrequests auf mobilen Aufrufen. Frische Browserkontexte mit 390 und 768 Pixeln: kein Hero-Request; 1440 Pixel: echtes Bild geladen. USP-Text unverändert, Abstände und mobile Anordnung kompakter.
 
 Der allgemeine Sicherheits-/Provisionshinweis steht am Ende des Sicherheitsartikels außerhalb der Clean-Karte. Bilder bei Umparken und Finanzierung tatsächlich geladen, mit eigenen Detail-Screenshots. Alle Bildvarianten werden nach jedem Wechsel der Screenshot-Breite dekodiert, bevor die Aufnahme erfolgt.
+
+## Freigegebene Gestaltungsvorschläge – Theme 0.3.2
+
+Alle vier Vorschläge umgesetzt. Vorher-/Nachher-Abgleich der Startseite bei 390 und 1440 Pixeln bestätigt identische Überschriften, Absätze und Listen sowie unveränderte Partnerlinks. Nur der ausdrücklich freigegebene sekundäre Hero-Link führt nun zu `/preise/`. Preislink genau einmal vor dem Kartenraster, mobiler Header unter 100 Pixeln; Desktop-Header-CTA weiterhin sichtbar mit Ziel `/#anbieter`. Erste Karte bei 390 Pixeln rund 87 Pixel früher, bei 1440 Pixeln rund 35 Pixel früher.

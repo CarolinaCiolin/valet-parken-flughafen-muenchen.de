@@ -21,6 +21,13 @@ with sync_playwright() as p:
   assert card.locator('.vpm-provider-button').count()==1
   assert 'parkos.de' in card.locator('.vpm-provider-button').get_attribute('href')
   assert page.locator('.vpm-header-cta').get_attribute('href')==base+'/#anbieter'
+  assert page.get_by_role('link',name='Münchener Anbieter vergleichen',exact=True).get_attribute('href')==base+'/preise/'
+  price_link=page.get_by_role('link',name='Detaillierte Preisinformationen',exact=True)
+  assert price_link.count()==1
+  assert price_link.locator('xpath=..').get_attribute('class').endswith('vpm-price-navigation')
+  assert price_link.bounding_box()['y'] < page.locator('.vpm-provider-card').first.bounding_box()['y']
+  assert page.locator('.vpm-header-cta').is_visible()==(width>760)
+  if width==390:assert page.locator('.vpm-header').bounding_box()['height']<100
   if width==1440:page.screenshot(path=str(root/'dist/startseite-erster-bildschirm.png'))
   if width==390:page.screenshot(path=str(root/'dist/startseite-mobil-einstieg.png'))
   ctx.close()

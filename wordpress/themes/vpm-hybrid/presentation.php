@@ -1,5 +1,5 @@
 <?php
-/** Presentation only: original text nodes and destinations are retained. */
+/** Presentation only: original text nodes are retained; approved navigation changes are scoped to the homepage. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function vpm_editorial_figure( $doc, $scene ) {
@@ -92,6 +92,33 @@ add_filter( 'the_content', function ( $html ) {
         foreach ( $paragraph->childNodes as $child ) { if ( $child instanceof DOMElement ) { $elements[] = $child; } }
         if ( 1 === count( $elements ) && 'a' === $elements[0]->tagName && trim( $paragraph->textContent ) === trim( $elements[0]->textContent ) ) {
             $paragraph->setAttribute( 'class', $paragraph->getAttribute( 'class' ) . ' vpm-action' );
+        }
+    }
+    // Approved homepage navigation: preserve copy and stored Gutenberg blocks.
+    if ( 'startseite' === $slug ) {
+        $provider_area = null; $price_paragraph = null;
+        foreach ( $root->getElementsByTagName( 'div' ) as $element ) {
+            if ( 'anbieter' === $element->getAttribute( 'id' ) ) { $provider_area = $element; break; }
+        }
+        foreach ( $root->getElementsByTagName( 'a' ) as $link ) {
+            if ( 'Münchener Anbieter vergleichen' === trim( $link->textContent ) ) {
+                $link->setAttribute( 'href', home_url( '/preise/' ) );
+            }
+            if ( 'Detaillierte Preisinformationen' === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
+                $price_paragraph = $link->parentNode;
+            }
+        }
+        if ( $provider_area && $price_paragraph ) {
+            foreach ( $provider_area->getElementsByTagName( 'div' ) as $element ) {
+                if ( str_contains( $element->getAttribute( 'class' ), 'vpm-provider-grid' ) ) {
+                    $price_paragraph->setAttribute( 'class', $price_paragraph->getAttribute( 'class' ) . ' vpm-price-navigation' );
+                    $element->parentNode->insertBefore( $price_paragraph, $element );
+                    break;
+                }
+            }
+            $ancestor = $provider_area->parentNode;
+            while ( $ancestor instanceof DOMElement && 'section' !== $ancestor->tagName ) { $ancestor = $ancestor->parentNode; }
+            if ( $ancestor instanceof DOMElement ) { $ancestor->setAttribute( 'class', $ancestor->getAttribute( 'class' ) . ' vpm-offers-section' ); }
         }
     }
     foreach ( $root->getElementsByTagName( 'table' ) as $table ) {
