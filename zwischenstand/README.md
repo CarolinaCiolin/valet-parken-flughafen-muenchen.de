@@ -6,6 +6,14 @@ Diese Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Dafür
 
 ![Startseite am Desktop](startseite-desktop.png)
 
+## Gestaltete Textabschnitte
+
+![Gestaltete Textabschnitte](abschnitte-desktop.png)
+
+## Preistabelle – Mobilansicht
+
+![Preistabelle als mobile Karten](preise-mobil-detail.png)
+
 ## Startseite – mobil
 
 ![Startseite mobil](startseite-mobil.png)

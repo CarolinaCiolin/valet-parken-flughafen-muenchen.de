@@ -40,10 +40,18 @@ with sync_playwright() as p:
     assert page.request.get(address).status==200,address
     if fragment:
      assert page.request.get(address).text().find('id="'+fragment+'"')>=0,fragment
+  for image in page.locator('main img').all():
+   image.scroll_into_view_if_needed()
+   image.evaluate('(img)=>new Promise((resolve,reject)=>{if(img.complete){img.naturalWidth?resolve():reject(new Error(img.src));return;}img.addEventListener("load",resolve,{once:true});img.addEventListener("error",()=>reject(new Error(img.src)),{once:true});})')
+  page.evaluate('scrollTo(0,0)')
   imgs=page.locator('main img').evaluate_all('(els)=>els.map(e=>({src:e.currentSrc,loaded:e.complete&&e.naturalWidth>0,alt:e.alt,width:e.getAttribute("width"),height:e.getAttribute("height"),srcset:e.srcset,loading:e.loading,priority:e.fetchPriority}))')
   for img in imgs:assert img['loaded'] and img['alt'] and img['width'] and img['height'] and img['srcset'],img
   for width in [1440,768,390,320]:
    page.set_viewport_size({'width':width,'height':1000});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(slug,width)
+   if width<900:
+    for cell in page.locator('main table td').all():
+     assert cell.get_attribute('data-label'),(slug,'missing table label')
+     assert cell.evaluate('(e)=>getComputedStyle(e).display')=='grid' or cell.evaluate('(e)=>e.cellIndex')==0
    if width in [1440,390]:page.screenshot(path=str(root/'dist'/f'{slug}-{width}.png'),full_page=True)
   page.keyboard.press('Tab');assert page.evaluate('document.activeElement.classList.contains("vpm-skip")')
   page.keyboard.press('Enter');assert page.evaluate('document.activeElement.id==="main"')

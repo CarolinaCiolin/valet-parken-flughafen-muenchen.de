@@ -63,3 +63,9 @@ VPM Anbieter 0.1.2 bündelt Änderungen veröffentlichter Anbieter in eine Cache
 HFCM konnte mangels verifiziertem Installationspaket nicht installiert werden. Seine erforderlichen Theme-Hooks wurden mit separatem lokalem Testcode geprüft. Kein Anspruch auf einen vollständigen HFCM-Test, echten LiteSpeed-Servercache oder Crawler-Preload. Optional reproduzierbar über `scripts/setup-plugin-compatibility-local.sh` nach dem regulären lokalen Setup.
 
 Die echte Gutenberg-/Elementor-Browserprüfung bestand auch bei gleichzeitig aktiven drei Fremdplugins, einschließlich Speichern und erneutem Lesen der Anbieterfelder. Nicht erreichbare externe Admin-APIs wurden ausschließlich in der lokalen Testinstallation durch ein MU-Testplugin sofort mit einem Nicht-verfügbar-Fehler beantwortet. Dieser Testhelper wird nicht ausgeliefert und bestätigt keine Online-Funktionen.
+
+## Designüberarbeitung, 11. Oktober 2026
+
+Theme 0.2.0 gestaltet vorhandene Abschnitte zur Ausgabe als Sektionen und Karten. Das gespeicherte Gutenberg-Dokument bleibt unverändert. Der Vergleich der sichtbaren Textinhalte aller vier Seiten mit der vorherigen Vorschau bestätigte identische Texte; externe Partnerlinks sind ebenfalls identisch. Bestehende alleinstehende Textlinks werden als Buttons dargestellt, einschließlich „Mehr über uns erfahren“.
+
+Unter 900 Pixeln erscheinen Tabellenzeilen als Karten mit den unveränderten Spaltenüberschriften. Die Tabellen behalten Tabellen-, Zeilen- und Zellrollen sowie Spaltenüberschriften. Alle Zellen bleiben sichtbar; es gibt keine abgeschnittenen Spalten. Geprüft bei 320, 390, 768 und 1440 Pixeln. Native Blöcke aller vier Seiten sind im Gutenberg-Editor weiterhin gültig. Bilder werden vor der Vollbildaufnahme tatsächlich geladen.
