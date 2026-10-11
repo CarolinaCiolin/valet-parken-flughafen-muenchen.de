@@ -30,6 +30,18 @@ Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte, Z
 
 ![Über uns mit Bild](ueber-uns-einstieg.png)
 
+## Umparken – Bild im Abschnitt
+
+![Umparken mit geladenem Bild](sicherheit-umparken.png)
+
+## Wie wir uns finanzieren – Bild im Abschnitt
+
+![Finanzierung mit geladenem Bild](ueber-uns-finanzierung.png)
+
+## Preistabelle – gleich breite Buttons
+
+![Preistabelle am Desktop](preistabelle-desktop.png)
+
 ## Preistabelle – Mobilansicht
 
 ![Preistabelle als mobile Karten](preise-mobil-detail.png)

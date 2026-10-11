@@ -75,3 +75,11 @@ Unter 900 Pixeln erscheinen Tabellenzeilen als Karten mit den unveränderten Spa
 Wortmarke mit goldenen Linien, großflächiger Hero mit Bildübergang, gemeinsames Seitenraster mit linksbündigen Überschriften und Absätzen, sechs unterschiedliche Anbieterbilder sowie zwei Bildbereiche je Unterseite. Die genehmigte Preistabellen-Darstellung bleibt erhalten.
 
 Text- und Linkabgleich aller vier Seiten: unverändert; neue Bildkennzeichnungen werden separat behandelt. Anbieterbilder: sechs verschiedene Mediathek-IDs, Wiederholung ohne Änderungen, Schutz eigener Bilder auch bei ausdrücklicher Aktualisierung, Berechtigungen und KI-Kennzeichnung geprüft. Echte Anbieterbilder werden nicht behauptet. Gutenberg-/Elementor-Frontend sowie gespeicherte Anbieterfelder mit den bereits lokal aktiven Plugins geprüft; keine Browser-JS-Fehler.
+
+## Konkrete Korrekturen – Theme 0.3.1 / Anbieter 0.2.1
+
+Park Drive Fly zeigt auf der Startseite nur Parkos; sein ParkVia-Link bleibt gespeichert und steht an anderen vorgesehenen Stellen weiterhin bereit. Der Header-Button führt auf allen Seiten zur Startseite mit `#anbieter`; er führte vorher zu ParkVia. Alle sieben Preis-Tabellenbuttons sind im Browser gleich breit.
+
+Ein `picture` mit Desktop-Media-Source und eingebetteter leerer Bildalternative verhindert Hero-Bildrequests auf mobilen Aufrufen. Frische Browserkontexte mit 390 und 768 Pixeln: kein Hero-Request; 1440 Pixel: echtes Bild geladen. USP-Text unverändert, Abstände und mobile Anordnung kompakter.
+
+Der allgemeine Sicherheits-/Provisionshinweis steht am Ende des Sicherheitsartikels außerhalb der Clean-Karte. Bilder bei Umparken und Finanzierung tatsächlich geladen, mit eigenen Detail-Screenshots. Alle Bildvarianten werden nach jedem Wechsel der Screenshot-Breite dekodiert, bevor die Aufnahme erfolgt.

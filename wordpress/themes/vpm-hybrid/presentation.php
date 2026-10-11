@@ -33,7 +33,7 @@ add_filter( 'the_content', function ( $html ) {
     $root = $doc->getElementById( 'vpm-render-root' );
     if ( ! $root ) { return $html; }
     $nodes = iterator_to_array( $root->childNodes );
-    $section = null; $inner = null; $grid = null; $card = null; $index = 0;
+    $section = null; $inner = null; $grid = null; $card = null; $index = 0; $article_note = null;
     $slug = get_post_field( 'post_name', get_the_ID() );
     $scene = array( 'preise' => 'arrival', 'valet-parken-sicherheit' => 'inspection', 'ueber-uns' => 'handover' )[ $slug ] ?? null;
     $intro = null; $intro_copy = null;
@@ -44,6 +44,10 @@ add_filter( 'the_content', function ( $html ) {
         $figure = vpm_editorial_figure( $doc, $scene ); if ( $figure ) { $intro->appendChild( $figure ); }
     }
     foreach ( $nodes as $node ) {
+        if ( 'valet-parken-sicherheit' === $slug && $node instanceof DOMElement && 'p' === $node->tagName && str_starts_with( trim( $node->textContent ), 'Die Angaben beruhen auf den veröffentlichten Angebotsbeschreibungen' ) ) {
+            $article_note = $node;
+            continue;
+        }
         if ( $node instanceof DOMElement && 'h2' === $node->tagName ) {
             $section = $doc->createElement( 'section' );
             $section->setAttribute( 'class', 'alignfull vpm-editorial-section vpm-section-' . ++$index );
@@ -105,6 +109,21 @@ add_filter( 'the_content', function ( $html ) {
                 }
             }
         }
+    }
+    if ( $article_note ) {
+        $note = $doc->createElement( 'aside' ); $note->setAttribute( 'class', 'alignwide vpm-article-note' );
+        $note->appendChild( $article_note ); $root->appendChild( $note );
+    }
+    // A media-conditioned picture avoids any hero-image request on mobile.
+    $xpath = new DOMXPath( $doc );
+    foreach ( $xpath->query( './/figure[contains(concat(" ",normalize-space(@class)," ")," vpm-hero-image ")]/img', $root ) as $image ) {
+        $picture = $doc->createElement( 'picture' ); $source = $doc->createElement( 'source' );
+        $source->setAttribute( 'media', '(min-width: 782px)' );
+        $source->setAttribute( 'srcset', $image->getAttribute( 'srcset' ) ?: $image->getAttribute( 'src' ) );
+        if ( $image->hasAttribute( 'sizes' ) ) { $source->setAttribute( 'sizes', $image->getAttribute( 'sizes' ) ); }
+        $image->parentNode->insertBefore( $picture, $image ); $picture->appendChild( $source ); $picture->appendChild( $image );
+        $image->setAttribute( 'src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' );
+        $image->removeAttribute( 'srcset' ); $image->removeAttribute( 'sizes' );
     }
     $result = '';
     foreach ( $root->childNodes as $node ) { $result .= $doc->saveHTML( $node ); }

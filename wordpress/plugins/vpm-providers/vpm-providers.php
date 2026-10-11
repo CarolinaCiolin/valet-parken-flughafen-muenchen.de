@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -62,7 +62,7 @@ add_action( 'add_meta_boxes', function () {
 add_action( 'enqueue_block_editor_assets', function () {
     $screen = get_current_screen();
     if ( ! $screen || 'vpm_provider' !== $screen->post_type ) { return; }
-    wp_enqueue_script( 'vpm-provider-editor', plugins_url( 'assets/editor.js', __FILE__ ), array( 'wp-plugins', 'wp-editor', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ), '0.2.0', true );
+    wp_enqueue_script( 'vpm-provider-editor', plugins_url( 'assets/editor.js', __FILE__ ), array( 'wp-plugins', 'wp-editor', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data' ), '0.2.1', true );
     wp_localize_script( 'vpm-provider-editor', 'vpmProviderFields', vpm_provider_fields() );
 } );
 
@@ -105,7 +105,7 @@ add_action( 'save_post_vpm_provider', function ( $post_id ) {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.2.0' );
+    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.2.1' );
 } );
 
 function vpm_render_provider_cards( $atts = array() ) {
@@ -147,7 +147,8 @@ function vpm_render_provider_cards( $atts = array() ) {
         $price = get_post_meta( $id, '_vpm_price', true );
         if ( $price ) { echo '<p class="vpm-provider-price">' . esc_html( $price ) . '</p>'; }
         echo '<div class="vpm-provider-links">';
-        foreach ( array( 'parkos' => 'Parkos', 'parkvia' => 'ParkVia' ) as $key => $platform ) {
+        $platforms = apply_filters( 'vpm_provider_booking_platforms', array( 'parkos' => 'Parkos', 'parkvia' => 'ParkVia' ), $id );
+        foreach ( $platforms as $key => $platform ) {
             $url = get_post_meta( $id, '_vpm_' . $key . '_url', true );
             $label = get_post_meta( $id, '_vpm_' . $key . '_label', true );
             if ( $url && $label ) {

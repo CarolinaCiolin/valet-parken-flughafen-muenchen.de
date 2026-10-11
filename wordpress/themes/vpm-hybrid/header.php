@@ -24,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
             <?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'vpm-menu', 'fallback_cb' => false, 'depth' => 2 ) ); ?>
         </nav>
         <?php endif; ?>
-        <?php $cta_url = get_theme_mod( 'vpm_cta_url' ); $cta_label = get_theme_mod( 'vpm_cta_label' ); if ( $cta_url && $cta_label ) : ?>
-        <a class="vpm-button vpm-header-cta" href="<?php echo esc_url( $cta_url ); ?>" rel="sponsored nofollow"><?php echo esc_html( $cta_label ); ?></a>
+        <?php $cta_url = home_url( '/' ) . '#anbieter'; $cta_label = get_theme_mod( 'vpm_cta_label', 'Verfügbarkeit prüfen' ); if ( $cta_label ) : ?>
+        <a class="vpm-button vpm-header-cta" href="<?php echo esc_url( $cta_url ); ?>"><?php echo esc_html( $cta_label ); ?></a>
         <?php endif; ?>
     </div>
 </header>

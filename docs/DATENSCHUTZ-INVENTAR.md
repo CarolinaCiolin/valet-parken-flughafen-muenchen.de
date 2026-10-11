@@ -4,8 +4,8 @@ Dies ist eine technische Dokumentation für die spätere Datenschutzerklärung, 
 
 | Bestandteil | Stand |
 | --- | --- |
-| Eigenes Theme | VPM Hybrid 0.3.0 |
-| Eigenes Plugin | VPM Anbieter 0.2.0 |
+| Eigenes Theme | VPM Hybrid 0.3.1 |
+| Eigenes Plugin | VPM Anbieter 0.2.1 |
 | Lokale Testinstallation | WordPress 7.1.3, PHP 8.3.35, MariaDB 11.4.13 |
 | Kompatibilitätstest | Offizielles Elementor 3.33.0, nur kostenlose Funktionen |
 | Schriften | Systemschriften; keine Font-Dateien oder externen Fontanbieter |

@@ -37,7 +37,7 @@ class Export(HTMLParser):
   if tag=='link':
    if attrs.get('rel')!='stylesheet':return
    attrs['href']=asset(attrs['href'])
-  elif tag=='img':
+  elif tag in ('img','source'):
    if 'src' in attrs:attrs['src']=asset(attrs['src'])
    if 'srcset' in attrs:
     attrs['srcset']=', '.join(asset(item.strip().split()[0])+' '+' '.join(item.strip().split()[1:]) for item in attrs['srcset'].split(','))

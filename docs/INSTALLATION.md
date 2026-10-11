@@ -73,3 +73,5 @@ Rank Math, LiteSpeed Cache und Complianz wurden gemeinsam anhand von Hersteller-
 ## Speed und Vorschau
 
 Responsive Bildvarianten und Menü-Ladeverhalten sind optimiert. Bei vorhandenen älteren Bildern nach dem Update Bildgrößen regenerieren; neue Importe erzeugen sie automatisch. `SPEED-UND-VORSCHAU.md` dokumentiert den lokalen Vergleich und den separat notwendigen Hostinger-Test. Die klickbare HTML-Vorschau ist zusätzlich im Gesamtpaket enthalten.
+
+Der Header-Button führt im Theme ab 0.3.1 immer zur Startseite mit `#anbieter`. Ein früher gespeicherter externer Header-Link wird nicht mehr verwendet.

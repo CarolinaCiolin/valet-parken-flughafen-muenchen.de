@@ -9,10 +9,12 @@ with sync_playwright() as p:
   for width in [1440,390]:
    page.set_viewport_size({'width':width,'height':1050});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
   for image in page.locator('main img').all():
-   image.scroll_into_view_if_needed()
-   image.evaluate('(i)=>i.decode()')
+   if image.is_visible():
+    image.scroll_into_view_if_needed()
+    image.evaluate('(i)=>i.decode()')
+   else:assert image.evaluate('(i)=>!!i.closest(".vpm-hero-image")&&i.currentSrc.startsWith("data:")')
   page.locator('footer').scroll_into_view_if_needed()
-  assert page.locator('main img').evaluate_all('(els)=>els.every(i=>i.complete&&i.naturalWidth>0)')
+  assert page.locator('main img').evaluate_all('(els)=>els.filter(i=>i.getClientRects().length).every(i=>i.complete&&i.naturalWidth>0)')
   print(name,'static images/layout OK',flush=True)
  page.goto(base+'index.html');page.set_viewport_size({'width':1440,'height':1050});page.locator('nav[aria-label="Hauptnavigation"]').get_by_role('link',name='Preise',exact=True).click();assert page.url.endswith('preise.html')
  page.goto(base+'index.html');page.locator('details summary').first.click();assert page.locator('details').first.get_attribute('open') is not None

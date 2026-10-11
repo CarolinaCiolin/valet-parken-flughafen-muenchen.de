@@ -41,14 +41,18 @@ add_filter( 'elementor/frontend/print_google_fonts', '__return_false' );
 function vpm_customizer( $customizer ) {
     $customizer->add_section( 'vpm_header', array( 'title' => 'Header-CTA' ) );
     $customizer->add_setting( 'vpm_cta_label', array( 'default' => '', 'sanitize_callback' => 'sanitize_text_field' ) );
-    $customizer->add_setting( 'vpm_cta_url', array( 'default' => '', 'sanitize_callback' => 'esc_url_raw' ) );
     $customizer->add_control( 'vpm_cta_label', array( 'section' => 'vpm_header', 'label' => 'Freigegebener Buttontext', 'type' => 'text' ) );
     $customizer->add_section( 'vpm_footer', array( 'title' => 'Footer-Hinweis' ) );
     $customizer->add_setting( 'vpm_footer_note', array( 'default' => '', 'sanitize_callback' => 'sanitize_textarea_field' ) );
     $customizer->add_control( 'vpm_footer_note', array( 'section' => 'vpm_footer', 'label' => 'Freigegebener Hinweistext', 'type' => 'textarea' ) );
-    $customizer->add_control( 'vpm_cta_url', array( 'section' => 'vpm_header', 'label' => 'Zugeordneter Affiliate-Link (vollständig)', 'type' => 'url' ) );
 }
 add_action( 'customize_register', 'vpm_customizer' );
+
+// Keep the stored affiliate URLs; choose one platform only for this homepage card.
+add_filter( 'vpm_provider_booking_platforms', function ( $platforms, $id ) {
+    if ( is_front_page() && 'park-drive-fly' === get_post_field( 'post_name', $id ) ) { return array( 'parkos' => 'Parkos' ); }
+    return $platforms;
+}, 10, 2 );
 
 // A desktop hero column does not need a full-width image download.
 add_filter( 'wp_calculate_image_sizes', function ( $sizes, $size, $src, $meta, $id ) {
