@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Inhaltsentwürfe
  * Description: Einmaliger, manuell ausgelöster Import der vier vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.1.3
+ * Version: 0.2.0
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -65,6 +65,12 @@ add_action( 'admin_menu', function() {
             if ( is_wp_error( $result ) ) { echo '<div class="notice notice-error"><p>' . esc_html( $result->get_error_message() ) . '</p></div>'; }
             else { echo '<div class="notice notice-success"><p>' . (int) $result . ' fehlende Anbieterbilder ergänzt.</p></div>'; }
         }
+        if ( isset( $_POST['vpm_refresh_symbol_images'] ) ) {
+            check_admin_referer( 'vpm_refresh_provider_symbols' );
+            $result = vpm_add_provider_symbol_images( null, true );
+            if ( is_wp_error( $result ) ) { echo '<div class="notice notice-error"><p>' . esc_html( $result->get_error_message() ) . '</p></div>'; }
+            else { echo '<div class="notice notice-success"><p>' . (int) $result . ' verwaltete Symbolbilder aktualisiert.</p></div>'; }
+        }
         if ( isset( $_POST['vpm_rank_math_metadata'] ) ) {
             check_admin_referer( 'vpm_rank_math_metadata' );
             $result = vpm_prepare_rank_math_metadata();
@@ -73,8 +79,10 @@ add_action( 'admin_menu', function() {
         }
         echo '<h2>Rank-Math-Angaben</h2><p>Übernimmt die gelieferten SEO-Titel und Beschreibungen in leere Felder der importierten Seiten. Ändert weder Indexierung noch Sitemap-Einstellungen.</p><form method="post">';
         wp_nonce_field( 'vpm_rank_math_metadata' ); submit_button( 'Leere Rank-Math-Felder ergänzen', 'secondary', 'vpm_rank_math_metadata' ); echo '</form>';
-        echo '<h2>Symbolbilder ergänzen</h2><p>Ein gemeinsames KI-Symbolbild für Valet-Parking. Es zeigt keinen tatsächlichen Anbieter oder Stellplatz. Ergänzt nur Anbieter ohne Beitragsbild; vorhandene Bilder, Texte und Veröffentlichungsstatus bleiben erhalten.</p><form method="post">';
+        echo '<h2>Symbolbilder ergänzen</h2><p>Sechs unterschiedliche KI-Symbolbilder für Valet-Parking. Sie zeigen keine tatsächlichen Anbieter oder Stellplätze. Ergänzt nur Anbieter ohne Beitragsbild; vorhandene Bilder, Texte und Veröffentlichungsstatus bleiben erhalten.</p><form method="post">';
         wp_nonce_field( 'vpm_provider_symbol_images' ); submit_button( 'Fehlende Symbolbilder ergänzen', 'secondary', 'vpm_add_symbol_images' ); echo '</form>';
+        echo '<p>Optional: Ersetzt die bisherigen verwalteten KI-Symbolbilder durch unterschiedliche Motive. Eigene Bilder und Veröffentlichungsstatus bleiben erhalten.</p><form method="post">';
+        wp_nonce_field( 'vpm_refresh_provider_symbols' ); submit_button( 'Verwaltete KI-Symbolbilder aktualisieren', 'secondary', 'vpm_refresh_symbol_images' ); echo '</form>';
         echo '<form method="post">'; wp_nonce_field( 'vpm_import_drafts' ); submit_button( 'Neue Entwürfe importieren', 'primary', 'vpm_import' ); echo '</form></div>';
     } );
 } );

@@ -6,7 +6,9 @@ from urllib.parse import urlparse,urldefrag
 import html,hashlib,re,shutil
 from zipfile import ZipFile,ZIP_DEFLATED
 root=Path(__file__).resolve().parent.parent
-out=root/'dist/vpm-vorschau';out.mkdir(parents=True,exist_ok=True);(out/'assets').mkdir(exist_ok=True)
+out=root/'dist/vpm-vorschau'
+if out.exists():shutil.rmtree(out)
+out.mkdir(parents=True,exist_ok=True);(out/'assets').mkdir(exist_ok=True)
 base='http://127.0.0.1:8088'
 paths={'/':'index.html','/preise/':'preise.html','/valet-parken-sicherheit/':'sicherheit.html','/ueber-uns/':'ueber-uns.html'}
 cache={}

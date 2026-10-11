@@ -29,6 +29,12 @@ with sync_playwright() as p:
   assert page.locator('html').get_attribute('lang').startswith('de')
   assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
   assert not errors,errors
+  assert page.locator('.vpm-wordmark-name').first.inner_text()=='VALET PARKEN'
+  assert page.locator('.vpm-section-inner').evaluate_all('(sections)=>sections.every(s=>{const h=s.querySelector(":scope > h2"),p=s.querySelector(":scope > p");return !h||!p||Math.abs(h.getBoundingClientRect().left-p.getBoundingClientRect().left)<1})')
+  if slug=='startseite':
+   sources=page.locator('.vpm-provider-image img').evaluate_all('(imgs)=>imgs.map(i=>i.src)')
+   assert len(set(sources))==6,'Provider illustrations must be distinct'
+  else:assert page.locator('.vpm-editorial-image').count()>=2,'Missing subpage imagery'
   assert all(r.url.startswith((base,'blob:'+base)) for r in responses),[r.url for r in responses if not r.url.startswith(base)]
   assert all(r.status<400 for r in responses),[(r.url,r.status) for r in responses if r.status>=400]
   links=page.locator('a[href]').evaluate_all('(els)=>els.map(e=>({url:e.href,label:e.textContent.trim(),rel:e.rel}))')

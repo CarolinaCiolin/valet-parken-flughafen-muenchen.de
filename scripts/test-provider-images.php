@@ -6,15 +6,18 @@ wp_set_current_user( 0 );
 if ( ! is_wp_error( vpm_add_provider_symbol_images() ) ) { throw new RuntimeException( 'Missing capability protection.' ); }
 wp_set_current_user( 1 );
 $before = get_posts( array( 'post_type' => 'vpm_provider', 'post_status' => 'any', 'numberposts' => 100 ) );
-if ( 0 !== vpm_add_provider_symbol_images() ) { throw new RuntimeException( 'Repeat image assignment was not idempotent.' ); }
+if ( 0 !== vpm_add_provider_symbol_images() || 0 !== vpm_add_provider_symbol_images( null, true ) ) { throw new RuntimeException( 'Repeat image assignment was not idempotent.' ); }
 foreach ( $before as $provider ) {
     if ( $provider->post_status !== get_post_status( $provider->ID ) ) { throw new RuntimeException( 'Publication status changed.' ); }
 }
+$published = get_posts( array( 'post_type' => 'vpm_provider', 'post_status' => 'publish', 'numberposts' => 100 ) );
+$images = array_map( function ( $post ) { return get_post_thumbnail_id( $post->ID ); }, $published );
+if ( 6 !== count( array_unique( $images ) ) ) { throw new RuntimeException( 'Expected six distinct provider images.' ); }
 $test_id = wp_insert_post( array( 'post_type' => 'vpm_provider', 'post_status' => 'draft', 'post_title' => 'LOCAL image preservation test' ) );
 try {
     $hero = get_posts( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'meta_key' => '_vpm_asset_key', 'meta_value' => 'hero-ai-v1', 'numberposts' => 1 ) );
     set_post_thumbnail( $test_id, $hero[0]->ID );
-    if ( 0 !== vpm_add_provider_symbol_images( array( $test_id ) ) || $hero[0]->ID !== get_post_thumbnail_id( $test_id ) ) { throw new RuntimeException( 'Existing image overwritten.' ); }
+    if ( 0 !== vpm_add_provider_symbol_images( array( $test_id ), true ) || $hero[0]->ID !== get_post_thumbnail_id( $test_id ) ) { throw new RuntimeException( 'Existing image overwritten.' ); }
     delete_post_thumbnail( $test_id );
     if ( 1 !== vpm_add_provider_symbol_images( array( $test_id ) ) || 'draft' !== get_post_status( $test_id ) ) { throw new RuntimeException( 'Missing image not added as expected.' ); }
 } finally { wp_delete_post( $test_id, true ); }

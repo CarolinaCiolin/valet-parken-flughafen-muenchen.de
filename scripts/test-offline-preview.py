@@ -8,6 +8,9 @@ with sync_playwright() as p:
   assert page.locator('h1').count()==1
   for width in [1440,390]:
    page.set_viewport_size({'width':width,'height':1050});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
+  for image in page.locator('main img').all():
+   image.scroll_into_view_if_needed()
+   image.evaluate('(i)=>i.decode()')
   page.locator('footer').scroll_into_view_if_needed()
   assert page.locator('main img').evaluate_all('(els)=>els.every(i=>i.complete&&i.naturalWidth>0)')
   print(name,'static images/layout OK',flush=True)

@@ -4,7 +4,7 @@
 
 Theme 0.1.4 setzt den mobilen Menüstatus vor dem ersten Bildaufbau. Dadurch entfällt der nachträgliche Sprung beim Einklappen der Navigation. Ohne JavaScript bleiben die Menülinks zugänglich. Das Navigationsscript wird mit `defer` geladen.
 
-Hero und Anbieterkarten erhalten 480-Pixel-Bildvarianten und passende responsive `sizes`-Angaben. Desktop-Browser müssen für eine halbe Hero-Spalte kein vollbreites Bild laden. Kartenbilder bleiben lazy geladen, haben feste Bilddimensionen und werden asynchron decodiert. Native WebP-Bilder, lokale Systemschrift und die gemeinsame Bilddatei der Anbieter bleiben erhalten.
+Hero und Anbieterkarten erhalten 480-Pixel-Bildvarianten und passende responsive `sizes`-Angaben. Die Bildgrößen folgen der tatsächlichen Layoutbreite. Seit dem Designstand 0.3.0 liegt das Hero-Bild auf Desktop hinter dem rechten Teil des großflächigen Heros. Kartenbilder bleiben lazy geladen, haben feste Bilddimensionen und werden asynchron decodiert. Native WebP-Bilder, lokale Systemschrift und sechs unterschiedliche Anbieterbilder werden lokal und verzögert geladen.
 
 ## Lokaler Vergleich
 
@@ -31,3 +31,7 @@ Auf Hostinger Serverantwortzeit, echten LiteSpeed-Cache-HIT, Kompression, Browse
 Die Dateien wurden durch einen statischen lokalen Server auf Layout, Bilder, Navigation, FAQs und mobiles Menü geprüft. Der Cloud-Browser blockiert `file://` durch seine Administratorrichtlinie; direktes Öffnen per Doppelklick konnte daher hier nicht ausgeführt werden. Der Export benötigt keine Fetch-API, Module oder WordPress-Verbindung und verwendet gewöhnliche relative Dateien für das Öffnen auf einem normalen Rechner.
 
 Die Chat-Umgebung bietet keinen freigegebenen Live-Preview-Port. Deshalb werden Screenshots direkt im Chat gezeigt und die klickbare Vorschau als ZIP bereitgestellt. Kein localhost-Link wird als benutzbare Nutzervorschau ausgegeben.
+
+## Aktueller Designstand 0.3.0
+
+Die oben genannten Vorher-/Nachher-Werte dokumentieren den früheren Speed-Durchgang. Mit neuer Gestaltung, Wortmarke und unterschiedlichen Bildern: drei mobile Labordurchläufe, medianer LCP 888 ms, CLS jeweils 0, initiale Übertragung 95.438 Bytes. Weiterhin keine Hostinger- oder Felddaten.

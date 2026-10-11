@@ -69,3 +69,9 @@ Die echte Gutenberg-/Elementor-Browserprüfung bestand auch bei gleichzeitig akt
 Theme 0.2.0 gestaltet vorhandene Abschnitte zur Ausgabe als Sektionen und Karten. Das gespeicherte Gutenberg-Dokument bleibt unverändert. Der Vergleich der sichtbaren Textinhalte aller vier Seiten mit der vorherigen Vorschau bestätigte identische Texte; externe Partnerlinks sind ebenfalls identisch. Bestehende alleinstehende Textlinks werden als Buttons dargestellt, einschließlich „Mehr über uns erfahren“.
 
 Unter 900 Pixeln erscheinen Tabellenzeilen als Karten mit den unveränderten Spaltenüberschriften. Die Tabellen behalten Tabellen-, Zeilen- und Zellrollen sowie Spaltenüberschriften. Alle Zellen bleiben sichtbar; es gibt keine abgeschnittenen Spalten. Geprüft bei 320, 390, 768 und 1440 Pixeln. Native Blöcke aller vier Seiten sind im Gutenberg-Editor weiterhin gültig. Bilder werden vor der Vollbildaufnahme tatsächlich geladen.
+
+## Mockup-Durchgang – Theme 0.3.0
+
+Wortmarke mit goldenen Linien, großflächiger Hero mit Bildübergang, gemeinsames Seitenraster mit linksbündigen Überschriften und Absätzen, sechs unterschiedliche Anbieterbilder sowie zwei Bildbereiche je Unterseite. Die genehmigte Preistabellen-Darstellung bleibt erhalten.
+
+Text- und Linkabgleich aller vier Seiten: unverändert; neue Bildkennzeichnungen werden separat behandelt. Anbieterbilder: sechs verschiedene Mediathek-IDs, Wiederholung ohne Änderungen, Schutz eigener Bilder auch bei ausdrücklicher Aktualisierung, Berechtigungen und KI-Kennzeichnung geprüft. Echte Anbieterbilder werden nicht behauptet. Gutenberg-/Elementor-Frontend sowie gespeicherte Anbieterfelder mit den bereits lokal aktiven Plugins geprüft; keine Browser-JS-Fehler.

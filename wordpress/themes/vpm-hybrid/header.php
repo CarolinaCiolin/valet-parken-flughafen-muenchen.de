@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
     <div class="vpm-shell vpm-header-inner">
         <div class="vpm-brand">
             <?php if ( has_custom_logo() ) : the_custom_logo(); else : ?>
-                <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a>
+                <a class="vpm-wordmark" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"><span class="vpm-wordmark-name">VALET PARKEN</span><span class="vpm-wordmark-city">MÜNCHEN</span></a>
             <?php endif; ?>
         </div>
         <?php if ( has_nav_menu( 'primary' ) ) : ?>

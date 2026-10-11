@@ -1,6 +1,29 @@
 <?php
-/** Presentation only: retain every existing text node and link. */
+/** Presentation only: original text nodes and destinations are retained. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+function vpm_editorial_figure( $doc, $scene ) {
+    $path = 'assets/images/' . $scene . '.webp';
+    if ( ! is_readable( get_theme_file_path( $path ) ) ) { return null; }
+    $figure = $doc->createElement( 'figure' );
+    $figure->setAttribute( 'class', 'vpm-editorial-image' );
+    $image = $doc->createElement( 'img' );
+    $image->setAttribute( 'src', get_theme_file_uri( $path ) );
+    $sources = array();
+    foreach ( array( 480, 800, 1200 ) as $width ) {
+        $file = 'assets/images/' . $scene . ( 1200 === $width ? '' : '-' . $width ) . '.webp';
+        $sources[] = get_theme_file_uri( $file ) . ' ' . $width . 'w';
+    }
+    $image->setAttribute( 'srcset', implode( ', ', $sources ) );
+    $image->setAttribute( 'sizes', '(max-width: 760px) calc(100vw - 40px), (max-width: 1240px) calc((100vw - 104px) / 2), 560px' );
+    $image->setAttribute( 'width', '1200' ); $image->setAttribute( 'height', '675' );
+    $image->setAttribute( 'alt', 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen' );
+    $image->setAttribute( 'loading', 'lazy' ); $image->setAttribute( 'decoding', 'async' );
+    $figure->appendChild( $image );
+    $figure->appendChild( $doc->createElement( 'figcaption', 'KI-Symbolbild · keine Anbieteraufnahme' ) );
+    return $figure;
+}
+
 add_filter( 'the_content', function ( $html ) {
     if ( ! is_page() || ! in_the_loop() || ! is_main_query() || false === strpos( $html, 'wp-block-heading' ) || ! class_exists( 'DOMDocument' ) ) { return $html; }
     $doc = new DOMDocument();
@@ -10,22 +33,54 @@ add_filter( 'the_content', function ( $html ) {
     $root = $doc->getElementById( 'vpm-render-root' );
     if ( ! $root ) { return $html; }
     $nodes = iterator_to_array( $root->childNodes );
-    $section = null; $grid = null; $card = null; $index = 0;
+    $section = null; $inner = null; $grid = null; $card = null; $index = 0;
+    $slug = get_post_field( 'post_name', get_the_ID() );
+    $scene = array( 'preise' => 'arrival', 'valet-parken-sicherheit' => 'inspection', 'ueber-uns' => 'handover' )[ $slug ] ?? null;
+    $intro = null; $intro_copy = null;
+    if ( $scene ) {
+        $intro = $doc->createElement( 'div' ); $intro->setAttribute( 'class', 'alignfull vpm-subpage-intro' );
+        $intro_copy = $doc->createElement( 'div' ); $intro_copy->setAttribute( 'class', 'vpm-intro-copy' ); $intro->appendChild( $intro_copy );
+        $root->insertBefore( $intro, $root->firstChild );
+        $figure = vpm_editorial_figure( $doc, $scene ); if ( $figure ) { $intro->appendChild( $figure ); }
+    }
     foreach ( $nodes as $node ) {
         if ( $node instanceof DOMElement && 'h2' === $node->tagName ) {
             $section = $doc->createElement( 'section' );
             $section->setAttribute( 'class', 'alignfull vpm-editorial-section vpm-section-' . ++$index );
             $root->insertBefore( $section, $node );
+            $inner = $doc->createElement( 'div' ); $inner->setAttribute( 'class', 'vpm-section-inner' ); $section->appendChild( $inner );
             $grid = null; $card = null;
+            if ( 'startseite' === $slug && str_starts_with( trim( $node->textContent ), 'Das sind wir:' ) ) { $section->setAttribute( 'class', $section->getAttribute( 'class' ) . ' vpm-about-panel' ); }
         }
         if ( $section ) {
             if ( $node instanceof DOMElement && 'h3' === $node->tagName ) {
-                if ( ! $grid ) { $grid = $doc->createElement( 'div' ); $grid->setAttribute( 'class', 'vpm-editorial-grid' ); $section->appendChild( $grid ); }
+                if ( ! $grid ) {
+                    $grid = $doc->createElement( 'div' );
+                    $grid->setAttribute( 'class', preg_match( '/^\d\s/', trim( $node->textContent ) ) ? 'vpm-editorial-grid vpm-process-grid' : 'vpm-editorial-grid' );
+                    $inner->appendChild( $grid );
+                }
                 $card = $doc->createElement( 'div' ); $card->setAttribute( 'class', 'vpm-editorial-card' ); $grid->appendChild( $card );
             }
-            ( $card ?: $section )->appendChild( $node );
+            ( $card ?: $inner )->appendChild( $node );
+        } elseif ( $intro_copy ) {
+            $intro_copy->appendChild( $node );
         } elseif ( $node instanceof DOMElement && 'ul' === $node->tagName ) {
             $node->setAttribute( 'class', $node->getAttribute( 'class' ) . ' alignwide vpm-benefits' );
+        }
+    }
+    foreach ( iterator_to_array( $root->getElementsByTagName( 'section' ) ) as $area ) {
+        if ( str_contains( $area->getAttribute( 'class' ), 'vpm-about-panel' ) ) {
+            $figure = vpm_editorial_figure( $doc, 'return' );
+            if ( $figure ) { $area->appendChild( $figure ); }
+        }
+        $secondary_scene = null;
+        $area_class = $area->getAttribute( 'class' );
+        if ( 'preise' === $slug && str_contains( $area_class, 'vpm-section-2' ) ) { $secondary_scene = 'handover'; }
+        if ( 'valet-parken-sicherheit' === $slug && str_contains( $area_class, 'vpm-section-3' ) ) { $secondary_scene = 'arrival'; }
+        if ( 'ueber-uns' === $slug && str_contains( $area_class, 'vpm-section-3' ) ) { $secondary_scene = 'return'; }
+        if ( $secondary_scene ) {
+            $figure = vpm_editorial_figure( $doc, $secondary_scene );
+            if ( $figure ) { $area->setAttribute( 'class', $area_class . ' vpm-visual-panel' ); $area->appendChild( $figure ); }
         }
     }
     foreach ( $root->getElementsByTagName( 'p' ) as $paragraph ) {

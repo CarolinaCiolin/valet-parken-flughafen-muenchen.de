@@ -64,7 +64,7 @@ Die fertig abgestimmte Menüstruktur, der allgemeine Header-CTA und der freigege
 
 ## Anbieter-Symbolbilder
 
-Neue importierte Anbieter verwenden ein gemeinsames, deutlich gekennzeichnetes KI-Symbolbild. Über Werkzeuge → VPM Inhaltsentwürfe → Fehlende Symbolbilder ergänzen können vorhandene Anbieter ohne Beitragsbild ergänzt werden. Bestehende Bilder und Veröffentlichungsstatus bleiben erhalten. Details in `PFLEGE.md`. Das Bild bleibt in der Mediathek erhalten, wenn das Importplugin deaktiviert wird.
+Neue importierte Anbieter verwenden sechs unterschiedliche, deutlich gekennzeichnete KI-Symbolbilder. Über Werkzeuge → VPM Inhaltsentwürfe → Fehlende Symbolbilder ergänzen können vorhandene Anbieter ohne Beitragsbild ergänzt werden. Bestehende Bilder und Veröffentlichungsstatus bleiben erhalten. Details in `PFLEGE.md`. Die Bilder bleiben in der Mediathek erhalten, wenn das Importplugin deaktiviert wird. **Verwaltete KI-Symbolbilder aktualisieren** ersetzt auf ausdrücklichen Klick nur bisherige mitgelieferte KI-Motive. Eigene Bilder werden geschützt.
 
 ## Gewünschte Fremdplugins
 

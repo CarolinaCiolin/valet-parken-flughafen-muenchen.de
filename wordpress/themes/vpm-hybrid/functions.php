@@ -53,7 +53,7 @@ add_action( 'customize_register', 'vpm_customizer' );
 // A desktop hero column does not need a full-width image download.
 add_filter( 'wp_calculate_image_sizes', function ( $sizes, $size, $src, $meta, $id ) {
     if ( 'hero-ai-v1' === get_post_meta( $id, '_vpm_asset_key', true ) ) {
-        return '(max-width: 781px) calc(100vw - 36px), (max-width: 1264px) calc((100vw - 96px) * 0.48), 576px';
+        return '(max-width: 781px) calc(100vw - 40px), 64vw';
     }
     return $sizes;
 }, 10, 5 );
