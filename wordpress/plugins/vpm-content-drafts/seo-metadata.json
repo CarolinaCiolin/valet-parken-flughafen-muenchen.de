@@ -1,0 +1,27 @@
+[
+  {
+    "url": "/",
+    "title": "Valet-Parken Flughafen München | Anbieter buchen",
+    "description": "Valet-Parken am Flughafen München: Private Anbieter, Preise und Komfort vergleichen. Fahrzeug am Flughafen übergeben und bequem online buchen.",
+    "source": "VPM _ Startseiten-Copy.pdf"
+  },
+  {
+    "url": "/preise/",
+    "title": "Valet Parken München Preise: Anbieter vergleichen",
+    "description": "Valet-Parken in München ab 89,99 € für 8 Tage: Preise und Gebühren vergleichen, Auto am Terminal abgeben und Ihr Angebot für die Reisedaten berechnen.",
+    "source": "VPM _ Preise.pdf"
+  },
+  {
+    "url": "/valet-parken-sicherheit/",
+    "title": "Ist Valet-Parken sicher? Worauf Sie am Flughafen achten sollten",
+    "description": "Ist Valet-Parken sicher? Auf welche Punkte Sie bei der Sicherheit für Ihr Fahrzeug achten sollten und wie Sie seriöse Anbieter erkennen. Jetzt informieren!",
+    "source": "VPM _ Wie sicher ist Valet-Parking.pdf"
+  },
+  {
+    "url": "/ueber-uns/",
+    "title": null,
+    "description": null,
+    "source": "VPM _ Über uns.pdf",
+    "note": "Keine gesonderten SEO-Metadaten in der Vorlage. WordPress-Seitentitel verwenden; keine Beschreibung ergänzen."
+  }
+]

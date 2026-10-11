@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "seo-by-rank-math",
+    "repository": "https://github.com/rankmath/seo-by-rank-math.git",
+    "commit": "50fc59587112316ad754ca3c9a26e1282795d49d"
+  },
+  {
+    "slug": "litespeed-cache",
+    "repository": "https://github.com/litespeedtech/lscache_wp.git",
+    "commit": "a4bd5fa11b77c95c660f003aec6a6c0d982cc9a8"
+  },
+  {
+    "slug": "complianz-gdpr",
+    "repository": "https://github.com/Really-Simple-Plugins/complianz-gdpr.git",
+    "commit": "8bc8bb002c2ddd1a8253d4ae6a6bf7cb39287230"
+  }
+]

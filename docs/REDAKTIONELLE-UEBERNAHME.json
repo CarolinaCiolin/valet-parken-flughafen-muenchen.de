@@ -1,0 +1,22 @@
+[
+  {
+    "page": "startseite",
+    "removed": "Geben Sie einfach Ihre Reisedaten an und finden Sie die besten Valet-Angebote am Flughafen München."
+  },
+  {
+    "page": "startseite",
+    "removed": "[Buchungsmodul: Fahrzeug abgeben, Fahrzeug zurückerhalten, Datum und Uhrzeit]"
+  },
+  {
+    "page": "startseite",
+    "approved_correction": "Anbieterzahl entfernt"
+  },
+  {
+    "page": "preise",
+    "removed": "Geben Sie Ihre Reisedaten und Übergabezeiten ein, um die verfügbaren Angebote und Ihren Gesamtpreis zu vergleichen."
+  },
+  {
+    "page": "valet-parken-sicherheit",
+    "link_correction": "Allgemeiner Anbieter-CTA → allgemeines ParkVia-Angebot"
+  }
+]

@@ -1,0 +1,7 @@
+VPM – klickbare Designvorschau
+
+1. Das ZIP vollständig entpacken.
+2. index.html mit Chrome, Firefox, Edge oder Safari öffnen (Doppelklick).
+3. Über das Menü Preise, Sicherheit und Über uns öffnen. FAQs lassen sich aufklappen.
+
+Bilder und Styles funktionieren offline. Partnerlinks führen bei Klick online zum Buchungspartner. Diese Vorschau enthält keinen WordPress-Editor und keine final konfigurierte Cookie-Verwaltung. Die WordPress-Pakete sind separat im Hostinger-Übergabepaket enthalten.
