@@ -53,7 +53,7 @@ docker cp .runtime/elementor/elementor/. vpm-local-wp:/var/www/html/wp-content/p
 docker exec vpm-local-wp sh -c 'chown -R www-data:www-data wp-content/themes/vpm-hybrid wp-content/plugins/vpm-providers wp-content/plugins/vpm-content-drafts wp-content/plugins/elementor; find wp-content/themes/vpm-hybrid wp-content/plugins/vpm-providers wp-content/plugins/vpm-content-drafts -type d -exec chmod 755 {} +; find wp-content/themes/vpm-hybrid wp-content/plugins/vpm-providers wp-content/plugins/vpm-content-drafts -type f -exec chmod 644 {} +'
 docker cp .runtime/admin-password vpm-local-wp:/tmp/vpm-local-admin-password
 docker cp scripts/fixture.json vpm-local-wp:/tmp/vpm-fixture.json
-for file in install-local hero-media-local seed-local seed-elementor-local seed-content-local refresh-provider-imagery-local prepare-handover-local test-integration; do
+for file in install-local hero-media-local seed-local seed-elementor-local seed-content-local prepare-guide-local refresh-provider-imagery-local prepare-handover-local test-integration; do
     docker cp "scripts/$file.php" "vpm-local-wp:/tmp/vpm-$file.php"
 done
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-install-local.php
@@ -61,6 +61,7 @@ docker exec vpm-local-wp php -r 'require "/var/www/html/wp-load.php"; require_on
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-seed-local.php
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-seed-elementor-local.php
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-seed-content-local.php
+docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-prepare-guide-local.php
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-refresh-provider-imagery-local.php
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-prepare-handover-local.php
 docker exec -e VPM_LOCAL_SETUP=1 vpm-local-wp php /tmp/vpm-test-integration.php

@@ -1,0 +1,326 @@
+{
+  "scope": "Vier öffentliche lokale Seiten. Erfasste CSS-Farben inklusive Gradient-Endpunkte und SVG-Striche; dekorative Linien ausgenommen. Kein vollständiges Barrierefreiheitszertifikat, kein Hostinger-Waterfall.",
+  "pages": [
+    {
+      "path": "/",
+      "text_elements": 186,
+      "minimum_text_contrast": 5.17,
+      "blocking_resources": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/vpm-providers/assets/cards.css?ver=0.2.1",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1535,
+          "duration": 9.399999998509884
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/complianz-gdpr/assets/css/cookieblocker.min.css?ver=1791725207",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1023,
+          "duration": 8.800000004470348
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/site.css?ver=0.3.4",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 5872,
+          "duration": 8.899999998509884
+        }
+      ],
+      "external_scripts": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/navigation.js?ver=0.3.4",
+          "defer": true,
+          "async": false
+        }
+      ]
+    },
+    {
+      "path": "/preise/",
+      "text_elements": 67,
+      "minimum_text_contrast": 5.17,
+      "blocking_resources": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/vpm-providers/assets/cards.css?ver=0.2.1",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1535,
+          "duration": 4.5
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/complianz-gdpr/assets/css/cookieblocker.min.css?ver=1791725207",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1023,
+          "duration": 10.300000004470348
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/site.css?ver=0.3.4",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 5872,
+          "duration": 11
+        }
+      ],
+      "external_scripts": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/navigation.js?ver=0.3.4",
+          "defer": true,
+          "async": false
+        }
+      ]
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "text_elements": 77,
+      "minimum_text_contrast": 5.17,
+      "blocking_resources": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/vpm-providers/assets/cards.css?ver=0.2.1",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1535,
+          "duration": 2.600000001490116
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/complianz-gdpr/assets/css/cookieblocker.min.css?ver=1791725207",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1023,
+          "duration": 4.200000002980232
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/site.css?ver=0.3.4",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 5872,
+          "duration": 4.600000001490116
+        }
+      ],
+      "external_scripts": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/navigation.js?ver=0.3.4",
+          "defer": true,
+          "async": false
+        }
+      ]
+    },
+    {
+      "path": "/ueber-uns/",
+      "text_elements": 31,
+      "minimum_text_contrast": 5.17,
+      "blocking_resources": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/vpm-providers/assets/cards.css?ver=0.2.1",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1535,
+          "duration": 8.699999995529652
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/plugins/complianz-gdpr/assets/css/cookieblocker.min.css?ver=1791725207",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 1023,
+          "duration": 8.600000001490116
+        },
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/site.css?ver=0.3.4",
+          "type": "link",
+          "blocking": "blocking",
+          "bytes": 5872,
+          "duration": 8.600000001490116
+        }
+      ],
+      "external_scripts": [
+        {
+          "url": "http://127.0.0.1:8088/wp-content/themes/vpm-hybrid/assets/navigation.js?ver=0.3.4",
+          "defer": true,
+          "async": false
+        }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "label": "Verfügbarkeit prüfen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Jetzt Parkplatz und Valet-Service buchen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Münchener Anbieter vergleichen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Fahrzeugübergabe direkt am Flughafen München",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Keine lästige Parkplatzsuche",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Kein Shuttletransfer nötig",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Schnelle Fahrzeugrückgabe nach der Landung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Sichere Außenstellplätze und überdachte Parkmöglichkeiten",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Verschiedene Angebote und Komfortstufen",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Detaillierte Preisinformationen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Fahrzeugübergabe am Terminal",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Kameraüberwachte und umzäunte Freifläche",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Starthilfe verfügbar",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Übergabe direkt am Terminal",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Unterbringung im Parkhaus",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Übergabeprotokoll und Fahrzeugfotos",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Versicherte Fahrer",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Übergabeprotokoll und Fahrzeugfotos",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Eingezäuntes Gelände mit Nachtüberwachung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Außenstellplatz oder überdachte Unterbringung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "24/7 Betrieb",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "E-Laden verfügbar",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Außenstellplatz oder überdachte Unterbringung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Umzäuntes und rund um die Uhr überwachtes Gelände",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Fahrzeuginspektion bei der Übergabe",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Außenstellplatz oder überdachte Unterbringung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Umzäuntes und rund um die Uhr besetztes Gelände",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Überdachte Stellplätze ohne Höhenbegrenzung",
+      "stroke": "#85652e",
+      "minimum_contrast": 4.86
+    },
+    {
+      "label": "Verfügbare Valet-Angebote ansehen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Private Valet-Angebote buchen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Mehr zur Sicherheit",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Valet-Angebote ausführlich vergleichen",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Mehr über uns erfahren",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    },
+    {
+      "label": "Valet-Parkplatz finden",
+      "stroke": "#101c2c",
+      "minimum_contrast": 5.27
+    }
+  ],
+  "controls": [
+    {
+      "component": "USP-Kreisrand",
+      "color": "#aa8747",
+      "background": "#f6f3ec",
+      "ratio": 3.02,
+      "required": 3
+    }
+  ]
+}

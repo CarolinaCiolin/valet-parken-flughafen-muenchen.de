@@ -3,6 +3,32 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
+    // Prefer Media Library attachments so image plugins see metadata and all sizes.
+    static $attachments = array();
+    if ( ! array_key_exists( $scene, $attachments ) ) {
+        $ids = get_posts( array( 'post_type' => 'attachment', 'post_status' => 'inherit', 'numberposts' => 1, 'fields' => 'ids', 'meta_key' => '_vpm_asset_key', 'meta_value' => 'provider-symbol-ai-v2-' . $scene ) );
+        $attachments[ $scene ] = $ids ? $ids[0] : 0;
+    }
+    if ( $attachments[ $scene ] ) {
+        $markup = wp_get_attachment_image( $attachments[ $scene ], 'large', false, array(
+            'alt' => 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen',
+            'loading' => $above_fold ? 'eager' : 'lazy', 'decoding' => 'async',
+            'sizes' => '(max-width: 760px) calc(100vw - 40px), (max-width: 1240px) calc((100vw - 104px) / 2), 560px',
+        ) );
+        if ( $markup ) {
+            $image_doc = new DOMDocument(); $previous = libxml_use_internal_errors( true );
+            $image_doc->loadHTML( '<?xml encoding="UTF-8"><div id="vpm-media-image">' . $markup . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+            libxml_clear_errors(); libxml_use_internal_errors( $previous );
+            $image_root = $image_doc->getElementById( 'vpm-media-image' );
+            if ( $image_root ) {
+                $figure = $doc->createElement( 'figure' ); $figure->setAttribute( 'class', 'vpm-editorial-image' );
+                foreach ( $image_root->childNodes as $child ) { $figure->appendChild( $doc->importNode( $child, true ) ); }
+                $figure->appendChild( $doc->createElement( 'figcaption', 'KI-Symbolbild · keine Anbieteraufnahme' ) );
+                return $figure;
+            }
+        }
+    }
+    // Theme-only installations retain the bundled WebP fallback.
     $path = 'assets/images/' . $scene . '.webp';
     if ( ! is_readable( get_theme_file_path( $path ) ) ) { return null; }
     $figure = $doc->createElement( 'figure' );

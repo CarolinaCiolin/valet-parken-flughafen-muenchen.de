@@ -1,0 +1,7 @@
+{
+  "version": "2.3.4",
+  "repository": "https://github.com/wp-media/imagify-plugin.git",
+  "tag": "v2.3.4",
+  "commit": "0fae188479f4186436c085f20857090e542d8c5c",
+  "scope": "Manufacturer source and actual picture formatter tested; not installed/activated as a complete plugin. No API account, compression, conversion or server rewrite test."
+}

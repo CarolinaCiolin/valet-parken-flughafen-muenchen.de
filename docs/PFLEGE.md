@@ -35,3 +35,7 @@ Rechtstexte und die Bestandsaufnahme der weiteren Plugins folgen nach deren Einr
 ## Designbilder auf den Unterseiten
 
 Die zusätzlichen Bilder auf Preise, Sicherheit und Über uns liegen im Theme unter `assets/images/`. Die Darstellung ergänzt das Theme anhand des Seitenslugs, ohne gespeicherte Texte zu verändern. Derzeit werden diese Bilder im Theme gepflegt. Der Hero bleibt ein Gutenberg-Bildblock, Anbieterbilder bleiben normale Beitragsbilder. Eine eigene Elementor-Seite kann unabhängig davon ihre eigenen Bildwidgets verwenden.
+
+## Imagify und Ratgeber
+
+Zusätzliche Unterseitenbilder nutzen ab Theme 0.3.4 bevorzugt die importierten Mediathek-Motive; Theme-WebPs bleiben Fallback. Imagify-Prüfumfang und spätere Einstellungen: `RENDERING-KONTRASTE-IMAGIFY.md`. Der neue Entwurf „Valet-Ratgeber“ enthält einen nativen Query-Loop für veröffentlichte Beiträge; Pflege und Veröffentlichung: `RATGEBER.md`.

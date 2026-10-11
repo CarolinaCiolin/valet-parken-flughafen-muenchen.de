@@ -48,7 +48,7 @@ Erst nach Einzelabnahme der Seiten, vollständiger Linkprüfung, Bildfreigabe un
 
 ## Vier Seitenentwürfe importieren
 
-Zusätzlich `dist/vpm-content-drafts.zip` als Plugin installieren und aktivieren. Unter **Werkzeuge → VPM Inhaltsentwürfe → Neue Entwürfe importieren** werden Startseite, Preise, Sicherheit und Über uns sowie fehlende Anbieter als **Entwürfe** angelegt. VPM Anbieter muss aktiv sein. Vorhandene Seiten mit derselben Adresse und Anbieter mit demselben Namen werden übersprungen. Wiederholter Import ersetzt keine Inhalte. Die Startseite, Menüs und Indexierung werden nicht umgestellt. Das Hero-Bild wird in die Mediathek übernommen und bleibt im Bildblock austauschbar.
+Zusätzlich `dist/vpm-content-drafts.zip` als Plugin installieren und aktivieren. Unter **Werkzeuge → VPM Inhaltsentwürfe → Neue Entwürfe importieren** werden Startseite, Preise, Sicherheit, Über uns und Valet-Ratgeber sowie fehlende Anbieter als **Entwürfe** angelegt. VPM Anbieter muss aktiv sein. Vorhandene Seiten mit derselben Adresse und Anbieter mit demselben Namen werden übersprungen. Wiederholter Import ersetzt keine Inhalte. Die Startseite, Menüs und Indexierung werden nicht umgestellt. Das Hero-Bild wird in die Mediathek übernommen und bleibt im Bildblock austauschbar.
 
 Die Entwürfe verwenden native Gutenberg-Blöcke. Bei Elementor bleiben Theme und Anbieter-Shortcode kompatibel; die Gutenberg-Seiten werden nicht automatisch zu Elementor-Widgets konvertiert. Entscheiden Sie pro Seite für einen Editor.
 
@@ -75,3 +75,5 @@ Rank Math, LiteSpeed Cache und Complianz wurden gemeinsam anhand von Hersteller-
 Responsive Bildvarianten und Menü-Ladeverhalten sind optimiert. Bei vorhandenen älteren Bildern nach dem Update Bildgrößen regenerieren; neue Importe erzeugen sie automatisch. `SPEED-UND-VORSCHAU.md` dokumentiert den lokalen Vergleich und den separat notwendigen Hostinger-Test. Die klickbare HTML-Vorschau ist zusätzlich im Gesamtpaket enthalten.
 
 Der Header-Button führt im Theme ab 0.3.1 immer zur Startseite mit `#anbieter`. Ein früher gespeicherter externer Header-Link wird nicht mehr verwendet.
+
+Der Ratgeber bleibt ein Entwurf, bis du ihn bewusst veröffentlichst. Neue veröffentlichte Blogbeiträge erscheinen dort automatisch. Nicht als WordPress-Beitragsseite zuweisen. Details in `RATGEBER.md`.

@@ -24,6 +24,9 @@ add_action( 'wp_head', function () { echo '<script>document.documentElement.clas
 add_action( 'wp_enqueue_scripts', function () {
     $version = wp_get_theme()->get( 'Version' );
     wp_enqueue_style( 'vpm-hybrid', get_theme_file_uri( 'assets/site.css' ), array(), $version );
+    if ( is_singular( 'post' ) || ( is_singular() && has_block( 'core/query', get_post() ) ) ) {
+        wp_enqueue_style( 'vpm-guide', get_theme_file_uri( 'assets/guide.css' ), array( 'vpm-hybrid' ), $version );
+    }
     wp_enqueue_script( 'vpm-navigation', get_theme_file_uri( 'assets/navigation.js' ), array(), $version, array( 'strategy' => 'defer', 'in_footer' => true ) );
 } );
 

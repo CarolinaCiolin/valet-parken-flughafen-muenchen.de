@@ -6,7 +6,7 @@ Das Gesamtpaket zuerst auf dem Computer entpacken. **Nur die drei einzelnen ZIPs
 2. `vpm-hybrid.zip` unter **Design → Themes → Hinzufügen → Theme hochladen** installieren und aktivieren.
 3. `vpm-providers.zip` und danach `vpm-content-drafts.zip` unter **Plugins → Installieren → Plugin hochladen** installieren und aktivieren.
 4. Unter **Werkzeuge → VPM Inhaltsentwürfe** die neuen Entwürfe importieren. Vier Seiten und sechs fehlende Anbieter werden angelegt. Bestehende Inhalte bleiben erhalten. Neue Anbieter erhalten das gemeinsame KI-Symbolbild. Bei vorhandenen Anbietern ohne Bild kann anschließend **Fehlende Symbolbilder ergänzen** genutzt werden.
-5. Unter **Einstellungen → Allgemein** Website-Titel „Valet-Parken Flughafen München“, Sprache Deutsch und Zeitzone Berlin einstellen. Unter **Permalinks** „Beitragsname“ wählen. In Staging die vier importierten Seiten und Anbieter prüfen und veröffentlichen, damit Navigation und Anbieterkarten vollständig getestet werden können. Die produktive Veröffentlichung folgt erst später.
+5. Unter **Einstellungen → Allgemein** Website-Titel „Valet-Parken Flughafen München“, Sprache Deutsch und Zeitzone Berlin einstellen. Unter **Permalinks** „Beitragsname“ wählen. In Staging die vier bisherigen Inhaltsseiten und Anbieter prüfen und veröffentlichen, damit Navigation und Anbieterkarten vollständig getestet werden können. Die produktive Veröffentlichung folgt erst später.
 6. Unter **Einstellungen → Lesen** die importierte „Startseite“ als statische Startseite zuweisen. Sie erhält damit `/`; die übrigen Adressen sind `/preise/`, `/valet-parken-sicherheit/` und `/ueber-uns/`.
 7. Unter **Design → Menüs** die folgenden beiden Menüs erstellen und ihren Theme-Positionen zuweisen. Die drei Inhaltsseiten als Seiten-Menüeinträge hinzufügen, damit WordPress ihre Adressen aktuell hält.
 
@@ -39,3 +39,5 @@ Nach erfolgreichem Import kann das Plugin „VPM Inhaltsentwürfe“ deaktiviert
 Für die spätere Pflege von Bildern, Anbieterangaben und Partnerlinks stehen `PFLEGE.md` und `LINK-INVENTAR.csv` bereit. Das Symbolbild behauptet keine tatsächliche Anbieteraufnahme.
 
 Die gewünschte Kombination aus Rank Math, HFCM, LiteSpeed Cache und Complianz wird in `PLUGIN-KOMPATIBILITAET.md` behandelt. Diese Fremdplugins separat aus den offiziellen WordPress-Angeboten installieren; das Gesamtpaket enthält nur die drei VPM-Pakete.
+
+Der zusätzliche Entwurf **Valet-Ratgeber** bleibt zunächst unveröffentlicht und unverlinkt. Pflege und spätere Veröffentlichung in `RATGEBER.md`.

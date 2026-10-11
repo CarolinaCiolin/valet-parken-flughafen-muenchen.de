@@ -8,7 +8,9 @@ if ( is_wp_error( $result ) ) { throw new RuntimeException( $result->get_error_m
 wp_set_current_user( 1 );
 $result = vpm_import_content_drafts();
 if ( is_wp_error( $result ) ) { throw new RuntimeException( $result->get_error_message() ); }
-foreach ( $result['pages'] as $id ) { wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ) ); }
+foreach ( $result['pages'] as $id ) {
+    if ( 'ratgeber' !== get_post_field( 'post_name', $id ) ) { wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ) ); }
+}
 $images = vpm_add_provider_symbol_images();
 if ( is_wp_error( $images ) ) { throw new RuntimeException( $images->get_error_message() ); }
 echo 'Fehlende lokale Symbolbilder ergänzt: ' . $images . PHP_EOL;

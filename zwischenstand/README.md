@@ -4,6 +4,14 @@ Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte un
 
 [Prüfbericht mit Ladezeiten und weiteren Empfehlungen](../docs/DESIGN-UND-TECHNIK-AUDIT.md)
 
+## Valet-Ratgeber – privater Entwurf
+
+Die Übersicht bleibt unveröffentlicht und ist nicht im Menü verlinkt. Spätere veröffentlichte Beiträge erscheinen automatisch. Die Screenshots zeigen den leeren Entwurf; keine Testartikel bleiben zurück.
+
+![Valet-Ratgeber am Desktop](ratgeber-entwurf-desktop.png)
+
+[Entwurf am Handy](ratgeber-entwurf-mobil.png) · [Pflegeanleitung](../docs/RATGEBER.md) · [Rendering, Kontraste und Imagify](../docs/RENDERING-KONTRASTE-IMAGIFY.md)
+
 ## Startseite – erster Bildschirm
 
 ![Startseite am Desktop](startseite-desktop.png)

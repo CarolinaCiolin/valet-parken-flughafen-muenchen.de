@@ -25,7 +25,7 @@ packages = [out / (name + '.zip') for name in ['vpm-hybrid', 'vpm-providers', 'v
 manifest = out / 'SHA256SUMS.txt'
 manifest.write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.name + '\n' for p in packages))
 bundle = out / 'vpm-hostinger-uebergabe.zip'
-docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json']
+docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json', 'RENDERING-KONTRASTE-IMAGIFY.md', 'RENDER-KONTRAST-AUDIT.json', 'IMAGIFY-QUELLSTAND.json', 'RATGEBER.md']
 with ZipFile(bundle, 'w', ZIP_DEFLATED) as archive:
     for file in packages + [manifest]:
         archive.write(file, file.name)
@@ -35,7 +35,7 @@ with ZipFile(bundle, 'w', ZIP_DEFLATED) as archive:
         for width in [1440, 390]:
             file = out / f'{slug}-{width}.png'
             if file.exists(): archive.write(file, 'Vorschauen/' + file.name)
-    for name in ['ablauf-desktop.png', 'sicherheitskarten-desktop.png', 'startseite-mobil-einstieg.png', 'tablet-menue.png']:
+    for name in ['ablauf-desktop.png', 'sicherheitskarten-desktop.png', 'startseite-mobil-einstieg.png', 'tablet-menue.png', 'ratgeber-entwurf-desktop.png', 'ratgeber-entwurf-mobil.png']:
         file = out / name
         if file.exists(): archive.write(file, 'Vorschauen/' + name)
     file = out / 'anbieter-mit-symbolbildern.png'

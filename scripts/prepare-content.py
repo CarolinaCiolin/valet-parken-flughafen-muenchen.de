@@ -83,6 +83,11 @@ for filename,slug in [('VPM _ Startseiten-Copy.pdf','startseite'),('VPM _ Preise
  pages.append({'slug':slug,'title':title,'content':content})
 for provider in fixture['providers']:
  provider['meta']['source_date']='Vom Nutzer bereitgestellte Startseiten-Copy; Prüfdatum nicht angegeben'
+existing_file = out/'content.json'
+if existing_file.exists():
+ existing_pages = json.loads(existing_file.read_text()).get('pages', [])
+ generated_slugs = {page['slug'] for page in pages}
+ pages.extend(page for page in existing_pages if page['slug'] not in generated_slugs)
 (out/'content.json').write_text(json.dumps({'pages':pages,'providers':fixture['providers'],'general_url':fixture['general_url']},ensure_ascii=False,indent=2))
 (root/'docs/REDAKTIONELLE-UEBERNAHME.json').write_text(json.dumps(changes,ensure_ascii=False,indent=2))
 print([(p['slug'],len(p['content'])) for p in pages])

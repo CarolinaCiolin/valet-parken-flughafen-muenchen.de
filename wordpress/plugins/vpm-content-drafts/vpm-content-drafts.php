@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: VPM Inhaltsentwürfe
- * Description: Einmaliger, manuell ausgelöster Import der vier vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.2.0
+ * Description: Einmaliger, manuell ausgelöster Import der vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
+ * Version: 0.2.1
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -52,7 +52,7 @@ function vpm_import_content_drafts() {
 add_action( 'admin_menu', function() {
     add_management_page( 'VPM Inhaltsentwürfe', 'VPM Inhaltsentwürfe', 'manage_options', 'vpm-content-drafts', function() {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
-        echo '<div class="wrap"><h1>VPM Inhaltsentwürfe</h1><p>Legt Startseite, Preise, Sicherheit und Über uns als Entwürfe an. Vorhandene Seiten und Anbieter werden übersprungen. Es wird nichts veröffentlicht, keine Startseite und kein Menü umgestellt.</p><p>Anbieter ebenfalls als Entwürfe: vor Veröffentlichung Leistungen prüfen. Anbieterzahl gemäß Freigabe entfernt; „24/7 Betrieb“ korrigiert. Rechtstexte folgen nach Einrichtung der Plugins.</p>';
+        echo '<div class="wrap"><h1>VPM Inhaltsentwürfe</h1><p>Legt Startseite, Preise, Sicherheit, Über uns und Valet-Ratgeber als Entwürfe an. Vorhandene Seiten und Anbieter werden übersprungen. Es wird nichts veröffentlicht, keine Startseite und kein Menü umgestellt.</p><p>Anbieter ebenfalls als Entwürfe: vor Veröffentlichung Leistungen prüfen. Anbieterzahl gemäß Freigabe entfernt; „24/7 Betrieb“ korrigiert. Rechtstexte folgen nach Einrichtung der Plugins.</p>';
         if ( isset( $_POST['vpm_import'] ) ) {
             check_admin_referer( 'vpm_import_drafts' );
             $result = vpm_import_content_drafts();
