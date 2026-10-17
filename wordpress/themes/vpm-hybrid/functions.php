@@ -2,6 +2,7 @@
 /** Theme integration, without content or provider storage. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once get_theme_file_path( 'language.php' );
+require_once get_theme_file_path( 'legal-footer.php' );
 require_once get_theme_file_path( 'presentation.php' );
 
 add_action( 'after_setup_theme', function () {

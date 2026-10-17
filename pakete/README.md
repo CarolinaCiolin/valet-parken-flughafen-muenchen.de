@@ -2,7 +2,7 @@
 
 Drei ZIPs direkt in WordPress hochladen, nicht entpacken. Vorher Dateien und Datenbank sichern.
 
-- [VPM Hybrid 0.4.0](vpm-hybrid.zip) – Theme, Abstände und englische Darstellung.
+- [VPM Hybrid 0.4.1](vpm-hybrid.zip) – Theme, Abstände und englische Darstellung.
 - [VPM Anbieter 0.3.0](vpm-providers.zip) – neue illustrative Karten und Sprachunterstützung; CleanLinking bleibt aus.
 - [VPM Inhaltsentwürfe 0.3.0](vpm-content-drafts.zip) – englische Entwürfe, Polylang-Vorbereitung und privater Rechtstext-Upload.
 

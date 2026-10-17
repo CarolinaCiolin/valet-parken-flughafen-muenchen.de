@@ -2,7 +2,7 @@
 
 ## Enthalten
 
-- VPM Hybrid 0.4.0: Abstand zum Reservierungshinweis, Sprachschalter und englische Darstellung.
+- VPM Hybrid 0.4.1: Abstand zum Reservierungshinweis, Sprachschalter und englische Darstellung.
 - VPM Anbieter 0.3.0: sechs freigegebene illustrative Anbieter-Motive ohne den bisherigen Foto-KI-Hinweis; eigene Beitragsbilder werden nicht ersetzt. Die fotorealistischen redaktionellen Bilder behalten ihren Hinweis. Ein WebP-Bildbogen (206.638 Bytes) wird für alle sechs Illustrationen verwendet und per CSS dargestellt; kein externer Bildserver.
 - VPM Inhaltsentwürfe 0.3.0: Sprachvorbereitung, fünf englische Seitenentwürfe und sechs englische Anbieterentwürfe, englische Menüs und SEO-Angaben. Zusätzlich separater Import privater Rechtstext-JSON-Dateien als Entwürfe.
 - CleanLinking bleibt standardmäßig deaktiviert. Keine TradeTracker-Aufrufe durch das Update. Partnerfreigabe und Website-Zuordnung sind noch offen.
@@ -40,3 +40,5 @@ Zusätzliche Prüfung: alle fünf englischen Gutenberg-Seiten ohne ungültige Bl
 Die englische Ratgeber-Entwurfsvorschau wurde zusätzlich mit einem englischen und einem deutschen Testbeitrag geprüft: nur der englische Beitrag erscheint in der englischen Übersicht. Beide Testbeiträge sind wieder gelöscht. Für einen statischen Export beider Sprachen `python3 scripts/build-offline-preview.py --english` während der temporär veröffentlichten lokalen Review-Fixtures ausführen; der normale Aufruf exportiert nur die vier deutschen Seiten und benötigt keine öffentlichen englischen Entwürfe.
 
 Nach Rücksetzen der lokalen Englisch-Fixtures auf Entwurf wurde geprüft: öffentlich bleiben nur die deutschen Karten sichtbar; die englische Preisseite ist nicht öffentlich erreichbar, und der öffentliche Sprachschalter zeigt keine unfertigen englischen Seiten. In der angemeldeten englischen Seitenvorschau werden die sechs englischen Anbieterentwürfe trotzdem angezeigt. Der Park-Drive-Fly-Button bleibt auch dort auf Parkos beschränkt. In WordPress bei Bedarf die Seiten-/Anbieterliste auf Sprache Englisch filtern.
+
+Footer-Ergänzung in Theme 0.4.1: Impressum und Datenschutz werden nach Veröffentlichung automatisch verlinkt. Entwürfe, fehlende Seiten und passwortgeschützte Seiten bleiben unverlinkt. Bereits manuell im Footer angelegte Ziele werden nicht doppelt ausgegeben. Englische Links erscheinen erst mit veröffentlichten, korrekt in Polylang zugeordneten englischen Rechtstexten. Entwurfsseiten werden nicht automatisch veröffentlicht. Die geschützte lokale Prüfung mit temporären deutschen/englischen Seiten bestätigt Ziele, Entwurfs-Schutz, fehlende Duplikate und responsive Darstellung.
