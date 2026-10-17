@@ -32,6 +32,24 @@ try:
    assert bc['itemListElement'][0]['item']==base+('/en/'if en else'/')
    assert s.select_one('.vpm-page-role a')['href']==base+('/en/'if en else'/')
    assert [x.get_text(' ',strip=True)for x in crumbs]==[x['name']for x in bc['itemListElement']]
+  if home:
+   for entry in listing['itemListElement']:
+    service=entry['item'];assert service['@type']=='Service' and 'offers'not in service
+    card=s.find(id=urllib.parse.urlsplit(entry['url']).fragment)
+    assert service['name']==card.select_one('h3').get_text(strip=True)
+    assert service['description']=='\n'.join(x.get_text(strip=True)for x in card.select('.vpm-provider-features li'))
+  if path in ['/preise/','/en/prices/']:
+   listing=next(n for n in nodes if n['@type']=='ItemList');assert int(listing['numberOfItems'])==7
+   rows=s.select('table tbody tr');assert len(rows)==7
+   for entry,row,expected in zip(listing['itemListElement'],rows,['89.99','105','145','147.99','160.99','190','335']):
+    service=entry['item'];cells=row.select('td');offer=service['offers'];spec=offer['priceSpecification']
+    assert service['@type']=='Service' and service['name']==cells[0].get_text(strip=True)
+    assert service['provider']['name']==service['name']
+    assert service['description']==cells[2].get_text(strip=True)
+    assert offer['url']==base+path and cells[3].select_one('a')['href'].startswith('https://')
+    assert str(spec['minPrice'])==expected and spec['priceCurrency']=='EUR' and 'price'not in offer
+    assert int(spec['referenceQuantity']['value'])==8 and spec['referenceQuantity']['unitCode']=='DAY'
+    assert not set(offer)&{'availability','priceValidUntil','seller'}
   if 'about-us'in path or 'ueber-uns'in path:assert page['@type']=='AboutPage'
   faqs=s.select('details summary');faqnodes=[n for n in nodes if n['@type']=='FAQPage']
   assert len(faqnodes)==(1 if faqs else 0)
@@ -62,7 +80,7 @@ try:
     icons=page.locator('link[rel="icon"]').evaluate_all('(els)=>els.map(x=>x.href)');assert len(icons)==2,icons
     if path in ['/preise/','/en/prices/']and width in[1440,390]:page.screenshot(path=str(root/'zwischenstand/schema'/(('en'if path.startswith('/en/')else'de')+'-'+str(width)+'.png')))
   b.close()
- (root/'docs/SCHEMA-KONTEXT-PRUEFUNG.json').write_text(json.dumps({'pages':report,'checks':['Exactly one graph with unique entity IDs and no duplicate Rank Math entities','Breadcrumbs match visible navigation in both languages','Provider ItemList targets exist in page','FAQ questions match actual rendered details','Published guide ItemList matches native query language','BlogPosting and Home > Guide > Article breadcrumbs','No schema or context UI on synthetic legal pages','Fallback graph works without Rank Math','Native icon import sizes 32/180/192/270, repeat preserves existing icon','30 viewport checks without horizontal overflow'],'limitations':['Local WordPress integration, not Hostinger deployment','No Google Rich Results Test or Schema Markup Validator service access','FAQ rich-result eligibility not guaranteed']},ensure_ascii=False,indent=2)+'\n')
+ (root/'docs/SCHEMA-KONTEXT-PRUEFUNG.json').write_text(json.dumps({'pages':report,'checks':['Exactly one graph with unique entity IDs and no duplicate Rank Math entities','Breadcrumbs match visible navigation in both languages','Provider ItemList targets exist in page; Service names/features match visible cards, no hidden homepage prices', 'Seven price-page Services in both languages: visible amounts, minimum EUR prices for eight days, local comparison URL and unchanged visible booking links, no invented availability or dates','FAQ questions match actual rendered details','Published guide ItemList matches native query language','BlogPosting and Home > Guide > Article breadcrumbs','No schema or context UI on synthetic legal pages','Fallback graph works without Rank Math','Native icon import sizes 32/180/192/270, repeat preserves existing icon','30 viewport checks without horizontal overflow'],'limitations':['Local WordPress integration, not Hostinger deployment','No Google Rich Results Test or Schema Markup Validator service access','FAQ rich-result eligibility not guaranteed']},ensure_ascii=False,indent=2)+'\n')
  print('Schema, visible context, fallback, legal exclusions, multilingual guide/articles, icon and 30 layouts passed.')
 finally:
  php('update_option("active_plugins",json_decode('+json.dumps(json.dumps(state['plugins']))+',true));update_option("site_icon",'+str(int(state['icon']or 0))+');foreach(json_decode('+json.dumps(json.dumps(state['statuses']))+',true)as $id=>$status)wp_update_post(["ID"=>$id,"post_status"=>$status]);foreach('+json.dumps([x['id']for x in created])+'as $id)wp_delete_post($id,true);')
