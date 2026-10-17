@@ -4,7 +4,7 @@
 
 - VPM Hybrid 0.4.1: Abstand zum Reservierungshinweis, Sprachschalter und englische Darstellung.
 - VPM Anbieter 0.3.1: sechs freigegebene illustrative Anbieter-Motive ohne den bisherigen Foto-KI-Hinweis; eigene Beitragsbilder werden nicht ersetzt. Die fotorealistischen redaktionellen Bilder behalten ihren Hinweis. Ein WebP-Bildbogen (206.638 Bytes) wird für alle sechs Illustrationen verwendet und per CSS dargestellt; kein externer Bildserver.
-- VPM Inhaltsentwürfe 0.3.1: Sprachvorbereitung, fünf englische Seitenentwürfe und sechs englische Anbieterentwürfe, englische Menüs und SEO-Angaben. Zusätzlich separater Import privater Rechtstext-JSON-Dateien als Entwürfe.
+- VPM Inhaltsentwürfe 0.3.2: Sprachvorbereitung, fünf englische Seitenentwürfe und sechs englische Anbieterentwürfe, englische Menüs und SEO-Angaben. Zusätzlich separater Import privater Rechtstext-JSON-Dateien als Entwürfe.
 - CleanLinking bleibt standardmäßig deaktiviert. Keine TradeTracker-Aufrufe durch das Update. Partnerfreigabe und Website-Zuordnung sind noch offen.
 
 ## Vor Upload
@@ -46,3 +46,14 @@ Footer-Ergänzung in Theme 0.4.1: Impressum und Datenschutz werden nach Veröffe
 Korrektur Anbieter 0.3.1: Die Sprachfilterung setzt keine bereits abgeschlossene Sprachvorbereitung mehr voraus. Deutsche Seiten zeigen aktive veröffentlichte deutsche und noch sprachlose Bestandsanbieter; englische Anbieter werden ausgeschlossen. Englische Seiten bleiben strikt auf Englisch beschränkt. Lokal nachgestellt und geprüft mit sechs vollständig sprachlosen Bestandsanbietern, gemischter Zuordnung sowie englischer Ausgabe; alle ursprünglichen Sprachen und Entwurfszustände anschließend wiederhergestellt. Ein Neuimport oder Löschen ist nicht erforderlich.
 
 Korrektur Inhaltsentwürfe 0.3.1: Polylang kann bereits leere Übersetzungen angelegt haben, die der normale Import bewusst überspringt. Neuer separater Button „3. Leere englische Seiten vervollständigen“ ergänzt nur solche Platzhalter mit vollständigem englischem Inhalt, Titel, kanonischem englischem Slug, Seitenlayout und SEO-Metadaten, ohne neue Duplikate anzulegen. Reparierte Seiten werden zur Vorschau auf Entwurf gesetzt, auch wenn der leere Platzhalter schon veröffentlicht war. Nichtleere Inhalte und vorhandene Elementor-Layouts bleiben geschützt. Danach LiteSpeed-Cache leeren und die Vorschau derselben englischen Seite öffnen.
+
+## Veröffentlichung mit Inhaltsentwürfe 0.3.2
+
+Unter Werkzeuge → VPM Inhaltsentwürfe stehen zwei zusätzliche, getrennte Aktionen bereit:
+
+- „Englische Seiten und Anbieter veröffentlichen“: prüft zuerst alle vier englischen Inhaltsseiten, sechs Anbieter und Menüzuordnungen. Fehlende oder leere Übersetzungen verhindern die Aktion vor Beginn. Veröffentlicht diese Inhalte mit den vorhandenen Links; die vorhandenen englischen Menüs werden damit nutzbar. Beide Ratgeber bleiben unverändert.
+- „Importiertes Impressum und Datenschutz veröffentlichen“: setzt voraus, dass beide deutschen Seiten über den privaten Rechtstext-Import angelegt wurden. Veröffentlicht nur diese beiden Seiten; der Theme-Footer ergänzt ihre Links automatisch. Keine englischen Rechtstexte werden erfunden oder automatisch aus deutschen Texten erzeugt.
+
+Keine automatische Veröffentlichung bei Plugin-Aktivierung, Aktualisierung, Sprachvorbereitung oder Import. Bereits veröffentlichte Zielinhalte werden übersprungen. Die Aktionen benötigen Administratorrechte und einen gültigen Formular-Nonce. LiteSpeed Cache wird nach Veröffentlichung geleert. Die globale Suchmaschinen-Sichtbarkeit und Rank-Math-Einstellungen werden nicht automatisch geändert; bei blog_public=0 erscheint ein konkreter Hinweis mit Verweis auf Einstellungen → Lesen.
+
+Lokal geprüft: Berechtigungen, Abbruch vor Veröffentlichung bei leerer englischer Seite, zehn englische Veröffentlichungen, sichere Wiederholung, private Ratgeber, getrennte Rechtstext-Veröffentlichung mit synthetischen Daten und danach die tatsächliche öffentliche englische Startseite samt Menü/Karten sowie deutsche Footerlinks. Alle lokalen Teststatus anschließend wiederhergestellt und synthetische Rechtstext-Seiten entfernt. Keine Hostinger-Veröffentlichung durchgeführt.

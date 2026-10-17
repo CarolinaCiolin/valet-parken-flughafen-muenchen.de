@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Inhaltsentwürfe
  * Description: Einmaliger, manuell ausgelöster Import der vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.3.1
+ * Version: 0.3.2
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -10,6 +10,7 @@ require_once __DIR__ . '/provider-images.php';
 require_once __DIR__ . '/seo-metadata.php';
 require_once __DIR__ . '/english.php';
 require_once __DIR__ . '/legal-import.php';
+require_once __DIR__ . '/publish.php';
 function vpm_import_content_drafts() {
     if ( ! current_user_can( 'manage_options' ) ) { return new WP_Error( 'forbidden', 'Keine Berechtigung.' ); }
     $data = json_decode( file_get_contents( __DIR__ . '/content.json' ), true );
@@ -81,6 +82,7 @@ add_action( 'admin_menu', function() {
         }
         vpm_english_admin();
         vpm_legal_admin();
+        vpm_publication_admin();
         echo '<h2>Rank-Math-Angaben</h2><p>Übernimmt die gelieferten SEO-Titel und Beschreibungen in leere Felder der importierten Seiten. Ändert weder Indexierung noch Sitemap-Einstellungen.</p><form method="post">';
         wp_nonce_field( 'vpm_rank_math_metadata' ); submit_button( 'Leere Rank-Math-Felder ergänzen', 'secondary', 'vpm_rank_math_metadata' ); echo '</form>';
         echo '<h2>Symbolbilder ergänzen</h2><p>Sechs unterschiedliche KI-Symbolbilder für Valet-Parking. Sie zeigen keine tatsächlichen Anbieter oder Stellplätze. Ergänzt nur Anbieter ohne Beitragsbild; vorhandene Bilder, Texte und Veröffentlichungsstatus bleiben erhalten.</p><form method="post">';

@@ -1,4 +1,4 @@
-Aktuelles gemeinsames Update: **Theme 0.4.1 / Anbieter 0.3.1 / Inhaltsentwürfe 0.3.1**. Anleitung: [UPDATE-0.4.0.md](docs/UPDATE-0.4.0.md). Frühere Prüfberichte unten dokumentieren ihre damaligen Versionen.
+Aktuelles gemeinsames Update: **Theme 0.4.1 / Anbieter 0.3.1 / Inhaltsentwürfe 0.3.2**. Anleitung: [UPDATE-0.4.0.md](docs/UPDATE-0.4.0.md). Frühere Prüfberichte unten dokumentieren ihre damaligen Versionen.
 
 # VPM WordPress-Grundgerüst
 
