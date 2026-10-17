@@ -60,7 +60,7 @@ class Export(HTMLParser):
   if not self.script:self.parts.append('&#'+name+';')
 for path,name in paths.items():
  with urlopen(base+path) as response:source=response.read().decode()
- parser=Export();parser.feed(source);(out/name).write_text(''.join(parser.parts))
+ parser=Export();parser.feed(source);(out/name).write_text('\n'.join(line.rstrip() for line in ''.join(parser.parts).splitlines()).rstrip()+'\n')
 shutil.copyfile(root/'wordpress/themes/vpm-hybrid/assets/navigation.js',out/'assets/navigation.js')
 (out/'SO-OEFFNEN.txt').write_text('VPM – klickbare Designvorschau\n\n1. Das ZIP vollständig entpacken.\n2. index.html mit Chrome, Firefox, Edge oder Safari öffnen (Doppelklick).\n3. Über das Menü Preise, Sicherheit und Über uns öffnen. FAQs lassen sich aufklappen.\n\nBilder und Styles funktionieren offline. Partnerlinks führen bei Klick online zum Buchungspartner. Diese Vorschau enthält keinen WordPress-Editor und keine final konfigurierte Cookie-Verwaltung. Die WordPress-Pakete sind separat im Hostinger-Übergabepaket enthalten.\n')
 archive=root/'dist/vpm-klickbare-vorschau.zip'
