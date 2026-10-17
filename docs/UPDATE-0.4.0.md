@@ -3,7 +3,7 @@
 ## Enthalten
 
 - VPM Hybrid 0.4.1: Abstand zum Reservierungshinweis, Sprachschalter und englische Darstellung.
-- VPM Anbieter 0.3.0: sechs freigegebene illustrative Anbieter-Motive ohne den bisherigen Foto-KI-Hinweis; eigene Beitragsbilder werden nicht ersetzt. Die fotorealistischen redaktionellen Bilder behalten ihren Hinweis. Ein WebP-Bildbogen (206.638 Bytes) wird für alle sechs Illustrationen verwendet und per CSS dargestellt; kein externer Bildserver.
+- VPM Anbieter 0.3.1: sechs freigegebene illustrative Anbieter-Motive ohne den bisherigen Foto-KI-Hinweis; eigene Beitragsbilder werden nicht ersetzt. Die fotorealistischen redaktionellen Bilder behalten ihren Hinweis. Ein WebP-Bildbogen (206.638 Bytes) wird für alle sechs Illustrationen verwendet und per CSS dargestellt; kein externer Bildserver.
 - VPM Inhaltsentwürfe 0.3.0: Sprachvorbereitung, fünf englische Seitenentwürfe und sechs englische Anbieterentwürfe, englische Menüs und SEO-Angaben. Zusätzlich separater Import privater Rechtstext-JSON-Dateien als Entwürfe.
 - CleanLinking bleibt standardmäßig deaktiviert. Keine TradeTracker-Aufrufe durch das Update. Partnerfreigabe und Website-Zuordnung sind noch offen.
 
@@ -42,3 +42,5 @@ Die englische Ratgeber-Entwurfsvorschau wurde zusätzlich mit einem englischen u
 Nach Rücksetzen der lokalen Englisch-Fixtures auf Entwurf wurde geprüft: öffentlich bleiben nur die deutschen Karten sichtbar; die englische Preisseite ist nicht öffentlich erreichbar, und der öffentliche Sprachschalter zeigt keine unfertigen englischen Seiten. In der angemeldeten englischen Seitenvorschau werden die sechs englischen Anbieterentwürfe trotzdem angezeigt. Der Park-Drive-Fly-Button bleibt auch dort auf Parkos beschränkt. In WordPress bei Bedarf die Seiten-/Anbieterliste auf Sprache Englisch filtern.
 
 Footer-Ergänzung in Theme 0.4.1: Impressum und Datenschutz werden nach Veröffentlichung automatisch verlinkt. Entwürfe, fehlende Seiten und passwortgeschützte Seiten bleiben unverlinkt. Bereits manuell im Footer angelegte Ziele werden nicht doppelt ausgegeben. Englische Links erscheinen erst mit veröffentlichten, korrekt in Polylang zugeordneten englischen Rechtstexten. Entwurfsseiten werden nicht automatisch veröffentlicht. Die geschützte lokale Prüfung mit temporären deutschen/englischen Seiten bestätigt Ziele, Entwurfs-Schutz, fehlende Duplikate und responsive Darstellung.
+
+Korrektur Anbieter 0.3.1: Die Sprachfilterung setzt keine bereits abgeschlossene Sprachvorbereitung mehr voraus. Deutsche Seiten zeigen aktive veröffentlichte deutsche und noch sprachlose Bestandsanbieter; englische Anbieter werden ausgeschlossen. Englische Seiten bleiben strikt auf Englisch beschränkt. Lokal nachgestellt und geprüft mit sechs vollständig sprachlosen Bestandsanbietern, gemischter Zuordnung sowie englischer Ausgabe; alle ursprünglichen Sprachen und Entwurfszustände anschließend wiederhergestellt. Ein Neuimport oder Löschen ist nicht erforderlich.

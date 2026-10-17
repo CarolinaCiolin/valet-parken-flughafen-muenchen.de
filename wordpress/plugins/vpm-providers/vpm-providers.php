@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -121,9 +121,18 @@ function vpm_render_provider_cards( $atts = array() ) {
         $args['orderby'] = 'post__in';
     }
     if ( is_preview() && current_user_can( 'edit_pages' ) ) { $args['post_status'] = array( 'publish', 'draft' ); }
-    if ( function_exists( 'pll_current_language' ) && pll_current_language() ) { $args['lang'] = pll_current_language( 'slug' ); }
+    $language = function_exists( 'pll_current_language' ) ? pll_current_language( 'slug' ) : false;
+    if ( $language ) { $args['lang'] = 'de' === $language ? '' : $language; }
     $query = new WP_Query( $args );
-    if ( ! $query->have_posts() ) { return ''; }
+    // Existing German providers may not yet have language terms after activation.
+    // Include only German/unassigned records; never fall back to German on English pages.
+    if ( 'de' === $language && function_exists( 'pll_get_post_language' ) ) {
+        $query->posts = array_values( array_filter( $query->posts, function ( $provider ) {
+            $lang = pll_get_post_language( $provider->ID, 'slug' );
+            return ! $lang || 'de' === $lang;
+        } ) );
+    }
+    if ( ! $query->posts ) { return ''; }
     ob_start();
     echo '<div class="vpm-provider-grid">';
     foreach ( $query->posts as $provider ) {
