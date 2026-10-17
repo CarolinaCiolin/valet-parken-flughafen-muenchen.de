@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.2.1
+ * Version: 0.2.2
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -10,6 +10,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/cache.php';
+require_once __DIR__ . '/cleanlinking.php';
 add_action( 'init', function () { add_image_size( 'vpm-provider-card', 480, 0, false ); } );
 
 function vpm_provider_fields() {
@@ -162,5 +163,5 @@ function vpm_render_provider_cards( $atts = array() ) {
 }
 add_shortcode( 'vpm_providers', 'vpm_render_provider_cards' );
 
-// No activation imports, public provider URLs, analytics, cookies or external requests.
+// No activation imports or public provider URLs. CleanLinking is marketing-consent gated.
 // Data is deliberately retained when the plugin is deactivated or deleted.

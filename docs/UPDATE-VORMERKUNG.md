@@ -6,3 +6,7 @@
 - Affiliate-Links im Inhaltsquellstand und allen vier Vorschauseiten geprüft: Parkos/ParkVia-Links mit sponsored; dynamische Anbieterbuttons erzeugen sponsored nofollow. Normale American-Express-Informations-/PDF-Links sind keine Affiliate-Links.
 
 Die drei ZIP-Dateien in pakete sind noch der vorherige Auslieferungsstand. Vor dem nächsten Upload das gesamte Update zusammenstellen und neu paketieren. Die Prüfung ist keine Kontrolle der aktuell von Hostinger ausgelieferten Seite.
+
+## CleanLinking
+
+TradeTracker-Tag für site 518003 im Anbieter-Plugin 0.2.2 vorbereitet, ausschließlich über Complianz-Marketingfreigabe. Keine ungefilterte noscript-Ausgabe. Details und Freigabeprüfungen: TRADETRACKER-CLEANLINKING.md. Plugin-Syntax und vier gezielte Ausgabe-/Sperrszenarien geprüft; reale Consent-/Netzwerkintegration auf Hostinger noch offen. Bisherige Datenschutz-Arbeitsfassung vor Tag-Aktivierung entsprechend aktualisieren.
