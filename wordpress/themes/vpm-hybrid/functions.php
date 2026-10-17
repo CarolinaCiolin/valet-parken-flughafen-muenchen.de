@@ -3,6 +3,8 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once get_theme_file_path( 'language.php' );
 require_once get_theme_file_path( 'legal-footer.php' );
+require_once get_theme_file_path( 'page-context.php' );
+require_once get_theme_file_path( 'structured-data.php' );
 require_once get_theme_file_path( 'presentation.php' );
 
 add_action( 'after_setup_theme', function () {
@@ -66,3 +68,10 @@ add_filter( 'wp_calculate_image_sizes', function ( $sizes, $size, $src, $meta, $
     }
     return $sizes;
 }, 10, 5 );
+
+// WordPress manages a chosen icon; only provide the bundled fallback when none exists.
+add_action( 'wp_head', function() {
+    if ( has_site_icon() ) { return; }
+    echo '<link rel="icon" type="image/png" sizes="64x64" href="' . esc_url( get_theme_file_uri( 'assets/favicon-64.png' ) ) . '">';
+    echo '<link rel="apple-touch-icon" href="' . esc_url( get_theme_file_uri( 'assets/site-icon.png' ) ) . '">';
+}, 98 );

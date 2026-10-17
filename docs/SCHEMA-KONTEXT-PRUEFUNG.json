@@ -1,0 +1,137 @@
+{
+  "pages": [
+    {
+      "path": "/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "ItemList",
+        "FAQPage",
+        "CollectionPage"
+      ],
+      "breadcrumbs": 0,
+      "result": "passed"
+    },
+    {
+      "path": "/preise/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "WebPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "FAQPage",
+        "WebPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/ueber-uns/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "AboutPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/ratgeber/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "ItemList",
+        "CollectionPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/en/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "ItemList",
+        "FAQPage",
+        "CollectionPage"
+      ],
+      "breadcrumbs": 0,
+      "result": "passed"
+    },
+    {
+      "path": "/en/prices/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "WebPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/en/valet-parking-safety/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "FAQPage",
+        "WebPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/en/about-us/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "AboutPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    },
+    {
+      "path": "/en/valet-parking-guide/",
+      "types": [
+        "Organization",
+        "WebSite",
+        "BreadcrumbList",
+        "ItemList",
+        "CollectionPage"
+      ],
+      "breadcrumbs": 2,
+      "result": "passed"
+    }
+  ],
+  "checks": [
+    "Exactly one graph with unique entity IDs and no duplicate Rank Math entities",
+    "Breadcrumbs match visible navigation in both languages",
+    "Provider ItemList targets exist in page",
+    "FAQ questions match actual rendered details",
+    "Published guide ItemList matches native query language",
+    "BlogPosting and Home > Guide > Article breadcrumbs",
+    "No schema or context UI on synthetic legal pages",
+    "Fallback graph works without Rank Math",
+    "Native icon import sizes 32/180/192/270, repeat preserves existing icon",
+    "30 viewport checks without horizontal overflow"
+  ],
+  "limitations": [
+    "Local WordPress integration, not Hostinger deployment",
+    "No Google Rich Results Test or Schema Markup Validator service access",
+    "FAQ rich-result eligibility not guaranteed"
+  ]
+}

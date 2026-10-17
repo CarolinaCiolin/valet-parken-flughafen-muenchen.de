@@ -37,7 +37,7 @@ class Export(HTMLParser):
   if self.script:return
   attrs=dict(attrs)
   if tag=='link':
-   if attrs.get('rel')!='stylesheet':return
+   if attrs.get('rel')not in ('stylesheet','icon','apple-touch-icon'):return
    attrs['href']=asset(attrs['href'])
   elif tag in ('img','source'):
    if 'src' in attrs:attrs['src']=asset(attrs['src'])

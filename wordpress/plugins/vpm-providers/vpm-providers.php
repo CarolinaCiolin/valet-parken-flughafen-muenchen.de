@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.3.1
+ * Version: 0.3.2
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -111,6 +111,7 @@ add_action( 'wp_enqueue_scripts', function () {
     wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.0' );
 } );
 
+function vpm_provider_anchor( $id ) { return 'anbieter-' . sanitize_title( get_the_title( $id ) ); }
 function vpm_render_provider_cards( $atts = array() ) {
     $atts = shortcode_atts( array( 'ids' => '' ), $atts, 'vpm_providers' );
     $args = array( 'post_type' => 'vpm_provider', 'post_status' => 'publish', 'posts_per_page' => 100, 'orderby' => array( 'menu_order' => 'ASC', 'ID' => 'ASC' ), 'no_found_rows' => true, 'meta_query' => array( array( 'key' => '_vpm_active', 'value' => '1' ) ) );
@@ -137,7 +138,7 @@ function vpm_render_provider_cards( $atts = array() ) {
     echo '<div class="vpm-provider-grid">';
     foreach ( $query->posts as $provider ) {
         $id = $provider->ID;
-        echo '<article class="vpm-provider-card">';
+        echo '<article class="vpm-provider-card" id="' . esc_attr( vpm_provider_anchor( $id ) ) . '">';
         $artwork = vpm_provider_artwork( $id );
         if ( $artwork ) { echo $artwork; }
         elseif ( has_post_thumbnail( $id ) ) {

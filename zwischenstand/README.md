@@ -1,3 +1,5 @@
+Neu: [Breadcrumbs, Seitenkontext und Website-Icon](schema/README.md), vorbereitet in Update 0.5.0.
+
 Aktueller Stand Update 0.4.0: [Englische Seiten und neue Anbieterkarten](englisch/README.md). [Installationsanleitung](../docs/UPDATE-0.4.0.md). Die folgenden Screenshots dokumentieren zum Teil frühere Zwischenstände.
 
 # Aktueller Zwischenstand – Design- und Technikprüfung

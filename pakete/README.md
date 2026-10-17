@@ -1,23 +1,13 @@
-**Veröffentlichung:** Inhaltsentwürfe 0.3.2 ergänzt unter Werkzeuge → VPM Inhaltsentwürfe separate Buttons für englische Seiten/Anbieter und importierte deutsche Rechtstexte. Keine automatische Veröffentlichung bei Aktualisierung; Ratgeber bleiben unverändert.
+# Aktuelles Update – Schema und Website-Icon
 
-**Leere englische Startseite:** Inhaltsentwürfe 0.3.1 aktualisieren, dann Werkzeuge → VPM Inhaltsentwürfe → „3. Leere englische Seiten vervollständigen“. Repariert nur leere, bereits zugeordnete englische Seiten; diese bleiben/werden Entwurf.
+Vorher Dateien und Datenbank sichern. ZIPs nicht entpacken, in WordPress als Ersatz für die bestehenden Pakete hochladen.
 
-**Korrektur für fehlende Anbieterkarten nach Polylang-Aktivierung:** VPM Anbieter 0.3.1 zeigt auf Deutsch auch noch nicht zugeordnete Bestandsanbieter. Nur vpm-providers.zip aktualisieren, danach Cache leeren. Unter Werkzeuge → VPM Inhaltsentwürfe weiterhin „1. Deutsch und Englisch vorbereiten“ ausführen.
+- [VPM Hybrid 0.5.0](vpm-hybrid.zip) – Schema, Breadcrumbs, Seitenkontext, Favicon und alle bisherigen Theme-Funktionen.
+- [VPM Anbieter 0.3.2](vpm-providers.zip) – stabile Anbieter-Anker für das Schema; vorhandene Grafiken, Links und Sprachkorrektur bleiben erhalten.
+- [VPM Inhaltsentwürfe 0.4.0](vpm-content-drafts.zip) – natives Website-Icon; bisherige Sprach-, Reparatur-, Rechtstext- und Veröffentlichungsfunktionen enthalten.
 
-# Gemeinsames Update 0.4.0
+**[Anleitung und Markup-Zuordnung](../docs/UPDATE-0.5.0.md)** · [Prüfsummen](SHA256SUMS.txt)
 
-Drei ZIPs direkt in WordPress hochladen, nicht entpacken. Vorher Dateien und Datenbank sichern.
+Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Danach LiteSpeed Cache leeren. Kein erneuter Textimport nötig. Optional unter Werkzeuge → VPM Inhaltsentwürfe „VP-Website-Icon einrichten“ ausführen. Bestehende eigene Icons bleiben erhalten.
 
-- [VPM Hybrid 0.4.1](vpm-hybrid.zip) – Theme, Abstände und englische Darstellung.
-- [VPM Anbieter 0.3.1](vpm-providers.zip) – neue illustrative Karten und Sprachunterstützung; CleanLinking bleibt aus.
-- [VPM Inhaltsentwürfe 0.3.2](vpm-content-drafts.zip) – englische Entwürfe, Polylang-Vorbereitung und privater Rechtstext-Upload.
-
-Je ZIP öffnen und „Download raw file“ wählen. Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Die bestehende Version ersetzen, anschließend LiteSpeed Cache leeren.
-
-**[Schritt-für-Schritt-Anleitung](../docs/UPDATE-0.4.0.md)**
-
-Für die Sprachvorbereitung zuerst das offizielle kostenlose Polylang installieren und aktivieren. Dann Werkzeuge → VPM Inhaltsentwürfe → „1. Deutsch und Englisch vorbereiten“ und danach „2. Englische Entwürfe importieren“. Alle neuen Seiten und Anbieter bleiben Entwürfe. Originale werden nicht überschrieben. Keine automatische Browser-/IP-Weiterleitung.
-
-Betreiberdaten stehen nicht im öffentlichen Paket. Die separate private Rechtstext-JSON wird auf derselben Werkzeugseite hochgeladen und ausschließlich als Entwürfe importiert. Englische Partnerlinks und Freigaben sind noch offen; englische Seiten vorerst unveröffentlicht lassen.
-
-Fremdplugins werden nicht mitgeliefert. [SHA-256-Prüfsummen](SHA256SUMS.txt) gehören genau zu diesen drei ZIPs.
+Bei der Aktualisierung wird nichts automatisch veröffentlicht. Ratgeber und Rechtstexte behalten ihren Status. Englisch-Veröffentlichung und Reparatur leerer Platzhalter sind weiterhin über getrennte Buttons verfügbar. Tracking wird nicht aktiviert. Betreiberangaben gehören weiterhin nur in die separate private Rechtstext-Importdatei.
