@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once get_theme_file_path( 'language.php' );
 require_once get_theme_file_path( 'legal-footer.php' );
+require_once get_theme_file_path( 'consent-diagnostics.php' );
 require_once get_theme_file_path( 'page-context.php' );
 require_once get_theme_file_path( 'structured-data.php' );
 require_once get_theme_file_path( 'presentation.php' );

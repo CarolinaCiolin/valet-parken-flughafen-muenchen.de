@@ -1,0 +1,54 @@
+{
+  "complianz_version": "7.5.5",
+  "banner_checks": [
+    {
+      "wizard_completed": false,
+      "consent_required": true,
+      "banner_visible": false,
+      "widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "wizard_completed": true,
+      "consent_required": false,
+      "banner_visible": false,
+      "widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "wizard_completed": true,
+      "consent_required": true,
+      "banner_visible": true,
+      "widths": [
+        1440,
+        390
+      ]
+    }
+  ],
+  "footer_checks": [
+    "Draft policy hidden",
+    "Published policy appears even outside active footer menu",
+    "English translation linked",
+    "Manual menu entry not duplicated",
+    "Generated Complianz shortcode policy resolved through official document API"
+  ],
+  "active_plugins": [
+    "polylang/polylang.php",
+    "complianz-gdpr/complianz-gpdr.php",
+    "elementor/elementor.php",
+    "litespeed-cache/litespeed-cache.php",
+    "seo-by-rank-math/rank-math.php",
+    "vpm-content-drafts/vpm-content-drafts.php",
+    "vpm-providers/vpm-providers.php"
+  ],
+  "limitations": [
+    "Local integration, not a production diagnosis",
+    "Local Complianz 7.5.5; user reported 7.5.6",
+    "Live LiteSpeed optimization settings unavailable",
+    "No tracking service added: consent-required configuration is a temporary test only"
+  ]
+}
