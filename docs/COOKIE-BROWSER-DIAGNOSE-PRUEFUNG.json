@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "consent_required": false,
+      "report_matches_frontend": true
+    },
+    {
+      "consent_required": true,
+      "report_matches_frontend": true
+    }
+  ],
+  "additional_checks": [
+    "Diagnostic UI requires authenticated administration",
+    "Diagnostic script absent on public frontend",
+    "CSS-hidden banner detected",
+    "Read-only inspection does not alter consent cookies",
+    "Cookie names only; sentinel value absent from report"
+  ],
+  "limitations": [
+    "Local WordPress; production browser report still needed",
+    "Authenticated iframe and test parameter may bypass visitor cache",
+    "No consent forced; no claim to identify live cause yet"
+  ]
+}
