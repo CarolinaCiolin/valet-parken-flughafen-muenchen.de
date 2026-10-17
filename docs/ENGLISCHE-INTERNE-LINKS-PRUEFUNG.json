@@ -1,0 +1,407 @@
+{
+  "result": "passed",
+  "live_local_links_checked": 66,
+  "content_targets": "English internal content targets match mapped German counterparts in order",
+  "anchors": "All local fragments resolve to existing element IDs",
+  "language": "English targets except intentional DE switch to matching page",
+  "offline_export": "All English preview local files and anchors exist",
+  "links": [
+    {
+      "source": "/en/",
+      "label": "Skip to content",
+      "target": "/en/#main",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Providers",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "DE",
+      "target": "/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/",
+      "label": "EN",
+      "target": "/en/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/",
+      "label": "Check availability",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Book parking and valet service",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Compare Munich providers",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Detailed pricing information",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "View available valet parking offers",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "valet-parken-flughafen-muenchen.de",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Book private valet parking",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "More about safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Compare valet parking offers in detail",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "valet-parken-flughafen-muenchen.de",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Find out more about us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Find valet parking",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Skip to content",
+      "target": "/en/prices/#main",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Providers",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "DE",
+      "target": "/preise/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/prices/",
+      "label": "EN",
+      "target": "/en/prices/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Check availability",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "valet provider comparison.",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/prices/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Skip to content",
+      "target": "/en/valet-parking-safety/#main",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Providers",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "DE",
+      "target": "/valet-parken-sicherheit/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "EN",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Check availability",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Valet parking at Munich Airport",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/valet-parking-safety/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Skip to content",
+      "target": "/en/about-us/#main",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Providers",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "DE",
+      "target": "/ueber-uns/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "EN",
+      "target": "/en/about-us/",
+      "language_switch": true
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Check availability",
+      "target": "/en/#anbieter",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "valet parking service at Munich Airport",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "VALET PARKEN MÜNCHEN",
+      "target": "/en/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Prices",
+      "target": "/en/prices/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "Safety",
+      "target": "/en/valet-parking-safety/",
+      "language_switch": false
+    },
+    {
+      "source": "/en/about-us/",
+      "label": "About us",
+      "target": "/en/about-us/",
+      "language_switch": false
+    }
+  ],
+  "scope": "Local WordPress review fixture and static preview; no Hostinger access. Original draft statuses restored in finally."
+}
