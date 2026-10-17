@@ -39,7 +39,15 @@ function vpm_original_page( $slug ) {
     foreach ( $posts as $p ) { if ( ( get_post_meta( $p->ID, '_vpm_import_slug', true ) === $slug || $p->post_name === $slug ) && 'de' === pll_get_post_language( $p->ID ) ) { return $p->ID; } }
     return 0;
 }
-function vpm_import_english() {
+function vpm_english_page_empty( $id ) {
+    $elementor = trim( (string) get_post_meta( $id, '_elementor_data', true ) );
+    if ( $elementor && ! in_array( $elementor, array( '[]', '{}' ), true ) ) { return false; }
+    $content = trim( (string) get_post_field( 'post_content', $id ) );
+    if ( '' === $content ) { return true; }
+    // Only an empty native paragraph is a placeholder; never discard other blocks.
+    return (bool) preg_match( '~^<!-- wp:paragraph -->\s*<p>\s*(?:<br\s*/?>\s*)?</p>\s*<!-- /wp:paragraph -->$~s', $content );
+}
+function vpm_import_english( $repair_empty = false ) {
     $ready = vpm_english_requirements(); if ( is_wp_error( $ready ) ) { return $ready; }
     if ( ! PLL()->model->get_language( 'en' ) || ! PLL()->model->get_language( 'de' ) ) { return new WP_Error( 'languages', 'Bitte zuerst die Sprachvorbereitung ausführen.' ); }
     $data = json_decode( file_get_contents( __DIR__ . '/content-en.json' ), true );
@@ -48,9 +56,10 @@ function vpm_import_english() {
         $source = vpm_original_page( $page['source_slug'] );
         if ( ! $source ) { return new WP_Error( 'source', 'Deutsche Originalseite fehlt: ' . $page['source_slug'] ); }
         $existing = pll_get_post( $source, 'en' );
-        if ( $existing ) { $page_ids[ $page['slug'] ] = $existing; continue; }
+        $repair = $repair_empty && $existing && vpm_english_page_empty( $existing );
+        if ( $existing && ! $repair ) { $page_ids[ $page['slug'] ] = $existing; continue; }
         // An unpaired previous import can be safely reattached, not duplicated.
-        $previous = get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'meta_key' => '_vpm_en_source', 'meta_value' => $source, 'numberposts' => 1, 'lang' => '', 'suppress_filters' => true ) );
+        $previous = $repair ? array() : get_posts( array( 'post_type' => 'page', 'post_status' => 'any', 'meta_key' => '_vpm_en_source', 'meta_value' => $source, 'numberposts' => 1, 'lang' => '', 'suppress_filters' => true ) );
         if ( $previous ) { $id = $previous[0]->ID; }
         else {
             $content = $page['content'];
@@ -60,7 +69,7 @@ function vpm_import_english() {
                 else { return new WP_Error( 'hero', 'Hero-Bild der deutschen Startseite nicht gefunden.' ); }
             }
             $content = str_replace( array( 'KI-generierte Illustration', 'Reisende und Valet-Mitarbeiter bei der Fahrzeugübergabe vor einem Flughafenterminal' ), array( 'AI-generated illustration', 'Traveller handing over a vehicle to a valet attendant outside an airport terminal' ), $content );
-            $id = wp_insert_post( array( 'post_type' => 'page', 'post_status' => 'draft', 'post_name' => $page['slug'], 'post_title' => $page['title'], 'post_content' => $content ), true );
+            $id = wp_insert_post( array( 'ID' => $repair ? $existing : 0, 'post_type' => 'page', 'post_status' => 'draft', 'post_name' => $page['slug'], 'post_title' => $page['title'], 'post_content' => $content ), true );
             if ( is_wp_error( $id ) ) { return $id; }
             update_post_meta( $id, '_wp_page_template', 'templates/full-width.php' );
             update_post_meta( $id, '_vpm_en_source', $source );
@@ -103,12 +112,13 @@ function vpm_import_english() {
     }
     PLL()->options['nav_menus'] = $nav; PLL()->options->save();
     flush_rewrite_rules( false );
-    return $created . ' englische Seiten-/Anbieterentwürfe angelegt; vorhandene Übersetzungen unverändert. Englische Menüs vorbereitet. Keine Entwürfe veröffentlicht.';
+    return $created . ' englische Seiten-/Anbieterentwürfe angelegt oder leere Seiten vervollständigt; vorhandene Übersetzungen mit Inhalt unverändert. Englische Menüs vorbereitet. Keine Entwürfe veröffentlicht.';
 }
+function vpm_repair_empty_english() { return vpm_import_english( true ); }
 function vpm_english_admin() {
-    foreach ( array( 'vpm_languages' => 'vpm_prepare_languages', 'vpm_english' => 'vpm_import_english' ) as $action => $callback ) {
+    foreach ( array( 'vpm_languages' => 'vpm_prepare_languages', 'vpm_english' => 'vpm_import_english', 'vpm_repair_english' => 'vpm_repair_empty_english' ) as $action => $callback ) {
         if ( isset( $_POST[ $action ] ) ) { check_admin_referer( $action ); $result = $callback(); echo '<div class="notice ' . ( is_wp_error( $result ) ? 'notice-error' : 'notice-success' ) . '"><p>' . esc_html( is_wp_error( $result ) ? $result->get_error_message() : $result ) . '</p></div>'; }
     }
-    echo '<h2>Deutsch / Englisch mit Polylang</h2><p>Erst Polylang installieren. Sprachvorbereitung weist bisher sprachlose Inhalte Deutsch zu und richtet /en/ ohne Browser-Weiterleitung ein. Danach Übersetzungen importieren. Vorhandene Übersetzungen werden nicht überschrieben; neue Inhalte bleiben Entwurf.</p>';
-    foreach ( array( 'vpm_languages' => '1. Deutsch und Englisch vorbereiten', 'vpm_english' => '2. Englische Entwürfe importieren' ) as $action => $label ) { echo '<form method="post">'; wp_nonce_field( $action ); submit_button( $label, 'secondary', $action ); echo '</form>'; }
+    echo '<h2>Deutsch / Englisch mit Polylang</h2><p>Erst Polylang installieren. Sprachvorbereitung weist bisher sprachlose Inhalte Deutsch zu und richtet /en/ ohne Browser-Weiterleitung ein. Danach Übersetzungen importieren. Vorhandene Übersetzungen werden nicht überschrieben; neue Inhalte bleiben Entwurf. Schritt 3 füllt nur bereits verknüpfte leere englische Seiten und setzt diese zur Prüfung auf Entwurf; vorhandene Inhalte und Elementor-Layouts bleiben erhalten.</p>';
+    foreach ( array( 'vpm_languages' => '1. Deutsch und Englisch vorbereiten', 'vpm_english' => '2. Englische Entwürfe importieren', 'vpm_repair_english' => '3. Leere englische Seiten vervollständigen' ) as $action => $label ) { echo '<form method="post">'; wp_nonce_field( $action ); submit_button( $label, 'secondary', $action ); echo '</form>'; }
 }
