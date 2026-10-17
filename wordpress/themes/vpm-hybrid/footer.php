@@ -11,9 +11,8 @@
     <?php endif; ?>
     </div>
 </div>
-<?php $note = vpm_theme_english() ? 'Some links on this website are affiliate links. If you make a booking through them, we may receive a commission from the booking partner. This does not increase the price you pay.' : get_theme_mod( 'vpm_footer_note' ); if ( $note ) : ?>
+<?php $note = vpm_theme_english() ? 'Some links on this website are affiliate links. If you make a booking through them, we may receive a commission from the booking partner. This does not increase the price you pay.' : trim( (string) get_theme_mod( 'vpm_footer_note', '' ) ); if ( ! $note ) { $note = 'Einige Links auf dieser Website sind Affiliate-Links. Wenn Sie darüber buchen, können wir vom Buchungspartner eine Provision erhalten. Für Sie erhöht sich der Buchungspreis dadurch nicht.'; } ?>
 <p class="vpm-shell vpm-footer-note"><?php echo esc_html( $note ); ?></p>
-<?php endif; ?>
 </footer>
 <?php endif; ?>
 <?php wp_footer(); ?>
