@@ -1,13 +1,17 @@
-# Installierbare WordPress-Pakete
+# Gemeinsames Update 0.4.0
 
-Eigene Pakete für Staging; Fremdplugins wie Imagify werden nicht mitgeliefert.
+Drei ZIPs direkt in WordPress hochladen, nicht entpacken. Vorher Dateien und Datenbank sichern.
 
-- [VPM Hybrid 0.3.4](vpm-hybrid.zip) – Theme.
-- [VPM Anbieter 0.2.1](vpm-providers.zip) – bestehende Anbieterkomponente.
-- [VPM Inhaltsentwürfe 0.2.1](vpm-content-drafts.zip) – Import einschließlich **Valet-Ratgeber** als Entwurf.
+- [VPM Hybrid 0.4.0](vpm-hybrid.zip) – Theme, Abstände und englische Darstellung.
+- [VPM Anbieter 0.3.0](vpm-providers.zip) – neue illustrative Karten und Sprachunterstützung; CleanLinking bleibt aus.
+- [VPM Inhaltsentwürfe 0.3.0](vpm-content-drafts.zip) – englische Entwürfe, Polylang-Vorbereitung und privater Rechtstext-Upload.
 
-ZIP öffnen und **Download raw file** wählen. Unter WordPress das Theme über Design → Themes, Plugins über Plugins → Installieren hochladen. Bei bestehenden eigenen Paketen die Aktualisierung bestätigen; Anbieter, Seiten und Mediathek bleiben erhalten. Nach Update den Seitencache leeren.
+Je ZIP öffnen und „Download raw file“ wählen. Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Die bestehende Version ersetzen, anschließend LiteSpeed Cache leeren.
 
-Dann unter Werkzeuge → VPM Inhaltsentwürfe → Neue Entwürfe importieren den zusätzlichen Ratgeber-Entwurf anlegen. Vorhandene Seiten und Anbieter werden übersprungen. Die Seite bleibt unveröffentlicht und das Menü unverändert. Details: [Ratgeber](../docs/RATGEBER.md) und [Installation](../docs/INSTALLATION.md).
+**[Schritt-für-Schritt-Anleitung](../docs/UPDATE-0.4.0.md)**
 
-[SHA-256-Prüfsummen](SHA256SUMS.txt) gehören zu genau diesen drei ZIPs. Die Archive enthalten keine lokalen Zugangsdaten oder Testfixtures.
+Für die Sprachvorbereitung zuerst das offizielle kostenlose Polylang installieren und aktivieren. Dann Werkzeuge → VPM Inhaltsentwürfe → „1. Deutsch und Englisch vorbereiten“ und danach „2. Englische Entwürfe importieren“. Alle neuen Seiten und Anbieter bleiben Entwürfe. Originale werden nicht überschrieben. Keine automatische Browser-/IP-Weiterleitung.
+
+Betreiberdaten stehen nicht im öffentlichen Paket. Die separate private Rechtstext-JSON wird auf derselben Werkzeugseite hochgeladen und ausschließlich als Entwürfe importiert. Englische Partnerlinks und Freigaben sind noch offen; englische Seiten vorerst unveröffentlicht lassen.
+
+Fremdplugins werden nicht mitgeliefert. [SHA-256-Prüfsummen](SHA256SUMS.txt) gehören genau zu diesen drei ZIPs.

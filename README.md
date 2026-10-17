@@ -1,3 +1,5 @@
+Aktuelles gemeinsames Update: **Theme 0.4.0 / VPM-Plugins 0.3.0**. Anleitung: [UPDATE-0.4.0.md](docs/UPDATE-0.4.0.md). Frühere Prüfberichte unten dokumentieren ihre damaligen Versionen.
+
 # VPM WordPress-Grundgerüst
 
 Schritt 2 des Projekts: leichtes Hybrid-Theme und eigenständiges Anbieter-Plugin. Die fertigen redaktionellen Seiten werden in einem anschließenden, separat geprüften Schritt übertragen. Kein Hostinger-Zugriff, keine Live-Veröffentlichung und keine automatische Übernahme bestehender Einstellungen.

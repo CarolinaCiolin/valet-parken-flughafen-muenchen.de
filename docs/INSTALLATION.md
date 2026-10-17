@@ -1,3 +1,5 @@
+Für die Aktualisierung der bestehenden Website gilt [UPDATE-0.4.0.md](UPDATE-0.4.0.md). Die Anleitung unten dokumentiert zusätzlich die ursprüngliche Erstinstallation.
+
 # Installation und Bearbeitung
 
 ## Zunächst auf einer Staging-Installation

@@ -1,5 +1,7 @@
 # TradeTracker CleanLinking – nächstes Update
 
+Update 0.4.0: zusätzliche Standardsperre `vpm_cleanlinking_enabled=false`. Der Tag wird auch nach Marketing-Zustimmung nicht ausgegeben, solange diese Sperre besteht. Website-Zuordnung und Freigabe sind noch offen. Nicht über HFCM zusätzlich einfügen.
+
 Vom Betreiber geliefertes Snippet mit site 518003 vorbereitet. Ausgabe über wp_footer auf öffentlichen Einzelseiten mit Parkos-/ParkVia-Links oder Anbieter-Shortcode, nicht für Administratoren/Vorschauen. Englische Seiten werden anhand ihres Inhalts ebenfalls erfasst. Bei fehlendem Complianz Free keine Ausgabe. Im ausgelieferten Markup bleibt das Skript type=text/plain mit data-category=marketing; Complianz darf es erst nach Marketing-Einwilligung aktivieren. Keine ungefilterte noscript-Bildanfrage. Besucher ohne JavaScript werden nicht darüber getrackt.
 
 Kein zusätzliches Einfügen desselben Codes über HFCM, sonst Doppelaufrufe. sponsored nofollow bleibt an Affiliate-Links bestehen. Vorhandene Trackingslinks werden nicht automatisch durch CleanLinks ersetzt.

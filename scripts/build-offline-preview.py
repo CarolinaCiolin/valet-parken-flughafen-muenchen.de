@@ -3,7 +3,7 @@ from pathlib import Path
 from html.parser import HTMLParser
 from urllib.request import urlopen
 from urllib.parse import urlparse,urldefrag
-import html,hashlib,re,shutil
+import html,hashlib,re,shutil,sys
 from zipfile import ZipFile,ZIP_DEFLATED
 root=Path(__file__).resolve().parent.parent
 out=root/'dist/vpm-vorschau'
@@ -11,6 +11,8 @@ if out.exists():shutil.rmtree(out)
 out.mkdir(parents=True,exist_ok=True);(out/'assets').mkdir(exist_ok=True)
 base='http://127.0.0.1:8088'
 paths={'/':'index.html','/preise/':'preise.html','/valet-parken-sicherheit/':'sicherheit.html','/ueber-uns/':'ueber-uns.html'}
+if '--english' in sys.argv:
+ paths.update({'/en/':'en-index.html','/en/prices/':'en-prices.html','/en/valet-parking-safety/':'en-safety.html','/en/about-us/':'en-about-us.html'})
 cache={}
 def asset(url):
  if url.startswith('data:'):return url

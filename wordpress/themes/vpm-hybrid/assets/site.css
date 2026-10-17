@@ -37,3 +37,5 @@
 /* Separate the booking note from the provider cards without changing its copy. */
 .vpm-content .vpm-booking-note{margin-top:28px;margin-bottom:0}
 @media(max-width:600px){.vpm-content .vpm-booking-note{margin-top:24px}}
+
+.vpm-language-switcher{display:flex;gap:2px;align-items:center;flex-shrink:0}.vpm-language-switcher a{min-width:36px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:12px;text-decoration:none;color:#101c2c}.vpm-language-switcher a[aria-current]{text-decoration:underline;text-underline-offset:5px;text-decoration-color:#85652e}.vpm-header-inner{gap:22px}@media(max-width:760px){.vpm-language-switcher{grid-column:1/-1;justify-content:flex-end}.vpm-language-switcher a{min-height:44px}}

@@ -25,7 +25,7 @@ packages = [out / (name + '.zip') for name in ['vpm-hybrid', 'vpm-providers', 'v
 manifest = out / 'SHA256SUMS.txt'
 manifest.write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.name + '\n' for p in packages))
 bundle = out / 'vpm-hostinger-uebergabe.zip'
-docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json', 'RENDERING-KONTRASTE-IMAGIFY.md', 'RENDER-KONTRAST-AUDIT.json', 'IMAGIFY-QUELLSTAND.json', 'RATGEBER.md']
+docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json', 'RENDERING-KONTRASTE-IMAGIFY.md', 'RENDER-KONTRAST-AUDIT.json', 'IMAGIFY-QUELLSTAND.json', 'RATGEBER.md', 'UPDATE-0.4.0.md', 'ENGLISCH-POLYLANG.md', 'MULTILINGUAL-BROWSER-PRUEFUNG.json', 'MULTILINGUAL-SEO-EDITOR-PRUEFUNG.json', 'TRADETRACKER-CLEANLINKING.md', 'POLYLANG-QUELLSTAND.json']
 with ZipFile(bundle, 'w', ZIP_DEFLATED) as archive:
     for file in packages + [manifest]:
         archive.write(file, file.name)

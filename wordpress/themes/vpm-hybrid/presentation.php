@@ -11,7 +11,7 @@ function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
     }
     if ( $attachments[ $scene ] ) {
         $markup = wp_get_attachment_image( $attachments[ $scene ], 'large', false, array(
-            'alt' => 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen',
+            'alt' => vpm_theme_text( 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen', 'AI illustration of an airport valet parking scene' ),
             'loading' => $above_fold ? 'eager' : 'lazy', 'decoding' => 'async',
             'sizes' => '(max-width: 760px) calc(100vw - 40px), (max-width: 1240px) calc((100vw - 104px) / 2), 560px',
         ) );
@@ -23,7 +23,7 @@ function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
             if ( $image_root ) {
                 $figure = $doc->createElement( 'figure' ); $figure->setAttribute( 'class', 'vpm-editorial-image' );
                 foreach ( $image_root->childNodes as $child ) { $figure->appendChild( $doc->importNode( $child, true ) ); }
-                $figure->appendChild( $doc->createElement( 'figcaption', 'KI-Symbolbild · keine Anbieteraufnahme' ) );
+                $figure->appendChild( $doc->createElement( 'figcaption', vpm_theme_text( 'KI-Symbolbild · keine Anbieteraufnahme', 'AI illustration · not a provider photograph' ) ) );
                 return $figure;
             }
         }
@@ -43,10 +43,10 @@ function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
     $image->setAttribute( 'srcset', implode( ', ', $sources ) );
     $image->setAttribute( 'sizes', '(max-width: 760px) calc(100vw - 40px), (max-width: 1240px) calc((100vw - 104px) / 2), 560px' );
     $image->setAttribute( 'width', '1200' ); $image->setAttribute( 'height', '675' );
-    $image->setAttribute( 'alt', 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen' );
+    $image->setAttribute( 'alt', vpm_theme_text( 'KI-Symbolbild einer Valet-Parking-Szene am Flughafen', 'AI illustration of an airport valet parking scene' ) );
     $image->setAttribute( 'loading', $above_fold ? 'eager' : 'lazy' ); $image->setAttribute( 'decoding', 'async' );
     $figure->appendChild( $image );
-    $figure->appendChild( $doc->createElement( 'figcaption', 'KI-Symbolbild · keine Anbieteraufnahme' ) );
+    $figure->appendChild( $doc->createElement( 'figcaption', vpm_theme_text( 'KI-Symbolbild · keine Anbieteraufnahme', 'AI illustration · not a provider photograph' ) ) );
     return $figure;
 }
 
@@ -60,7 +60,7 @@ add_filter( 'the_content', function ( $html ) {
     if ( ! $root ) { return $html; }
     $nodes = iterator_to_array( $root->childNodes );
     $section = null; $inner = null; $grid = null; $card = null; $index = 0; $article_note = null;
-    $slug = get_post_field( 'post_name', get_the_ID() );
+    $slug = get_post_meta( get_the_ID(), '_vpm_layout_slug', true ) ?: get_post_field( 'post_name', get_the_ID() );
     $scene = array( 'preise' => 'arrival', 'valet-parken-sicherheit' => 'inspection', 'ueber-uns' => 'handover' )[ $slug ] ?? null;
     $intro = null; $intro_copy = null;
     if ( $scene ) {
@@ -70,7 +70,7 @@ add_filter( 'the_content', function ( $html ) {
         $figure = vpm_editorial_figure( $doc, $scene, true ); if ( $figure ) { $intro->appendChild( $figure ); }
     }
     foreach ( $nodes as $node ) {
-        if ( 'valet-parken-sicherheit' === $slug && $node instanceof DOMElement && 'p' === $node->tagName && str_starts_with( trim( $node->textContent ), 'Die Angaben beruhen auf den veröffentlichten Angebotsbeschreibungen' ) ) {
+        if ( 'valet-parken-sicherheit' === $slug && $node instanceof DOMElement && 'p' === $node->tagName && str_starts_with( trim( $node->textContent ), vpm_theme_text( 'Die Angaben beruhen auf den veröffentlichten Angebotsbeschreibungen', 'This information is based on the booking partners' ) ) ) {
             $article_note = $node;
             continue;
         }
@@ -80,7 +80,7 @@ add_filter( 'the_content', function ( $html ) {
             $root->insertBefore( $section, $node );
             $inner = $doc->createElement( 'div' ); $inner->setAttribute( 'class', 'vpm-section-inner' ); $section->appendChild( $inner );
             $grid = null; $card = null;
-            if ( 'startseite' === $slug && str_starts_with( trim( $node->textContent ), 'Das sind wir:' ) ) { $section->setAttribute( 'class', $section->getAttribute( 'class' ) . ' vpm-about-panel' ); }
+            if ( 'startseite' === $slug && str_starts_with( trim( $node->textContent ), vpm_theme_text( 'Das sind wir:', 'About us:' ) ) ) { $section->setAttribute( 'class', $section->getAttribute( 'class' ) . ' vpm-about-panel' ); }
         }
         if ( $section ) {
             if ( $node instanceof DOMElement && 'h3' === $node->tagName ) {
@@ -114,7 +114,7 @@ add_filter( 'the_content', function ( $html ) {
         }
     }
     foreach ( $root->getElementsByTagName( 'p' ) as $paragraph ) {
-        if ( str_starts_with( trim( $paragraph->textContent ), 'Die Reservierung erfolgt beim ausgewiesenen Buchungspartner.' ) ) {
+        if ( str_starts_with( trim( $paragraph->textContent ), vpm_theme_text( 'Die Reservierung erfolgt beim ausgewiesenen Buchungspartner.', 'Reservations are made with the booking partner shown.' ) ) ) {
             $paragraph->setAttribute( 'class', $paragraph->getAttribute( 'class' ) . ' vpm-booking-note' );
         }
         $elements = array();
@@ -130,10 +130,10 @@ add_filter( 'the_content', function ( $html ) {
             if ( 'anbieter' === $element->getAttribute( 'id' ) ) { $provider_area = $element; break; }
         }
         foreach ( $root->getElementsByTagName( 'a' ) as $link ) {
-            if ( 'Münchener Anbieter vergleichen' === trim( $link->textContent ) ) {
-                $link->setAttribute( 'href', home_url( '/preise/' ) );
+            if ( vpm_theme_text( 'Münchener Anbieter vergleichen', 'Compare Munich providers' ) === trim( $link->textContent ) ) {
+                $link->setAttribute( 'href', vpm_theme_url( '/preise/' ) );
             }
-            if ( 'Detaillierte Preisinformationen' === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
+            if ( vpm_theme_text( 'Detaillierte Preisinformationen', 'Detailed pricing information' ) === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
                 $price_paragraph = $link->parentNode;
             }
         }
@@ -167,7 +167,7 @@ add_filter( 'the_content', function ( $html ) {
                 // This CTA applies to the entire process, rather than the last step.
                 if ( 'startseite' === $slug ) {
                     foreach ( iterator_to_array( $step->getElementsByTagName( 'a' ) ) as $link ) {
-                        if ( 'Verfügbare Valet-Angebote ansehen' === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
+                        if ( vpm_theme_text( 'Verfügbare Valet-Angebote ansehen', 'View available valet parking offers' ) === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {
                             $layout->parentNode->appendChild( $link->parentNode );
                         }
                     }

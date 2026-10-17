@@ -1,6 +1,7 @@
 <?php
 /** Theme integration, without content or provider storage. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+require_once get_theme_file_path( 'language.php' );
 require_once get_theme_file_path( 'presentation.php' );
 
 add_action( 'after_setup_theme', function () {
@@ -53,7 +54,7 @@ add_action( 'customize_register', 'vpm_customizer' );
 
 // Keep the stored affiliate URLs; choose one platform only for this homepage card.
 add_filter( 'vpm_provider_booking_platforms', function ( $platforms, $id ) {
-    if ( is_front_page() && 'park-drive-fly' === get_post_field( 'post_name', $id ) ) { return array( 'parkos' => 'Parkos' ); }
+    if ( is_front_page() && 'Park Drive Fly' === get_the_title( $id ) ) { return array( 'parkos' => 'Parkos' ); }
     return $platforms;
 }, 10, 2 );
 

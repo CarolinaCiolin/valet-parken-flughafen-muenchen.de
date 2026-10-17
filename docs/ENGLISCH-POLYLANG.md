@@ -1,4 +1,6 @@
-# Englische Sprachversion – vorbereitet, noch nicht aktiviert
+# Englische Sprachversion – Update 0.4.0
+
+Lokal mit Polylang 3.8.9 umgesetzt und geprüft; auf Hostinger noch nicht installiert. Schritt-für-Schritt-Anleitung: [UPDATE-0.4.0.md](UPDATE-0.4.0.md).
 
 ## Keywordbasis
 
@@ -20,22 +22,28 @@ Vorschlag Description: Compare valet parking providers at Munich Airport, explor
 
 Das sind Vorschläge, keine bereits eingespielten Metadaten. Keine erfundenen Preise, Bewertungen, Leistungszusagen oder Keywordblöcke. Deutscher Quelltext bleibt unverändert. Englische weitere Seiten hochwertig übersetzen.
 
-## Konfiguration
+## Umsetzung
 
-Die maschinenlesbare Spezifikation steht unter translations/polylang-plan.json. Sie ist ausdrücklich noch kein Polylang-Import und ändert keine Website.
+- Deutsch de_DE als Standard ohne /de/; Englisch en_GB unter /en/.
+- Fünf englische Seiten und sechs Anbieter als Entwürfe, jeweils mit dem deutschen Original gepaart.
+- Eigene englische Haupt- und Footermenüs. Deutsche Menü-IDs bleiben erhalten.
+- Sprachschalter auf der passenden veröffentlichten Seite, übersetzte Header-/Footer-Texte, Anbietermerkmale, Buttons und Bildhinweise.
+- Keywordgerechte englische Startseite mit SEO-Titel, Description und Fokuskeywords. Weitere Seiten hochwertig übersetzt; deutsche Texte bleiben unverändert.
+- Selbstreferenzierende Canonicals und Polylang-hreflang de/en lokal geprüft. Keine manuell duplizierten SEO-Tags.
+- Keine Browser-/IP-Weiterleitung und keine Suchmaschinen-Sonderbehandlung. Ein Sprachhinweis beziehungsweise eine automatische Erstauswahl ist noch nicht implementiert.
+- Die englischen Anbieterentwürfe übernehmen zunächst die derzeitigen deutschen Buchungslinks. Englische Affiliate-Ziele und Vergütungsfreigaben müssen ergänzt werden; vorhandene Kennungen werden nicht blind verändert.
 
-- Polylang kostenlos zunächst separat aus dem offiziellen WordPress-Verzeichnis installieren.
-- Deutsch de_DE als Standardsprache, Englisch en_GB als zweite Sprache.
-- Sprachverzeichnisse; deutsche Standardsprache ohne /de/, englische Startseite /en/.
-- Bestehenden deutschen Seiten, Beiträgen und Menüs zunächst Deutsch zuweisen. Keine automatische Massenveröffentlichung.
-- Englische Seiten als Entwürfe erzeugen und mit Originalen paaren. Valet-Ratgeber bleibt auch nach Sprachvorbereitung Entwurf.
-- Eigene englische Haupt- und Footermenüs, übersetzte Buttons, Footerhinweis und Sprachschalter.
-- Anbieter sind ein eigener Post-Type mit Metadaten. Übersetzbare Felder und Auswahl der passenden Sprache separat implementieren und testen; Affiliate-URLs nicht blind umschreiben. Ein reines Übersetzen der Seiten genügt nicht.
-- Darstellungscode enthält deutsche Slug-/Textzuordnungen: diese vor englischer Veröffentlichung sprachfähig machen. Andernfalls reicht Polylang allein für identisches Layout nicht aus.
-- Canonical jeder veröffentlichten Seite auf sich selbst; gegenseitige hreflang-Ausgabe aus der finalen Polylang-/Rank-Math-Konfiguration prüfen. Keine zusätzlichen manuell duplizierten Tags.
-- LiteSpeed-Sprachcache, Sitemap, Sprachschalter, Consent-Texte, englische Anbieter, lokale Bilder, responsive Layouts und Entwurfszugriff vor Freigabe testen.
-- Keine IP-Weiterleitung und keine Sonderbehandlung von Suchmaschinen. Browserhinweis oder begrenzte Erstauswahl sind noch nicht implementiert; beide Sprach-URLs stets zugänglich lassen.
+## Import
 
-## Noch auszuführen
+VPM-Pakete aktualisieren und offizielles Polylang aktivieren. Unter Werkzeuge → VPM Inhaltsentwürfe erst „1. Deutsch und Englisch vorbereiten“, danach „2. Englische Entwürfe importieren“. Kein Aktivierungsimport, keine automatische Veröffentlichung, kein Überschreiben vorhandener Übersetzungen. Spätere Änderungen an deutschen Texten werden nicht automatisch in englische Texte gespiegelt.
 
-Polylang ist nicht auf Hostinger aktiviert oder lokal praktisch verifiziert. Keine vollständigen englischen Seiten oder Sprachimporte erstellt. Erst nach der technischen Anpassung und Prüfung ein installierbares Update liefern. Das nächste Update muss die bereits freigegebenen Grafiken, Abstände und privaten Rechtstextentwürfe berücksichtigen. Privatdaten nicht in dieses Repository übernehmen.
+Die Datei translations/polylang-plan.json dokumentiert die Spezifikation; sie ist keine eigenständig in Polylang importierbare Datei. Aktuelle Daten liegen in wordpress/plugins/vpm-content-drafts/content-en.json. translations/en enthält die lesbaren Gutenberg-HTML-Fassungen.
+
+Vor Veröffentlichung: englische Partnerlinks, Rechtstexte und Consent-Texte ergänzen; Menüs, Indexierung, Sitemap und echte Hostinger-Cache-Auslieferung prüfen. Der Ratgeber bleibt vorerst in beiden Sprachen Entwurf. Beim späteren Erstellen von Beiträgen die passende Polylang-Sprache auswählen; die jeweilige Ratgeberseite verwendet die native Beitragsabfrage.
+
+## Prüfungen
+
+- MULTILINGUAL-BROWSER-PRUEFUNG.json: acht Seiten × vier Breiten, Bilder, Original-/Übersetzungsmenüs, Sprachwechsel, Layout, Karten, Abstand und sponsored.
+- MULTILINGUAL-SEO-EDITOR-PRUEFUNG.json: Canonicals, hreflang, gültige Gutenberg-Blöcke aller fünf englischen Seiten.
+- Import: Wiederholbarkeit, Schutz bestehender Originale, Entwurfsstatus, Sprachpaare, Berechtigungen und privater Rechtstext-Import lokal geprüft.
+- Testaufbau optional mit scripts/setup-polylang-local.sh, anschließend guarded local fixture workflow scripts/test-multilingual-local.sh. Keine Fremdplugin-Quellpakete auf Hostinger hochladen.

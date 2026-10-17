@@ -1,0 +1,166 @@
+{
+  "checks": [
+    {
+      "path": "/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/preise/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/preise/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/preise/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/preise/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/valet-parken-sicherheit/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/ueber-uns/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/ueber-uns/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/ueber-uns/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/ueber-uns/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/en/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/en/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/en/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/en/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/en/prices/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/en/prices/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/en/prices/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/en/prices/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/en/valet-parking-safety/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/en/valet-parking-safety/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/en/valet-parking-safety/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/en/valet-parking-safety/",
+      "width": 390,
+      "status": "passed"
+    },
+    {
+      "path": "/en/about-us/",
+      "width": 1440,
+      "status": "passed"
+    },
+    {
+      "path": "/en/about-us/",
+      "width": 1024,
+      "status": "passed"
+    },
+    {
+      "path": "/en/about-us/",
+      "width": 768,
+      "status": "passed"
+    },
+    {
+      "path": "/en/about-us/",
+      "width": 390,
+      "status": "passed"
+    }
+  ],
+  "navigation": "English menu, paired language switch, mobile toggle passed",
+  "tracking": "No TradeTracker requests observed; integration disabled"
+}

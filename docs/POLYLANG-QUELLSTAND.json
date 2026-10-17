@@ -1,0 +1,12 @@
+{
+  "plugin": "Polylang",
+  "version": "3.8.9",
+  "repository": "https://github.com/polylang/polylang.git",
+  "commit": "8a308ebe034672d41fd5dc711107a123806db02f",
+  "build": "Composer 2.8.12 classmap plus official post-autoload-dump loaders, no runtime dependencies",
+  "limits": [
+    "Manufacturer source fixture, not a WordPress distribution archive",
+    "Admin asset build not tested",
+    "Install official WordPress plugin on Hostinger"
+  ]
+}

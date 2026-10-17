@@ -1,17 +1,93 @@
 {
-  "status": "prepared-not-applied",
+  "status": "implemented-and-tested-locally-not-applied-to-hostinger",
   "default_language": "de",
-  "languages": [{"slug":"de","locale":"de_DE","name":"Deutsch"},{"slug":"en","locale":"en_GB","name":"English"}],
-  "url_structure": {"mode":"directory","hide_default_language":true,"english_prefix":"/en/","translated_homepage":"/en/"},
+  "languages": [
+    {
+      "slug": "de",
+      "locale": "de_DE",
+      "name": "Deutsch"
+    },
+    {
+      "slug": "en",
+      "locale": "en_GB",
+      "name": "English"
+    }
+  ],
+  "url_structure": {
+    "mode": "directory",
+    "hide_default_language": true,
+    "english_prefix": "/en/",
+    "translated_homepage": "/en/"
+  },
   "automatic_redirect": false,
   "pages": [
-    {"de":"startseite","en":"home","expected_english_url":"/en/","status":"draft"},
-    {"de":"preise","en":"prices","expected_english_url":"/en/prices/","status":"draft"},
-    {"de":"valet-parken-sicherheit","en":"valet-parking-safety","expected_english_url":"/en/valet-parking-safety/","status":"draft"},
-    {"de":"ueber-uns","en":"about-us","expected_english_url":"/en/about-us/","status":"draft"},
-    {"de":"ratgeber","en":"valet-parking-guide","expected_english_url":"/en/valet-parking-guide/","status":"draft"}
+    {
+      "de": "startseite",
+      "en": "home",
+      "expected_english_url": "/en/",
+      "status": "draft"
+    },
+    {
+      "de": "preise",
+      "en": "prices",
+      "expected_english_url": "/en/prices/",
+      "status": "draft"
+    },
+    {
+      "de": "valet-parken-sicherheit",
+      "en": "valet-parking-safety",
+      "expected_english_url": "/en/valet-parking-safety/",
+      "status": "draft"
+    },
+    {
+      "de": "ueber-uns",
+      "en": "about-us",
+      "expected_english_url": "/en/about-us/",
+      "status": "draft"
+    },
+    {
+      "de": "ratgeber",
+      "en": "valet-parking-guide",
+      "expected_english_url": "/en/valet-parking-guide/",
+      "status": "draft"
+    }
   ],
-  "menus": {"primary_en":[{"label":"Providers","target":"/en/#anbieter"},{"label":"Prices","page":"prices"},{"label":"Safety","page":"valet-parking-safety"},{"label":"About us","page":"about-us"}],"switcher":"DE / EN, paired page where published"},
-  "seo": {"home_primary":"valet parking munich airport","home_secondary":["munich airport valet parking"],"canonical":"self","hreflang":["de-DE","en-GB"],"drafts_indexable":false},
-  "notes": ["Configuration specification, not an executable Polylang import.","Affiliate destination locales require verified partner links; do not rewrite tracking URLs blindly.","Translate provider data, theme strings, consent and metadata separately from page bodies."]
+  "menus": {
+    "primary_en": [
+      {
+        "label": "Providers",
+        "target": "/en/#anbieter"
+      },
+      {
+        "label": "Prices",
+        "page": "prices"
+      },
+      {
+        "label": "Safety",
+        "page": "valet-parking-safety"
+      },
+      {
+        "label": "About us",
+        "page": "about-us"
+      }
+    ],
+    "switcher": "DE / EN, paired page where published"
+  },
+  "seo": {
+    "home_primary": "valet parking munich airport",
+    "home_secondary": [
+      "munich airport valet parking"
+    ],
+    "canonical": "self",
+    "hreflang": [
+      "de",
+      "en"
+    ],
+    "drafts_indexable": false
+  },
+  "notes": [
+    "Implemented by explicit administrator actions in VPM Inhaltsentwürfe 0.3.0; this JSON remains a specification, not an import file.",
+    "Affiliate destination locales require verified partner links; do not rewrite tracking URLs blindly.",
+    "Translate provider data, theme strings, consent and metadata separately from page bodies."
+  ]
 }

@@ -4,8 +4,8 @@ Dies ist eine technische Dokumentation für die spätere Datenschutzerklärung, 
 
 | Bestandteil | Stand |
 | --- | --- |
-| Eigenes Theme | VPM Hybrid 0.3.4 |
-| Eigenes Plugin | VPM Anbieter 0.2.1 |
+| Eigenes Theme | VPM Hybrid 0.4.0 |
+| Eigenes Plugin | VPM Anbieter 0.3.0 |
 | Lokale Testinstallation | WordPress 7.1.3, PHP 8.3.35, MariaDB 11.4.13 |
 | Kompatibilitätstest | Offizielles Elementor 3.33.0, nur kostenlose Funktionen |
 | Schriften | Systemschriften; keine Font-Dateien oder externen Fontanbieter |
@@ -22,8 +22,10 @@ WordPress und Elementor haben eigene Administratorfunktionen, Login-Cookies, Upd
 
 Der Hostinger-Server kann IP-Adressen, Zugriffsprotokolle, Backups und andere Hostingdaten verarbeiten. Die tatsächlichen Hostinger-Einstellungen sowie vorhandene Plugins wurden mangels Cloud-SSH-Verbindung noch nicht geprüft. Dieses Inventar umfasst deshalb nur das lokal entwickelte Grundgerüst und ist vor dem Launch um die reale Installation zu ergänzen.
 
-Das optionale Importplugin VPM Inhaltsentwürfe 0.2.1 legt lokal gespeicherte Inhaltsentwürfe und die Mediathek-Bilder an. Es sendet keine Daten an externe Dienste. Der Footer-Hinweis wird als Theme-Einstellung gespeichert. Vor dem späteren Einsatz weiterer Plugins deren Datenverarbeitung gesondert erfassen.
+Das optionale Importplugin VPM Inhaltsentwürfe 0.3.0 legt lokal gespeicherte Inhaltsentwürfe und die Mediathek-Bilder an. Es sendet keine Daten an externe Dienste. Der Footer-Hinweis wird als Theme-Einstellung gespeichert. Vor dem späteren Einsatz weiterer Plugins deren Datenverarbeitung gesondert erfassen.
 
 Die Anbieterübersicht verwendet sechs unterschiedliche KI-Symbolbilder mit ausdrücklicher Kennzeichnung als keine Anbieteraufnahme. Die Bilder werden lokal gespeichert, responsiv ausgeliefert und verzögert geladen. Bilder können im WordPress-Backend ausgetauscht werden; das Ergänzen fehlender Bilder erfordert eine ausdrücklich ausgelöste Administratoraktion.
 
 Die lokale Plugin-Prüfung umfasst Rank Math, LiteSpeed Cache und Complianz als Hersteller-Quellstände. Das lokale Consent-Testfixture überträgt keine Nutzerdaten und bleibt außerhalb der installierbaren Pakete. Auf Hostinger müssen die tatsächlichen Konfigurationen, Accounts, eingebundenen Scripts und gegebenenfalls Online-Dienste dieser Plugins neu erfasst werden. HFCM war lokal nicht installiert.
+
+Update 0.4.0: Anbieter-Kartengrafiken sind abstrakte illustrative Motive ohne Fotohinweis; die redaktionellen fotorealistischen KI-Bilder behalten ihn. Polylang wurde lokal für /en/ geprüft; Browser-/IP-Weiterleitung ist aus. CleanLinking ist zusätzlich über eine ausgeschaltete Standardoption gesperrt und wird im Update nicht aktiviert. Die tatsächlichen Hostingangaben und Plugin-Einstellungen stammen für die privaten Rechtstexte aus Betreiberangaben, nicht aus einer unabhängigen Hostinger-Netzwerkprüfung.

@@ -1,3 +1,5 @@
+Aktuelle Erweiterung: Update 0.4.0 mit Polylang 3.8.9 lokal geprüft; Berichte in MULTILINGUAL-BROWSER-PRUEFUNG.json und MULTILINGUAL-SEO-EDITOR-PRUEFUNG.json. Frühere Prüfstände unten bleiben als Historie erhalten.
+
 # Prüfergebnis des technischen Grundgerüsts
 
 Prüfung am 11. Oktober 2026 in der lokalen Cloud-Testinstallation, nicht auf Hostinger.

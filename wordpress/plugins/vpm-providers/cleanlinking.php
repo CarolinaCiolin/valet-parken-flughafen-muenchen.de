@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 add_action( 'wp_footer', function () {
+    if ( ! get_option( 'vpm_cleanlinking_enabled', false ) ) { return; }
     // Fail closed when consent management is absent; do not track previews/admins.
     if ( ! defined( 'cmplz_free' ) || is_admin() || is_preview() || ! is_singular() || current_user_can( 'manage_options' ) ) { return; }
     $page = get_queried_object();

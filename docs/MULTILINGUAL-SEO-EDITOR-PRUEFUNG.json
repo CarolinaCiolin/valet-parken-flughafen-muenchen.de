@@ -1,0 +1,36 @@
+{
+  "canonical_and_hreflang": "Eight public local review routes: one self canonical and two language alternates each",
+  "editor": [
+    {
+      "id": 125,
+      "title": "Valet Parking Guide",
+      "bad": [],
+      "blocks": 2
+    },
+    {
+      "id": 121,
+      "title": "Munich Airport Valet Parking",
+      "bad": [],
+      "blocks": 62
+    },
+    {
+      "id": 122,
+      "title": "Munich Airport Valet Parking Prices",
+      "bad": [],
+      "blocks": 18
+    },
+    {
+      "id": 123,
+      "title": "Is Valet Parking Safe?",
+      "bad": [],
+      "blocks": 51
+    },
+    {
+      "id": 124,
+      "title": "About Us",
+      "bad": [],
+      "blocks": 15
+    }
+  ],
+  "note": "Temporarily blog_public=1 only on localhost for SEO check, then restored. English review publication only in local fixture."
+}

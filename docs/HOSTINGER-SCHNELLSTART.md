@@ -1,3 +1,5 @@
+Aktuelles Update für die bereits eingerichtete Website: [UPDATE-0.4.0.md](UPDATE-0.4.0.md). Die ursprüngliche Erstinstallation unten beschreibt auch Staging; für den freigegebenen Neubau ist die direkte Installation nach Sicherung vorgesehen.
+
 # VPM auf Hostinger einrichten
 
 Das Gesamtpaket zuerst auf dem Computer entpacken. **Nur die drei einzelnen ZIPs** in WordPress hochladen; das Gesamtpaket ist kein WordPress-Plugin.
@@ -5,7 +7,7 @@ Das Gesamtpaket zuerst auf dem Computer entpacken. **Nur die drei einzelnen ZIPs
 1. In Hostinger eine Sicherung von Dateien und Datenbank erstellen. Die Einrichtung zuerst in einer Staging-Kopie durchführen. Suchmaschinen-Sichtbarkeit dort deaktiviert lassen.
 2. `vpm-hybrid.zip` unter **Design → Themes → Hinzufügen → Theme hochladen** installieren und aktivieren.
 3. `vpm-providers.zip` und danach `vpm-content-drafts.zip` unter **Plugins → Installieren → Plugin hochladen** installieren und aktivieren.
-4. Unter **Werkzeuge → VPM Inhaltsentwürfe** die neuen Entwürfe importieren. Vier Seiten und sechs fehlende Anbieter werden angelegt. Bestehende Inhalte bleiben erhalten. Neue Anbieter erhalten das gemeinsame KI-Symbolbild. Bei vorhandenen Anbietern ohne Bild kann anschließend **Fehlende Symbolbilder ergänzen** genutzt werden.
+4. Unter **Werkzeuge → VPM Inhaltsentwürfe** die neuen Entwürfe importieren. Fünf Seiten (einschließlich Ratgeberentwurf) und sechs fehlende Anbieter werden angelegt. Bestehende Inhalte bleiben erhalten. Neue Anbieter erhalten das gemeinsame KI-Symbolbild. Bei vorhandenen Anbietern ohne Bild kann anschließend **Fehlende Symbolbilder ergänzen** genutzt werden.
 5. Unter **Einstellungen → Allgemein** Website-Titel „Valet-Parken Flughafen München“, Sprache Deutsch und Zeitzone Berlin einstellen. Unter **Permalinks** „Beitragsname“ wählen. In Staging die vier bisherigen Inhaltsseiten und Anbieter prüfen und veröffentlichen, damit Navigation und Anbieterkarten vollständig getestet werden können. Die produktive Veröffentlichung folgt erst später.
 6. Unter **Einstellungen → Lesen** die importierte „Startseite“ als statische Startseite zuweisen. Sie erhält damit `/`; die übrigen Adressen sind `/preise/`, `/valet-parken-sicherheit/` und `/ueber-uns/`.
 7. Unter **Design → Menüs** die folgenden beiden Menüs erstellen und ihren Theme-Positionen zuweisen. Die drei Inhaltsseiten als Seiten-Menüeinträge hinzufügen, damit WordPress ihre Adressen aktuell hält.
@@ -23,9 +25,9 @@ Das Gesamtpaket zuerst auf dem Computer entpacken. **Nur die drei einzelnen ZIPs
 | Sicherheit | Sicherheitsseite |
 | Über uns | Über-uns-Seite |
 
-Bei einer Staging-Installation in einem Unterverzeichnis den Anbieter-Link mit dem tatsächlichen Startseitenpfad verwenden. Ein Ratgeber und eine separate Vergleichsseite sind nicht Bestandteil der gelieferten Inhalte und werden nicht verlinkt.
+Bei einer Staging-Installation in einem Unterverzeichnis den Anbieter-Link mit dem tatsächlichen Startseitenpfad verwenden. Der Valet-Ratgeber bleibt zunächst Entwurf und unverlinkt; eine separate Vergleichsseite ist nicht vorgesehen.
 
-8. Unter **Design → Customizer → Header-CTA** den Text „Verfügbarkeit prüfen“ und den allgemeinen ParkVia-Link aus `ALLGEMEINER-PARTNERLINK.txt` eintragen. Unter **Footer-Hinweis** diesen freigegebenen Text aus der Über-uns-Vorlage eintragen:
+8. Unter **Design → Customizer → Header-CTA** den Text „Verfügbarkeit prüfen“ eintragen. Der Header-Button führt zur Startseite in den Anbieterbereich `#anbieter`. Unter **Footer-Hinweis** diesen freigegebenen Text aus der Über-uns-Vorlage eintragen:
 
 > Einige Verlinkungen auf dieser Website sind Affiliate-Links. Wenn Sie darüber eine Buchung abschließen, können wir vom jeweiligen Buchungspartner eine Provision erhalten. Der Preis erhöht sich für Sie dadurch nicht.
 

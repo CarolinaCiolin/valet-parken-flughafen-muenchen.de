@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.2.2
+ * Version: 0.3.0
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -10,6 +10,8 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/cache.php';
+require_once __DIR__ . '/language.php';
+require_once __DIR__ . '/artwork.php';
 require_once __DIR__ . '/cleanlinking.php';
 add_action( 'init', function () { add_image_size( 'vpm-provider-card', 480, 0, false ); } );
 
@@ -106,7 +108,7 @@ add_action( 'save_post_vpm_provider', function ( $post_id ) {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.2.1' );
+    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.0' );
 } );
 
 function vpm_render_provider_cards( $atts = array() ) {
@@ -118,6 +120,8 @@ function vpm_render_provider_cards( $atts = array() ) {
         $args['post__in'] = $ids;
         $args['orderby'] = 'post__in';
     }
+    if ( is_preview() && current_user_can( 'edit_pages' ) ) { $args['post_status'] = array( 'publish', 'draft' ); }
+    if ( function_exists( 'pll_current_language' ) && pll_current_language() ) { $args['lang'] = pll_current_language( 'slug' ); }
     $query = new WP_Query( $args );
     if ( ! $query->have_posts() ) { return ''; }
     ob_start();
@@ -125,7 +129,9 @@ function vpm_render_provider_cards( $atts = array() ) {
     foreach ( $query->posts as $provider ) {
         $id = $provider->ID;
         echo '<article class="vpm-provider-card">';
-        if ( has_post_thumbnail( $id ) ) {
+        $artwork = vpm_provider_artwork( $id );
+        if ( $artwork ) { echo $artwork; }
+        elseif ( has_post_thumbnail( $id ) ) {
             echo '<figure class="vpm-provider-image">' . get_the_post_thumbnail( $id, 'vpm-provider-card', array( 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => '(max-width: 600px) calc(100vw - 56px), (max-width: 1000px) calc((100vw - 100px) / 2), (max-width: 1264px) calc((100vw - 132px) / 3), 364px' ) );
             $caption = get_post_meta( $id, '_vpm_image_caption', true );
             if ( str_starts_with( (string) get_post_meta( get_post_thumbnail_id( $id ), '_vpm_asset_key', true ), 'provider-symbol-ai-' ) ) { $caption = 'KI-Symbolbild · keine Anbieteraufnahme'; }
@@ -153,7 +159,7 @@ function vpm_render_provider_cards( $atts = array() ) {
             $url = get_post_meta( $id, '_vpm_' . $key . '_url', true );
             $label = get_post_meta( $id, '_vpm_' . $key . '_label', true );
             if ( $url && $label ) {
-                echo '<div><span class="vpm-provider-platform">' . esc_html( 'Buchbar über ' . $platform . ':' ) . '</span><a class="vpm-provider-button" href="' . esc_url( $url, array( 'https' ) ) . '" rel="sponsored nofollow">' . esc_html( $label ) . '<span class="screen-reader-text"> – ' . esc_html( get_the_title( $id ) . ' / ' . $platform ) . '</span></a></div>';
+                echo '<div><span class="vpm-provider-platform">' . esc_html( vpm_text( 'Buchbar über ', 'Book with ' ) . $platform . ':' ) . '</span><a class="vpm-provider-button" href="' . esc_url( $url, array( 'https' ) ) . '" rel="sponsored nofollow">' . esc_html( $label ) . '<span class="screen-reader-text"> – ' . esc_html( get_the_title( $id ) . ' / ' . $platform ) . '</span></a></div>';
             }
         }
         echo '</div></div></article>';

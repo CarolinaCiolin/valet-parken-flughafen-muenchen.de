@@ -1,9 +1,12 @@
 """Validate exported files through a static-only local server (file:// restricted in cloud Chromium)."""
 from playwright.sync_api import sync_playwright
+from pathlib import Path
 base='http://127.0.0.1:8091/'
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=b.new_page(viewport={'width':1440,'height':1050});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
- for name in ['index.html','preise.html','sicherheit.html','ueber-uns.html']:
+ names=['index.html','preise.html','sicherheit.html','ueber-uns.html']
+ if (Path(__file__).resolve().parents[1]/'dist/vpm-vorschau/en-index.html').exists():names+=['en-index.html','en-prices.html','en-safety.html','en-about-us.html']
+ for name in names:
   response=page.goto(base+name,wait_until='networkidle');assert response.status==200
   assert page.locator('h1').count()==1
   for width in [1440,390]:

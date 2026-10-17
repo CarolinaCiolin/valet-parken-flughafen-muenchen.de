@@ -10,3 +10,7 @@ Die drei ZIP-Dateien in pakete sind noch der vorherige Auslieferungsstand. Vor d
 ## CleanLinking
 
 TradeTracker-Tag für site 518003 im Anbieter-Plugin 0.2.2 vorbereitet, ausschließlich über Complianz-Marketingfreigabe. Keine ungefilterte noscript-Ausgabe. Details und Freigabeprüfungen: TRADETRACKER-CLEANLINKING.md. Plugin-Syntax und vier gezielte Ausgabe-/Sperrszenarien geprüft; reale Consent-/Netzwerkintegration auf Hostinger noch offen. Bisherige Datenschutz-Arbeitsfassung vor Tag-Aktivierung entsprechend aktualisieren.
+
+## Zusammengeführter Stand
+
+Die freigegebenen Illustrationen, Abstandskorrektur, englische Entwurfsimporte und privater Rechtstext-Upload sind im gemeinsamen Update 0.4.0 integriert. CleanLinking besitzt zusätzlich eine ausgeschaltete Standardsperre. Aktuelle Anleitung: UPDATE-0.4.0.md; alte Zwischenstandsnotizen darüber beschreiben den früheren Vorbereitungsstand.

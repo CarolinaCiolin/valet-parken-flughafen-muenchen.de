@@ -1,3 +1,5 @@
+Aktueller Stand Update 0.4.0: [Englische Seiten und neue Anbieterkarten](englisch/README.md). [Installationsanleitung](../docs/UPDATE-0.4.0.md). Die folgenden Screenshots dokumentieren zum Teil frühere Zwischenstände.
+
 # Aktueller Zwischenstand – Design- und Technikprüfung
 
 Die Bilder zeigen die tatsächlich gerenderte lokale WordPress-Website. Texte und Zwischenüberschriften sind unverändert. Der freigegebene Vergleichsbutton führt zur Preisseite; der Preislink steht über den Anbieterkarten. Der mobile Hero nutzt nun die volle Breite; das Tabletmenü ist kompakter. Listen, Kartenraster und Ablauf wurden vereinheitlicht. Bilder sind ausdrücklich gekennzeichnete KI-Symbolbilder; keine tatsächlichen Anbieteraufnahmen. Für die Screenshots sind weder GitHub Pages noch GitHub Actions nötig.
