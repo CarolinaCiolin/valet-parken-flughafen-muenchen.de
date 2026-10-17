@@ -33,3 +33,7 @@
 .vpm-hero-image figcaption{background:#fcfaf7;padding:4px 8px;border-radius:4px}
 /* Functional outlines need 3:1 against their surrounding light surface. */
 .vpm-menu-toggle{border-color:#777c82}
+
+/* Separate the booking note from the provider cards without changing its copy. */
+.vpm-content .vpm-booking-note{margin-top:28px;margin-bottom:0}
+@media(max-width:600px){.vpm-content .vpm-booking-note{margin-top:24px}}

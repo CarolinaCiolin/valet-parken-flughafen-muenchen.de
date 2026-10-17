@@ -114,6 +114,9 @@ add_filter( 'the_content', function ( $html ) {
         }
     }
     foreach ( $root->getElementsByTagName( 'p' ) as $paragraph ) {
+        if ( str_starts_with( trim( $paragraph->textContent ), 'Die Reservierung erfolgt beim ausgewiesenen Buchungspartner.' ) ) {
+            $paragraph->setAttribute( 'class', $paragraph->getAttribute( 'class' ) . ' vpm-booking-note' );
+        }
         $elements = array();
         foreach ( $paragraph->childNodes as $child ) { if ( $child instanceof DOMElement ) { $elements[] = $child; } }
         if ( 1 === count( $elements ) && 'a' === $elements[0]->tagName && trim( $paragraph->textContent ) === trim( $elements[0]->textContent ) ) {
