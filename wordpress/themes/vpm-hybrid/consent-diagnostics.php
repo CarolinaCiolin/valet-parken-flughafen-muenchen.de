@@ -62,6 +62,7 @@ add_action( 'wp_footer', function() {
         'Complianz aktiv' => $active,
         'Assistent abgeschlossen (Frontend)' => (bool) get_option( 'cmplz_wizard_completed_once' ),
         'Vorschau' => is_preview(),
+        'VPM-Spätinitialisierung angewendet' => ! empty( $GLOBALS['vpm_consent_hooks_reconciled'] ),
     );
     if ( $active ) {
         $loader = COMPLIANZ::$banner_loader;

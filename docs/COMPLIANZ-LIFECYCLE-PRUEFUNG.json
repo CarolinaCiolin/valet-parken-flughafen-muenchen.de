@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "case": "reproduced without repair",
+      "visible": false,
+      "repair_applied": false,
+      "result": "passed"
+    },
+    {
+      "case": "late repair",
+      "visible": true,
+      "repair_applied": true,
+      "result": "passed"
+    },
+    {
+      "case": "normal initialization",
+      "visible": true,
+      "repair_applied": false,
+      "result": "passed"
+    },
+    {
+      "case": "no banner required",
+      "visible": false,
+      "repair_applied": false,
+      "result": "passed"
+    },
+    {
+      "case": "wizard incomplete",
+      "visible": false,
+      "repair_applied": false,
+      "result": "passed"
+    },
+    {
+      "case": "banner disabled",
+      "visible": false,
+      "repair_applied": false,
+      "result": "passed"
+    },
+    {
+      "case": "DNT respected",
+      "visible": false,
+      "repair_applied": true,
+      "result": "passed"
+    }
+  ],
+  "method": "Temporary MU fixture makes the constructor requirement false until init, reproducing the observed hook mismatch; does not claim to identify which live integration causes the timing difference.",
+  "checks": [
+    "Single script and single banner, no duplicate initialization",
+    "No-warning output removed only in repaired state",
+    "Rejected choice retained after reload",
+    "No requirement, incomplete wizard, explicit disabled banner and DNT honored",
+    "No JavaScript errors at mobile viewport"
+  ],
+  "limitations": [
+    "Local Complianz 7.5.5; public diagnostic shows 7.5.6",
+    "Fix not deployed to Hostinger by this test"
+  ]
+}
