@@ -21,17 +21,15 @@ try:
   assert not set(types)&{'Product','Offer','AggregateRating','Review','LocalBusiness','ParkingFacility','Person'}
   page=next(n for n in nodes if n['@id']==base+path+'#webpage');assert page['inLanguage']==locale
   home=path in ['/','/en/']
-  crumbs=s.select('.vpm-page-context nav ol li')
+  crumbs=s.select('.vpm-page-context nav ol li');assert not s.select('.vpm-page-context, .vpm-page-role')
   if home:
    assert not crumbs and 'BreadcrumbList'not in types
    listing=next(n for n in nodes if n['@type']=='ItemList');assert int(listing['numberOfItems'])==6
    for item in listing['itemListElement']:assert s.find(id=urllib.parse.urlsplit(item['url']).fragment),item
   else:
-   assert len(crumbs)==2
    bc=next(n for n in nodes if n['@type']=='BreadcrumbList');assert len(bc['itemListElement'])==2
    assert bc['itemListElement'][0]['item']==base+('/en/'if en else'/')
-   assert s.select_one('.vpm-page-role a')['href']==base+('/en/'if en else'/')
-   assert [x.get_text(' ',strip=True)for x in crumbs]==[x['name']for x in bc['itemListElement']]
+   assert bc['itemListElement'][-1]['item']==base+path and bc['itemListElement'][-1]['name']==page['name']
   if home:
    for entry in listing['itemListElement']:
     service=entry['item'];assert service['@type']=='Service' and 'offers'not in service
@@ -57,7 +55,7 @@ try:
   if 'ratgeber'in path or 'valet-parking-guide'in path:
    listing=next(n for n in nodes if n['@type']=='ItemList');assert int(listing['numberOfItems'])==1
    assert listing['itemListElement'][0]['name']=='Schema article '+('en'if en else'de')
-  report.append({'path':path,'types':types,'breadcrumbs':len(crumbs),'result':'passed'})
+  report.append({'path':path,'types':types,'breadcrumbs':0 if home else len(bc['itemListElement']),'result':'passed'})
  for item in created:
   path=urllib.parse.urlsplit(item['url']).path
   if item['kind']=='legal':
@@ -80,7 +78,7 @@ try:
     icons=page.locator('link[rel="icon"]').evaluate_all('(els)=>els.map(x=>x.href)');assert len(icons)==2,icons
     if path in ['/preise/','/en/prices/']and width in[1440,390]:page.screenshot(path=str(root/'zwischenstand/schema'/(('en'if path.startswith('/en/')else'de')+'-'+str(width)+'.png')))
   b.close()
- (root/'docs/SCHEMA-KONTEXT-PRUEFUNG.json').write_text(json.dumps({'pages':report,'checks':['Exactly one graph with unique entity IDs and no duplicate Rank Math entities','Breadcrumbs match visible navigation in both languages','Provider ItemList targets exist in page; Service names/features match visible cards, no hidden homepage prices', 'Seven price-page Services in both languages: visible amounts, minimum EUR prices for eight days, local comparison URL and unchanged visible booking links, no invented availability or dates','FAQ questions match actual rendered details','Published guide ItemList matches native query language','BlogPosting and Home > Guide > Article breadcrumbs','No schema or context UI on synthetic legal pages','Fallback graph works without Rank Math','Native icon import sizes 32/180/192/270, repeat preserves existing icon','30 viewport checks without horizontal overflow'],'limitations':['Local WordPress integration, not Hostinger deployment','No Google Rich Results Test or Schema Markup Validator service access','FAQ rich-result eligibility not guaranteed']},ensure_ascii=False,indent=2)+'\n')
+ (root/'docs/SCHEMA-KONTEXT-PRUEFUNG.json').write_text(json.dumps({'pages':report,'checks':['Exactly one graph with unique entity IDs and no duplicate Rank Math entities','BreadcrumbList hierarchy retained in both languages; no visible breadcrumbs or topic line','Provider ItemList targets exist in page; Service names/features match visible cards, no hidden homepage prices', 'Seven price-page Services in both languages: visible amounts, minimum EUR prices for eight days, local comparison URL and unchanged visible booking links, no invented availability or dates','FAQ questions match actual rendered details','Published guide ItemList matches native query language','BlogPosting and Home > Guide > Article breadcrumbs','No schema or context UI on synthetic legal pages','Fallback graph works without Rank Math','Native icon import sizes 32/180/192/270, repeat preserves existing icon','30 viewport checks without horizontal overflow'],'limitations':['Local WordPress integration, not Hostinger deployment','No Google Rich Results Test or Schema Markup Validator service access','FAQ rich-result eligibility not guaranteed']},ensure_ascii=False,indent=2)+'\n')
  print('Schema, visible context, fallback, legal exclusions, multilingual guide/articles, icon and 30 layouts passed.')
 finally:
  php('update_option("active_plugins",json_decode('+json.dumps(json.dumps(state['plugins']))+',true));update_option("site_icon",'+str(int(state['icon']or 0))+');foreach(json_decode('+json.dumps(json.dumps(state['statuses']))+',true)as $id=>$status)wp_update_post(["ID"=>$id,"post_status"=>$status]);foreach('+json.dumps([x['id']for x in created])+'as $id)wp_delete_post($id,true);')

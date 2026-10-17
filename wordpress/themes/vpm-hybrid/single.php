@@ -6,7 +6,7 @@ get_header();
 <?php if ( ! function_exists( 'elementor_theme_do_location' ) || ! elementor_theme_do_location( 'single' ) ) : ?>
 <?php while ( have_posts() ) : the_post(); ?>
     <article <?php post_class(); ?>>
-        <?php vpm_render_page_context(); ?>
+
         <header class="vpm-page-heading vpm-shell"><h1><?php the_title(); ?></h1></header>
         <?php if ( has_post_thumbnail() ) : ?><div class="vpm-featured vpm-shell"><?php the_post_thumbnail( 'large' ); ?></div><?php endif; ?>
         <div class="vpm-content entry-content"><?php the_content(); ?></div>

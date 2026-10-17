@@ -121,7 +121,7 @@
   ],
   "checks": [
     "Exactly one graph with unique entity IDs and no duplicate Rank Math entities",
-    "Breadcrumbs match visible navigation in both languages",
+    "BreadcrumbList hierarchy retained in both languages; no visible breadcrumbs or topic line",
     "Provider ItemList targets exist in page; Service names/features match visible cards, no hidden homepage prices",
     "Seven price-page Services in both languages: visible amounts, minimum EUR prices for eight days, local comparison URL and unchanged visible booking links, no invented availability or dates",
     "FAQ questions match actual rendered details",

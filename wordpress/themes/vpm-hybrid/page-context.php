@@ -1,5 +1,5 @@
 <?php
-/** Visible navigation context and the same hierarchy for structured data. */
+/** Page hierarchy for structured data only; no visible breadcrumb output. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 function vpm_layout_key( $id = 0 ) {
     $id = $id ?: get_queried_object_id();
@@ -34,13 +34,4 @@ function vpm_page_context() {
     $crumbs[] = array( 'name' => get_the_title( get_queried_object_id() ), 'url' => get_permalink( get_queried_object_id() ) );
     $role = $roles[ $key ] ?? ( is_singular( 'post' ) ? array( 'Ratgeberartikel', 'Guide article' ) : array( 'Informationen zum Valet-Parken', 'Valet parking information' ) );
     return array( 'crumbs' => $crumbs, 'parent' => $guide ? get_permalink( $guide ) : $home, 'parent_name' => $guide ? get_the_title( $guide ) : vpm_theme_text( 'Valet-Parken am Flughafen München', 'Munich Airport Valet Parking' ), 'role' => vpm_theme_text( $role[0], $role[1] ) );
-}
-function vpm_render_page_context() {
-    $context = vpm_page_context(); if ( ! $context ) { return; }
-    echo '<div class="vpm-page-context vpm-shell"><nav aria-label="' . esc_attr( vpm_theme_text( 'Brotkrümelnavigation', 'Breadcrumbs' ) ) . '"><ol>';
-    $last = count( $context['crumbs'] ) - 1;
-    foreach ( $context['crumbs'] as $i => $crumb ) {
-        echo '<li>' . ( $i === $last ? '<span aria-current="page">' . esc_html( $crumb['name'] ) . '</span>' : '<a href="' . esc_url( $crumb['url'] ) . '">' . esc_html( $crumb['name'] ) . '</a>' ) . '</li>';
-    }
-    echo '</ol></nav><p class="vpm-page-role">' . esc_html( vpm_theme_text( 'Themenbereich: ', 'Topic: ' ) ) . '<a href="' . esc_url( $context['parent'] ) . '">' . esc_html( $context['parent_name'] ) . '</a><span aria-hidden="true"> · </span>' . esc_html( $context['role'] ) . '</p></div>';
 }
