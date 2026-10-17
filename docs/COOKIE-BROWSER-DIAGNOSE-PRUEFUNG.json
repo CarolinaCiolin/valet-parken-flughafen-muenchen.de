@@ -2,23 +2,26 @@
   "checks": [
     {
       "consent_required": false,
-      "report_matches_frontend": true
+      "report_matches_frontend": true,
+      "direct_anonymous_report_matches": true
     },
     {
       "consent_required": true,
-      "report_matches_frontend": true
+      "report_matches_frontend": true,
+      "direct_anonymous_report_matches": true
     }
   ],
   "additional_checks": [
-    "Diagnostic UI requires authenticated administration",
-    "Diagnostic script absent on public frontend",
+    "PHP diagnostic UI requires authenticated administration; optional frontend diagnostic contains only local public DOM/browser state",
+    "Diagnostic script absent on ordinary frontend requests",
     "CSS-hidden banner detected",
     "Read-only inspection does not alter consent cookies",
     "Cookie names only; sentinel value absent from report"
   ],
   "limitations": [
     "Local WordPress; production browser report still needed",
-    "Authenticated iframe and test parameter may bypass visitor cache",
-    "No consent forced; no claim to identify live cause yet"
+    "Iframe uses authenticated session; direct test can be anonymous; test parameter may bypass visitor cache",
+    "No consent forced; no claim to identify live cause yet",
+    "Direct test does not use an iframe or require a shared admin domain"
   ]
 }

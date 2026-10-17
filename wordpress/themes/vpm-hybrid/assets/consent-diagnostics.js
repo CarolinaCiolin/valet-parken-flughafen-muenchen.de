@@ -1,18 +1,20 @@
-/* Admin-only same-origin frontend inspection. No consent changes, no external reporting. */
+/* Local browser inspection via admin iframe or explicit direct-page test. No consent changes, no external reporting. */
 (() => {
   const start = document.getElementById('vpm-consent-start');
   const output = document.getElementById('vpm-consent-output');
   const frame = document.getElementById('vpm-consent-frame');
   const again = document.getElementById('vpm-consent-refresh');
   const copy = document.getElementById('vpm-consent-copy');
-  if (!start || !output || !frame) return;
+  const direct = start?.dataset.direct === '1';
+  if (!start || !output || (!direct && !frame)) return;
   const inspect = () => {
     try {
-      const w = frame.contentWindow, doc = w.document;
+      const w = direct ? window : frame.contentWindow, doc = w.document;
+      if (w.location.protocol === 'about:') return;
       if (doc.readyState === 'loading') { output.value = 'Startseite lädt noch. Bitte kurz warten und erneut auslesen.'; return; }
       const config = w.complianz;
       const report = {
-        Hinweis: 'Aktueller Browser, angemeldete Sitzung, Startseite mit Testparameter. Kein Nachweis für anonymen Seitencache. Keine Cookies gelöscht, keine Einwilligung erteilt oder zurückgesetzt.',
+        Hinweis: (direct ? 'Direkt auf der Website, aktueller Browser und aktuelle Sitzung.' : 'Eingebettete Startseite, angemeldete Sitzung.') + ' Testparameter kann normalen Besuchercache umgehen. Keine Cookies gelöscht, keine Einwilligung erteilt oder zurückgesetzt.',
         Zeitpunkt: new Date().toISOString(),
         Seite: w.location.origin + w.location.pathname,
         'Dokument geladen': doc.readyState,
@@ -23,6 +25,8 @@
         'Banner-Container vorhanden': !!doc.getElementById('cmplz-cookiebanner-container'),
         'Richtlinien-Verwaltung auf dieser Seite': !!doc.querySelector('#cmplz-manage-consent-container, .cmplz-dropdown-cookiepolicy'),
       };
+      const server = doc.getElementById('vpm-consent-server');
+      if (server) { try { report['Serverstatus dieses Frontend-Aufrufs'] = JSON.parse(server.textContent); } catch (_) { report['Serverstatus lesbar'] = false; } }
       if (config) {
         ['consenttype', 'region', 'user_banner_id', 'disable_cookiebanner', 'do_not_track_enabled', 'geoip'].forEach(key => { report[key] = config[key] ?? null; });
       }
@@ -45,11 +49,15 @@
       output.value = 'Die eingebettete Seite konnte nicht gelesen werden: ' + error.message + '\nMögliche Ursache: Weiterleitung auf eine andere Domain oder Einbettung durch Sicherheitsrichtlinie blockiert. Dann bitte den Quelltext der Startseite als Datei bereitstellen.';
     }
   };
-  frame.addEventListener('load', () => { setTimeout(inspect, 1500); });
+  if (direct) {
+    if (document.readyState === 'complete') setTimeout(inspect, 1500);
+    else window.addEventListener('load', () => setTimeout(inspect, 1500), {once: true});
+  } else frame.addEventListener('load', () => { setTimeout(inspect, 1500); });
   start.addEventListener('click', () => {
+    if (direct) { inspect(); return; }
     output.value = 'Startseite wird im aktuellen Browser geladen …';
     const url = new URL(start.dataset.url, location.origin);
-    if (url.origin !== location.origin) { output.value = 'Frontend und WordPress-Verwaltung haben unterschiedliche Domains. Eine eingebettete Diagnose ist so nicht möglich.'; return; }
+    if (url.origin !== location.origin) { output.value = 'Die Domains unterscheiden sich. Bitte oben auf „Direkt auf der Website prüfen“ klicken und dort den Bericht kopieren.'; return; }
     url.searchParams.set('vpm_cookie_probe', Date.now().toString());
     frame.hidden = false; frame.src = url.href;
   });

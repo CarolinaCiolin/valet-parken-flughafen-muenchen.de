@@ -35,9 +35,28 @@ try:
     assert frame.evaluate('document.cookie')==before,'Read-only refresh changed cookies'
     frame.evaluate('document.cookie="cmplz_diag_test=SENSITIVE_VALUE_DO_NOT_REPORT;path=/"')
     page.locator('#vpm-consent-refresh').click();assert 'SENSITIVE_VALUE_DO_NOT_REPORT'not in page.locator('#vpm-consent-output').input_value()
-   results.append({'consent_required':required,'report_matches_frontend':True})
+   # Direct test runs without an iframe or admin cookie, so admin/frontend domain mismatch is irrelevant.
+   public=b.new_context();direct=public.new_page()
+   response=direct.goto(base+'/?vpm_cookie_diagnostics=1',wait_until='networkidle')
+   assert response.headers.get('x-robots-tag')=='noindex, nofollow, noarchive'
+   assert 'no-cache'in response.headers.get('cache-control','')
+   assert direct.locator('#vpm-consent-frame').count()==0
+   assert direct.locator('script[data-no-optimize="1"][src*="consent-diagnostics.js"]').count()==1
+   direct.wait_for_function('document.getElementById("vpm-consent-output").value.startsWith("{")')
+   direct_report=json.loads(direct.locator('#vpm-consent-output').input_value())
+   assert direct_report['Banner-Funktion geladen']==required
+   server=direct_report['Serverstatus dieses Frontend-Aufrufs']
+   assert server['Assistent abgeschlossen (Frontend)']==True
+   assert server['Banner erforderlich (Frontend)']==required
+   assert server['Banner-HTML-Hook registriert']==required
+   assert server['Banner-Asset-Hook registriert']==required
+   assert server['Ohne-Banner-Hook registriert']!=(required)
+   assert direct_report['Hinweis'].startswith('Direkt auf der Website')
+   direct.goto(base+'/',wait_until='networkidle');assert direct.locator('#vpm-consent-output, script[src*="consent-diagnostics.js"]').count()==0
+   public.close()
+   results.append({'consent_required':required,'report_matches_frontend':True,'direct_anonymous_report_matches':True})
   b.close()
- (root/'docs/COOKIE-BROWSER-DIAGNOSE-PRUEFUNG.json').write_text(json.dumps({'checks':results,'additional_checks':['Diagnostic UI requires authenticated administration','Diagnostic script absent on public frontend','CSS-hidden banner detected','Read-only inspection does not alter consent cookies','Cookie names only; sentinel value absent from report'],'limitations':['Local WordPress; production browser report still needed','Authenticated iframe and test parameter may bypass visitor cache','No consent forced; no claim to identify live cause yet']},ensure_ascii=False,indent=2)+'\n')
- print('Browser diagnostics passed: admin-only, absent banner versus loaded and CSS-hidden banner, no consent changes, no cookie values in report.')
+ (root/'docs/COOKIE-BROWSER-DIAGNOSE-PRUEFUNG.json').write_text(json.dumps({'checks':results,'additional_checks':['PHP diagnostic UI requires authenticated administration; optional frontend diagnostic contains only local public DOM/browser state','Diagnostic script absent on ordinary frontend requests','CSS-hidden banner detected','Read-only inspection does not alter consent cookies','Cookie names only; sentinel value absent from report'],'limitations':['Local WordPress; production browser report still needed','Iframe uses authenticated session; direct test can be anonymous; test parameter may bypass visitor cache','No consent forced; no claim to identify live cause yet','Direct test does not use an iframe or require a shared admin domain']},ensure_ascii=False,indent=2)+'\n')
+ print('Browser diagnostics passed: protected admin report, direct anonymous report with matching PHP hook status, absent/loaded/CSS-hidden banner, no consent changes or cookie values.')
 finally:
  php('foreach('+lit({k:v for k,v in state.items()if k!='banners'})+'as $k=>$v){if($v["exists"])update_option($k,$v["value"]);else delete_option($k);}global $wpdb;$wpdb->query("DELETE FROM {$wpdb->prefix}cmplz_cookiebanners");foreach('+lit(state['banners'])+'as $row)$wpdb->insert($wpdb->prefix."cmplz_cookiebanners",$row);')
