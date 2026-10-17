@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Inhaltsentwürfe
  * Description: Einmaliger, manuell ausgelöster Import der vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.4.0
+ * Version: 0.4.1
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }

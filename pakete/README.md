@@ -2,13 +2,13 @@
 
 Vorher Dateien und Datenbank sichern. ZIPs nicht entpacken, in WordPress als Ersatz für die bestehenden Pakete hochladen.
 
-- [VPM Hybrid 0.5.7](vpm-hybrid.zip) – gezielter Abgleich fehlender Complianz-Banner-Hooks; Complianz-Cookie-Richtlinie im Footer und direkte Cookie-Diagnose auch bei unterschiedlichen Domains, einschließlich Status des öffentlichen PHP-Aufrufs; deutscher Affiliate-Hinweis auch bei leerem Hinweisfeld; Service- und Ab-Preis-Schema, Breadcrumb-Markup ohne sichtbare Themenzeile, Favicon und alle bisherigen Theme-Funktionen.
+- [VPM Hybrid 0.5.8](vpm-hybrid.zip) – gezielter Abgleich fehlender Complianz-Banner-Hooks; Complianz-Cookie-Richtlinie im Footer und direkte Cookie-Diagnose auch bei unterschiedlichen Domains, einschließlich Status des öffentlichen PHP-Aufrufs; deutscher Affiliate-Hinweis auch bei leerem Hinweisfeld; Service- und Ab-Preis-Schema, Breadcrumb-Markup ohne sichtbare Themenzeile, Favicon und alle bisherigen Theme-Funktionen.
 - [VPM Anbieter 0.3.2](vpm-providers.zip) – stabile Anbieter-Anker für das Schema; vorhandene Grafiken, Links und Sprachkorrektur bleiben erhalten.
-- [VPM Inhaltsentwürfe 0.4.0](vpm-content-drafts.zip) – natives Website-Icon; bisherige Sprach-, Reparatur-, Rechtstext- und Veröffentlichungsfunktionen enthalten.
+- [VPM Inhaltsentwürfe 0.4.1](vpm-content-drafts.zip) – natives Website-Icon; bisherige Sprach-, Reparatur-, Rechtstext- und Veröffentlichungsfunktionen enthalten.
 
-**[Aktuelle Ergänzungen und Installation](../docs/UPDATE-0.5.7.md)** · [Schema-/Icon-Grundupdate](../docs/UPDATE-0.5.0.md) · [Prüfsummen](SHA256SUMS.txt)
+**[Aktuelle Ergänzungen und Installation](../docs/UPDATE-0.5.8.md)** · [Schema-/Icon-Grundupdate](../docs/UPDATE-0.5.0.md) · [Prüfsummen](SHA256SUMS.txt)
 
-Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Danach LiteSpeed Cache leeren. Kein erneuter Textimport nötig. Optional unter Werkzeuge → VPM Inhaltsentwürfe „VP-Website-Icon einrichten“ ausführen. Bestehende eigene Icons bleiben erhalten.
+Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Danach LiteSpeed Cache leeren. Kein erneuter Textimport nötig. Optional unter Werkzeuge → VPM Inhaltsentwürfe „VPM-Website-Icon einrichten“ ausführen. Bestehende eigene Icons bleiben erhalten.
 
 Bei der Aktualisierung wird nichts automatisch veröffentlicht. Ratgeber und Rechtstexte behalten ihren Status. Englisch-Veröffentlichung und Reparatur leerer Platzhalter sind weiterhin über getrennte Buttons verfügbar. Tracking wird nicht aktiviert. Betreiberangaben gehören weiterhin nur in die separate private Rechtstext-Importdatei.
 
@@ -19,3 +19,7 @@ Bei der Aktualisierung wird nichts automatisch veröffentlicht. Ratgeber und Rec
 Unter Werkzeuge → VPM Inhaltsentwürfe → Private Rechtstext-Entwürfe die JSON auswählen und importieren. Legt fehlendes Impressum und Datenschutz als deutsche Entwürfe an; bestehende Seiten werden übersprungen. Anschließend Inhalte durchsehen und über „Importiertes Impressum und Datenschutz veröffentlichen“ veröffentlichen. Kein normaler WordPress-Import und kein Theme-/Plugin-Upload dieser JSON.
 
 Datenschutz-Arbeitsfassung zum besprochenen technischen Stand: Hosting-Speicherfristen und Vertragsdetails zur Datenverarbeitung sind noch nicht abschließend geklärt. Google Analytics, Klaviyo und CleanLinking werden als nicht aktiv behandelt; vor deren Aktivierung muss der Text angepasst werden. Englische Rechtstexte sind nicht enthalten.
+
+## Helles VPM-Icon
+
+[512-Pixel-PNG direkt herunterladen](../zwischenstand/website-icon/vpm-website-icon-512.png) und in WordPress unter Einstellungen → Allgemein → Website-Icon auswählen. Für diesen Austausch ist kein Paket-Update nötig. Die Pakete enthalten dieselbe neue Grafik für künftige Installationen.
