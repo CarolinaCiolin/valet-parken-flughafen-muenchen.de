@@ -64,4 +64,4 @@ docker exec vpm-ci-wp php -r 'define("WP_ADMIN",true);require "/var/www/html/wp-
 cmp .runtime/ci/before.sha .runtime/ci/after.sha
 printf '%s\n' '{"scope":"disposable CI database only","snapshot_and_ledger_roundtrip":true,"hostinger_restore_tested":false}' > .runtime/ci-reports/backup-restore.json
 rm -f .runtime/ci/after.sha
-echo 'Fresh WordPress CI checks and isolated database backup/restore passed without third-party plugin fixtures.' 
+echo 'Fresh WordPress CI checks and isolated database backup/restore passed without third-party plugin fixtures.'
