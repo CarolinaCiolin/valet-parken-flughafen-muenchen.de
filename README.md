@@ -7,6 +7,7 @@ Aktueller Entwicklungsstand: **Theme 0.6.0 / Anbieter 0.3.3 / Münchner Inhaltse
 - [Standorte München, Frankfurt und Dachmarke](docs/STANDORTE.md)
 - [Update 0.6.0](docs/UPDATE-0.6.0.md) und [aktuelle ZIP-Pakete](pakete/)
 - [Profiltests](docs/STANDORT-PROFILE-PRUEFUNG.json)
+- [Geplante Buchungsplattform, Gutscheine und Partnerabrechnung](docs/BUCHUNGSPLATTFORM.md)
 
 Der gemeinsame Kern lässt sich in separaten WordPress-Installationen einsetzen. Profile für Frankfurt und valet-parkservice.com sind technische Startwerte; eigene Inhalte, Anbieter, Bilder, Rechtstexte, Partnerfreigaben und Sprachseiten kommen je Projekt hinzu. Das bestehende München-Paket ist kein allgemeiner Contentimport.
 

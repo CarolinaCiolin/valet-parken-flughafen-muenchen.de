@@ -28,6 +28,14 @@ Dieses Repository enthält den gemeinsamen Flughafenparken-Kern und die bestehen
 - Complianz: beobachtet wurden Bannerbedarf=true, aber fehlende Banner-/Asset-Hooks bei registriertem Ohne-Banner-Hook. Eng begrenzter Fix in consent-compatibility.php, vom Betreiber als funktionierend bestätigt. Keine Zustimmung erzwingen. Diagnose ist kein allgemeiner Beweis für jede Pluginversion.
 - Direktzugriff auf Live-Domain war aus Cloud häufig mit CONNECT-403 blockiert. Nicht als Website-403 darstellen. Lokale Tests, Benutzerberichte und echte Live-Prüfung auseinanderhalten.
 
+## Geplante Buchungsplattform der Dachmarke
+
+- Betreiber möchte Standortseiten je relevantem Flughafen und je zwei bis drei ausführende Partner; eigene Buchungsoberfläche ohne gekaufte Buchungsplattform.
+- Kapazität/Storno im führenden Partnersystem, möglichst keine Doppelpflege. Eigene, plattformfinanzierte Gutscheine sowie automatische Provision-/Stornoverrechnung sind Anforderungen.
+- Eigenes mandantenfähiges Anbietertool mit SaaS-Tarif ist eine langfristige Option, noch kein implementiertes Produkt.
+- Architekturvorschlag und offene Entscheidungen: docs/BUCHUNGSPLATTFORM.md, Partnerfragen: docs/PARTNER-SYSTEMCHECK.md. Herstellerbeispiele sind keine verifizierte Marktanteilsrangliste; Stripe Connect ist ein Kandidat, keine bestätigte Dienstleisterwahl.
+- Zahlungs-/Buchungslogik getrennt vom Theme. Keine Live-Zahlung, Zahlungsdienstkonten, weiteren Kundendaten oder Tracking-Dienste ungefragt einrichten. Alte Münchner Affiliate-Architektur nicht mit dem neuen Vermittlungs-/Zahlungsmodell gleichsetzen.
+
 ## Arbeiten und Prüfen
 
 - Bestehenden Checkout benutzen; kein Worktree ohne Auftrag. Keine Subagents ohne ausdrücklichen Auftrag.
