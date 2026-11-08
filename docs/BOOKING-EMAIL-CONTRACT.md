@@ -1,3 +1,5 @@
+Aktuell ab 0.7.0: [Partnerzuständigkeit und neue Dokument-/Fahrhinweis-Ereignisse](BOOKING-LOGISTICS-0.7.0.md). Die dortige Zuordnung ersetzt die hier historisch genannten generischen invoice.requested/invoice.adjustment_requested-Ereignisse.
+
 # Schnittstelle für E-Mail-Automatisierung und Belege
 
 ## Einrichtung erst nach Wahl des Dienstes

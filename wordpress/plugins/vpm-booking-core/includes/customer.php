@@ -31,14 +31,14 @@ final class Customer {
     public static function view( string $token ): array {
         $a = self::lookup( $token ); $b = DB::row( 'bookings', 'id', $a['booking_id'] ); Config::require( (bool) $b, 'access_unavailable' ); $q = Core::snapshot( $b );
         global $wpdb; $change = $wpdb->get_var( $wpdb->prepare( 'SELECT state FROM ' . DB::table( 'changes' ) . " WHERE booking_id=%d AND kind='cancellation'", $b['id'] ) );
-        return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'refunded_cents' => (int) $b['refunded_cents'], 'currency' => 'eur', 'airport' => $q['airport'], 'travel' => $q['travel'] ?? array(), 'offer_terms' => $q['offer_terms'] ?? '', 'offer_selection' => $q['offer_selection'] ?? array(), 'cancellation_request' => $change ?: '', 'expires_at' => (int) $a['expires_at'] );
+        return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'refunded_cents' => (int) $b['refunded_cents'], 'currency' => 'eur', 'airport' => $q['airport'], 'travel' => $q['travel'] ?? array(), 'offer_terms' => $q['offer_terms'] ?? '', 'offer_selection' => $q['offer_selection'] ?? array(), 'partner_service' => Logistics::customer_data($b), 'cancellation_request' => $change ?: '', 'expires_at' => (int) $a['expires_at'] );
     }
     public static function cancellation( string $token ): array {
         $access = self::lookup( $token );
         return DB::tx( function() use ( $access, $token ) {
             $b = DB::row( 'bookings', 'id', $access['booking_id'], true ); self::lookup( $token ); Config::require( $b && $b['state'] !== 'cancelled', 'booking_already_cancelled' );
             global $wpdb; $old = (array) $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'changes' ) . " WHERE booking_id=%d AND kind='cancellation'", $b['id'] ), ARRAY_A );
-            if ( ! $old ) { $id = DB::insert( 'changes', array( 'booking_id' => $b['id'], 'kind' => 'cancellation', 'state' => 'pending', 'created_at' => time() ) ); Operations::audit( 'cancellation.requested', 'booking', (int) $b['id'] ); Automation::booking_event( $b, 'booking.cancellation_requested', array(), 'change:' . $id ); }
+            if ( ! $old ) { $id = DB::insert( 'changes', array( 'booking_id' => $b['id'], 'kind' => 'cancellation', 'state' => 'pending', 'created_at' => time() ) ); Operations::audit( 'cancellation.requested', 'booking', (int) $b['id'] ); Automation::booking_event( $b, 'booking.cancellation_requested', array(), 'change:' . $id ); Logistics::partner_event($b,'partner.cancellation_requested',array('change_id'=>$id),'change:'.$id); }
             return array( 'accepted' => true, 'state' => $old['state'] ?? 'pending' );
         } );
     }

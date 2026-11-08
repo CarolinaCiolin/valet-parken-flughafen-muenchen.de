@@ -6,6 +6,7 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'logistics' => 'partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, updated_at bigint NOT NULL, PRIMARY KEY  (partner_id)',
             'operation_locks' => 'booking_id bigint unsigned NOT NULL, lease varchar(64) NOT NULL, expires_at bigint NOT NULL, PRIMARY KEY  (booking_id)',
             'product_templates' => 'id varchar(50) NOT NULL, partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (id), KEY partner_id (partner_id)',
             'memberships' => 'partner_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, role varchar(20) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (partner_id,user_id), KEY user_id (user_id)',
@@ -38,7 +39,7 @@ final class DB {
         foreach ( $schemas as $name => $body ) { $body = str_replace( ', ', ",\n", $body ); dbDelta( 'CREATE TABLE ' . self::table( $name ) . " ($body) ENGINE=InnoDB $charset;" ); }
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
-        update_option( 'vpm_booking_db_version', 6, false );
+        update_option( 'vpm_booking_db_version', 7, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }

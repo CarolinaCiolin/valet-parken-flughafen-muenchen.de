@@ -1,0 +1,20 @@
+{
+  "count": 11,
+  "checks": [
+    "Partner form saves three places and support contact",
+    "Customer sees three distinct route buttons",
+    "Customer can call designated partner for booking questions",
+    "Internal partner email addresses not exposed to customer",
+    "No Maps image, script or iframe loads before explicit route click",
+    "No embedded map requiring third-party loading",
+    "Customer travel instructions responsive 1440",
+    "Customer travel instructions responsive 390",
+    "Customer can submit cancellation wish without executing cancellation",
+    "Partner sees actionable cancellation wish in own portal",
+    "No JavaScript errors in portal/customer travel flow"
+  ],
+  "limitations": [
+    "Local test addresses and payment state only",
+    "No actual route lookup, mail delivery or partner document generation"
+  ]
+}

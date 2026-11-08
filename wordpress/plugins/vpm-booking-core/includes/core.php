@@ -44,7 +44,7 @@ final class Core {
                 $coupon = DB::row( 'coupons', 'code', $code, true );
                 $discount = Vouchers::evaluate( $coupon, $partner, $base, $email );
             }
-            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); if($fulfilment)$q['fulfilment']=$fulfilment; if($demo)$q['sandbox_demo']=true; $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
+            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); if($fulfilment)$q['fulfilment']=$fulfilment; if($demo)$q['sandbox_demo']=true; $q['partner_service']=Logistics::snapshot($partner); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );
             if($demo) DB::insert('demo',array('booking_id'=>$id,'state'=>'created','created_at'=>time()));
             if ( $coupon ) {
@@ -55,7 +55,7 @@ final class Core {
         } );
     }
     public static function confirm( string $public ): array {
-        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); if(Flow::managed($b))Config::require(Flow::confirmation_ready($b),'partner_confirmation_not_ready'); Config::require( in_array( $b['state'], array( 'requested', 'confirmed' ), true ), 'invalid_booking_transition' ); DB::update( 'bookings', array( 'state' => 'confirmed' ), array( 'id' => $b['id'] ) ); $b['state'] = 'confirmed'; if ( $b['payment_state'] === 'paid' ) { Automation::booking_event( $b, 'booking.confirmed' ); } return $b; } );
+        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); if(Flow::managed($b))Config::require(Flow::confirmation_ready($b),'partner_confirmation_not_ready'); Config::require( in_array( $b['state'], array( 'requested', 'confirmed' ), true ), 'invalid_booking_transition' ); DB::update( 'bookings', array( 'state' => 'confirmed' ), array( 'id' => $b['id'] ) ); $b['state'] = 'confirmed'; if ( $b['payment_state'] === 'paid' ) { Automation::booking_event( $b, 'booking.confirmed' ); Logistics::document_required($b); } return $b; } );
     }
     public static function coupon_state( array $booking, string $target ): void {
         global $wpdb; $use = (array) $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'coupon_uses' ) . ' WHERE booking_id=%d FOR UPDATE', $booking['id'] ), ARRAY_A );
@@ -66,7 +66,7 @@ final class Core {
         DB::update( 'coupons', $data, array( 'id' => $c['id'] ) ); DB::update( 'coupon_uses', array( 'state' => $target ), array( 'id' => $use['id'] ) );
     }
     public static function cancel( string $public ): array {
-        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); if ( 'cancelled' === $b['state'] ) { return $b; } DB::update( 'bookings', array( 'state' => 'cancelled' ), array( 'id' => $b['id'] ) ); $b['state'] = 'cancelled'; self::coupon_state( $b, 'released' ); if ( in_array( $b['payment_state'], array( 'paid', 'partially_refunded' ), true ) ) { global $wpdb; $pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COALESCE(SUM(cents),0) FROM ' . DB::table( 'refunds' ) . " WHERE booking_id=%d AND status IN ('pending','submitted','attention')", $b['id'] ) ); $remaining = self::snapshot( $b )['charged'] - (int) $b['refunded_cents'] - $pending; if ( $remaining > 0 ) { self::refund_row( $b, $remaining, 'confirmed-cancellation' ); } } Automation::booking_event( $b, 'booking.cancelled' ); return $b; } );
+        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); if ( 'cancelled' === $b['state'] ) { return $b; } DB::update( 'bookings', array( 'state' => 'cancelled' ), array( 'id' => $b['id'] ) ); $b['state'] = 'cancelled'; global $wpdb; DB::query($wpdb->prepare('UPDATE '.DB::table('changes')." SET state='completed',reviewed_at=%d WHERE booking_id=%d AND kind='cancellation'",time(),$b['id'])); self::coupon_state( $b, 'released' ); if ( in_array( $b['payment_state'], array( 'paid', 'partially_refunded' ), true ) ) { global $wpdb; $pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COALESCE(SUM(cents),0) FROM ' . DB::table( 'refunds' ) . " WHERE booking_id=%d AND status IN ('pending','submitted','attention')", $b['id'] ) ); $remaining = self::snapshot( $b )['charged'] - (int) $b['refunded_cents'] - $pending; if ( $remaining > 0 ) { self::refund_row( $b, $remaining, 'confirmed-cancellation' ); } } Automation::booking_event( $b, 'booking.cancelled' ); return $b; } );
     }
     // Caller must hold booking row lock. Pending refunds reserve their amount too.
     public static function refund_row( array $b, int $cents, string $key ): array {

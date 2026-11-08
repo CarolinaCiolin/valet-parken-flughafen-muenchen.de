@@ -44,7 +44,7 @@ final class Stripe {
                     Flow::enqueue($b,'confirm');
                     Finance::journal( $b, 'paid:' . $b['public_id'], Finance::paid_entries( $q ) );
                     if ( $b['state'] !== 'cancelled' ) { Core::coupon_state( $b, 'consumed' ); }
-                    Automation::booking_event( $b, 'payment.received' ); Automation::booking_event( $b, 'invoice.requested' );
+                    Automation::booking_event( $b, 'payment.received' ); Logistics::document_required($b);
                     if ( $b['state'] === 'confirmed' && !Flow::managed($b) ) { Automation::booking_event( $b, 'booking.confirmed' ); }
                     if ( $b['state'] === 'cancelled' ) { Core::refund_row( $b, $q['charged'], 'late-cancelled-payment' ); }
                 }
@@ -65,7 +65,7 @@ final class Stripe {
             Finance::journal( $b, 'refund:' . $r['public_id'], Finance::refund_entries( $q, (int) $b['refunded_cents'], $after ) );
             DB::update( 'refunds', array( 'status' => 'succeeded', 'stripe_refund' => $o['id'], 'error_code' => '' ), array( 'id' => $r['id'] ) );
             DB::update( 'bookings', array( 'refunded_cents' => $after, 'payment_state' => $after === $q['charged'] ? 'refunded' : 'partially_refunded' ), array( 'id' => $b['id'] ) );
-            Automation::booking_event( $b, 'invoice.adjustment_requested', array( 'refund_id' => $r['public_id'], 'amount_cents' => (int) $r['cents'] ), 'refund:' . $r['id'] );
+            Logistics::partner_event( $b, 'partner.credit_note_required', array( 'refund_id' => $r['public_id'], 'amount_cents' => (int) $r['cents'] ), 'refund:' . $r['id'] );
             Automation::booking_event( $b, 'refund.succeeded', array( 'refund_id' => $r['public_id'], 'amount_cents' => (int) $r['cents'] ), 'refund:' . $r['id'] );
         } elseif ( in_array( $o['status'] ?? '', array( 'failed', 'canceled' ), true ) ) { DB::update( 'refunds', array( 'status' => 'failed', 'stripe_refund' => $o['id'], 'error_code' => 'stripe_refund_failed' ), array( 'id' => $r['id'] ) ); Automation::booking_event( $b, 'refund.failed', array( 'refund_id' => $r['public_id'] ), 'refund:' . $r['id'] ); }
         else { DB::update( 'refunds', array( 'status' => 'submitted', 'stripe_refund' => $o['id'] ), array( 'id' => $r['id'] ) ); }

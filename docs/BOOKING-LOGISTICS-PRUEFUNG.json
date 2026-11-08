@@ -1,0 +1,24 @@
+{
+    "count": 19,
+    "checks": [
+        "Three separate places and decimal-comma GPS pin saved",
+        "reject:invalid_coordinate",
+        "reject:coordinate_pair_required",
+        "Directions URL uses fixed Maps host and encoded destination",
+        "Address-only directions encode special characters",
+        "reject:portal_forbidden",
+        "Booking fixes partner responsibility for documents and cancellations",
+        "Unconfirmed enquiry does not receive final travel instructions",
+        "Changing partner settings never silently rewrites existing booking",
+        "Customer confirmation envelope carries platform sender role, support and all places",
+        "Customer-facing service data hides internal partner email addresses",
+        "Invoice request routed to partner, not customer invoice generation",
+        "Private customer view exposes confirmed routes and partner phone",
+        "Cancellation wish is routed to partner without auto-confirming cancellation",
+        "Explicit route update preserves financial amounts",
+        "Identical repeated instruction update does not send duplicate notice",
+        "Internal billing contact change does not send misleading travel email",
+        "Confirmed cancellation completes customer review case",
+        "reject:booking_not_confirmed"
+    ]
+}

@@ -15,7 +15,7 @@
   const fail = () => status(t('Der Zugang ist abgelaufen oder derzeit nicht verfügbar. Bitte fordern Sie bei Bedarf einen neuen Link an.', 'Access has expired or is unavailable. You can request a new link below.'));
   const labels = {
     requested: ['angefragt', 'requested'], confirmed: ['operativ bestätigt', 'operationally confirmed'], cancelled: ['storniert', 'cancelled'],
-    unpaid: ['unbezahlt', 'unpaid'], creating: ['Zahlung wird vorbereitet', 'payment being prepared'], pending: ['ausstehend', 'pending'], paid: ['bezahlt', 'paid'], expired: ['abgelaufen', 'expired'], partially_refunded: ['teilweise erstattet', 'partially refunded'], refunded: ['erstattet', 'refunded'], reviewed: ['geprüft', 'reviewed']
+    unpaid: ['unbezahlt', 'unpaid'], creating: ['Zahlung wird vorbereitet', 'payment being prepared'], pending: ['ausstehend', 'pending'], paid: ['bezahlt', 'paid'], expired: ['abgelaufen', 'expired'], partially_refunded: ['teilweise erstattet', 'partially refunded'], refunded: ['erstattet', 'refunded'], reviewed: ['geprüft', 'reviewed'], completed: ['bearbeitet', 'completed']
   };
   const state = value => labels[value] ? t(...labels[value]) : value;
   const render = value => {
@@ -31,6 +31,18 @@
       row(t('Abgabe', 'Drop-off'), format(value.travel.departure_utc)); row(t('Rückgabe', 'Collection'), format(value.travel.return_utc)); row(t('Zeitzone', 'Timezone'), value.travel.timezone);
     }
     if (value.offer_selection?.addons) { value.offer_selection.addons.forEach(item => row(item.quantity + ' × ' + item.label, money(item.amount_cents))); }
+    const service = value.partner_service || {};
+    if (service.partner_name) row(t('Ihr ausführender Partner', 'Your service provider'), service.partner_name);
+    if (service.support_phone) {const p=document.createElement('p'),a=document.createElement('a');a.href='tel:'+service.support_phone.replace(/[^+0-9]/g,'');a.textContent=service.support_phone;p.append(document.createTextNode(t('Fragen, Rückmeldungen oder Rechnung: ', 'Questions, feedback or invoices: ')),a);details.append(p);}
+    const pointLabels={parking:t('Parkplatzadresse','Parking address'),handover:t('Schlüsselübergabe bei Abreise','Key handover at departure'),return:t('Fahrzeugrückgabe nach der Reise','Vehicle collection on return')};
+    Object.entries(service.points || {}).forEach(([key, point])=>{
+      if(!pointLabels[key])return;const section=document.createElement('section'),h=document.createElement('h2');h.textContent=pointLabels[key];section.append(h);
+      const name=document.createElement('p');name.textContent=point['name_'+(en?'en':'de')]||point.name_de||'';section.append(name);
+      const address=document.createElement('p');address.textContent=point.address||'';section.append(address);
+      const note=document.createElement('p');note.className='vpm-handover-note';note.textContent=point['instructions_'+(en?'en':'de')]||point.instructions_de||'';section.append(note);
+      if((point.directions_url||'').startsWith('https://www.google.com/maps/dir/?api=1&destination=')){const link=document.createElement('a');link.href=point.directions_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=t('Route in Google Maps öffnen','Open route in Google Maps');section.append(link);}
+      details.append(section);
+    });
     if (value.offer_terms) row(t('Angebotshinweise', 'Offer information'), value.offer_terms);
     if (value.cancellation_request) row(t('Stornowunsch', 'Cancellation request'), state(value.cancellation_request));
     root.querySelector('.vpm-customer-cancel').hidden = value.state === 'cancelled' || !!value.cancellation_request;
