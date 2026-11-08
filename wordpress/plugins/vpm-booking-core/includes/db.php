@@ -6,13 +6,15 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'inquiries' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, request_key varchar(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, payload longtext NOT NULL, state varchar(20) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (id), UNIQUE KEY booking_request (booking_id,request_key)',
+            'commerce' => 'partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (partner_id)',
             'logistics' => 'partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, updated_at bigint NOT NULL, PRIMARY KEY  (partner_id)',
             'operation_locks' => 'booking_id bigint unsigned NOT NULL, lease varchar(64) NOT NULL, expires_at bigint NOT NULL, PRIMARY KEY  (booking_id)',
             'product_templates' => 'id varchar(50) NOT NULL, partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (id), KEY partner_id (partner_id)',
             'memberships' => 'partner_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, role varchar(20) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (partner_id,user_id), KEY user_id (user_id)',
             'connections' => 'partner_id bigint unsigned NOT NULL, mode varchar(20) NOT NULL, adapter varchar(50) NOT NULL, credentials longtext NOT NULL, last_error varchar(50) NOT NULL DEFAULT \'\', assistance tinyint unsigned NOT NULL DEFAULT 0, updated_at bigint NOT NULL, PRIMARY KEY  (partner_id)',
-            'rates' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, partner_id bigint unsigned NOT NULL, product_id varchar(50) NOT NULL, price_cents bigint unsigned NOT NULL, pricing varchar(20) NOT NULL, capacity int unsigned NOT NULL, enabled tinyint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY partner_product (partner_id,product_id)',
-            'allocations' => 'booking_id bigint unsigned NOT NULL, rate_id bigint unsigned NOT NULL, starts_at bigint NOT NULL, ends_at bigint NOT NULL, expires_at bigint NOT NULL, state varchar(20) NOT NULL, PRIMARY KEY  (booking_id), KEY occupancy (rate_id,state,starts_at,ends_at)',
+            'rates' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, partner_id bigint unsigned NOT NULL, product_id varchar(50) NOT NULL, price_cents bigint unsigned NOT NULL, pricing varchar(20) NOT NULL, capacity int unsigned NOT NULL, charging_capacity int unsigned NOT NULL DEFAULT 0, rules longtext DEFAULT NULL, enabled tinyint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY partner_product (partner_id,product_id)',
+            'allocations' => 'booking_id bigint unsigned NOT NULL, rate_id bigint unsigned NOT NULL, charging tinyint unsigned NOT NULL DEFAULT 0, starts_at bigint NOT NULL, ends_at bigint NOT NULL, expires_at bigint NOT NULL, state varchar(20) NOT NULL, PRIMARY KEY  (booking_id), KEY occupancy (rate_id,state,starts_at,ends_at)',
             'fulfilment' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, action varchar(20) NOT NULL, result longtext DEFAULT NULL, status varchar(20) NOT NULL, attempts int unsigned NOT NULL DEFAULT 0, next_attempt bigint NOT NULL DEFAULT 0, locked_until bigint NOT NULL DEFAULT 0, locked_by varchar(64) NOT NULL DEFAULT \'\', error_code varchar(50) NOT NULL DEFAULT \'\', created_at bigint NOT NULL, PRIMARY KEY  (id), UNIQUE KEY booking_action (booking_id,action)',
             'demo' => 'booking_id bigint unsigned NOT NULL, state varchar(30) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (booking_id)',
             'loyalty' => 'contact_id bigint unsigned NOT NULL, coupon_id bigint unsigned NOT NULL, booking_id bigint unsigned NOT NULL, issued_at bigint NOT NULL, PRIMARY KEY  (contact_id), UNIQUE KEY coupon_id (coupon_id)',
@@ -39,7 +41,7 @@ final class DB {
         foreach ( $schemas as $name => $body ) { $body = str_replace( ', ', ",\n", $body ); dbDelta( 'CREATE TABLE ' . self::table( $name ) . " ($body) ENGINE=InnoDB $charset;" ); }
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
-        update_option( 'vpm_booking_db_version', 7, false );
+        update_option( 'vpm_booking_db_version', 8, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }

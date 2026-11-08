@@ -19,6 +19,7 @@
   };
   const state = value => labels[value] ? t(...labels[value]) : value;
   const render = value => {
+    root.querySelector('.vpm-customer-inquiry').hidden=false;
     const details = root.querySelector('.vpm-customer-details'); details.replaceChildren(); details.hidden = false;
     const row = (label, text) => {const p = document.createElement('p'), strong = document.createElement('strong'); strong.textContent = label + ': '; p.append(strong, document.createTextNode(text)); details.append(p);};
     const money = cents => new Intl.NumberFormat(en ? 'en-GB' : 'de-DE', {style: 'currency', currency: value.currency.toUpperCase()}).format(cents / 100);
@@ -34,13 +35,13 @@
     const service = value.partner_service || {};
     if (service.partner_name) row(t('Ihr ausführender Partner', 'Your service provider'), service.partner_name);
     if (service.support_phone) {const p=document.createElement('p'),a=document.createElement('a');a.href='tel:'+service.support_phone.replace(/[^+0-9]/g,'');a.textContent=service.support_phone;p.append(document.createTextNode(t('Fragen, Rückmeldungen oder Rechnung: ', 'Questions, feedback or invoices: ')),a);details.append(p);}
-    const pointLabels={parking:t('Parkplatzadresse','Parking address'),handover:t('Schlüsselübergabe bei Abreise','Key handover at departure'),return:t('Fahrzeugrückgabe nach der Reise','Vehicle collection on return')};
+    const pointLabels={parking:t('Parkplatzadresse','Parking address'),handover:value.offer_selection?.service==='valet'?t('Schlüsselübergabe bei Abreise','Key handover at departure'):t('Anreise / Treffpunkt','Arrival / meeting point'),return:t('Fahrzeugrückgabe nach der Reise','Vehicle collection on return')};
     Object.entries(service.points || {}).forEach(([key, point])=>{
       if(!pointLabels[key])return;const section=document.createElement('section'),h=document.createElement('h2');h.textContent=pointLabels[key];section.append(h);
       const name=document.createElement('p');name.textContent=point['name_'+(en?'en':'de')]||point.name_de||'';section.append(name);
       const address=document.createElement('p');address.textContent=point.address||'';section.append(address);
       const note=document.createElement('p');note.className='vpm-handover-note';note.textContent=point['instructions_'+(en?'en':'de')]||point.instructions_de||'';section.append(note);
-      if((point.directions_url||'').startsWith('https://www.google.com/maps/dir/?api=1&destination=')){const link=document.createElement('a');link.href=point.directions_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=t('Route in Google Maps öffnen','Open route in Google Maps');section.append(link);}
+      if(point.directions_url && (()=>{try{const u=new URL(point.directions_url);return u.protocol==='https:'&&['www.google.com','google.com','www.google.de','google.de','maps.google.com','maps.app.goo.gl','goo.gl'].includes(u.hostname);}catch(_){return false;}})()){const link=document.createElement('a');link.href=point.directions_url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=t('Route in Google Maps öffnen','Open route in Google Maps');section.append(link);}
       details.append(section);
     });
     if (value.offer_terms) row(t('Angebotshinweise', 'Offer information'), value.offer_terms);
@@ -56,6 +57,7 @@
       if (form.classList.contains('vpm-customer-access')) {
         await post('access', Object.fromEntries(new FormData(form))); form.reset();
         status(t('Falls die Angaben zugeordnet werden können und der Versand eingerichtet ist, erhalten Sie einen Zugangslink per E-Mail.', 'If the details match and delivery is configured, an access link will be sent by email.'));
+      } else if(form.classList.contains('vpm-customer-inquiry')){form.__key=form.__key||crypto.randomUUID();await post('inquiry',{token,message:form.elements.message.value,request_key:form.__key});form.reset();form.__key='';status(t('Ihre Anfrage wurde für den Partner erfasst.','Your enquiry has been recorded for the provider.'));
       } else if (form.classList.contains('vpm-customer-cancel') && form.elements.acknowledged.checked) {
         await post('cancellation', {token}); form.hidden = true;
         status(t('Ihr Stornowunsch wurde zur Prüfung übermittelt. Das ist noch keine Stornobestätigung oder Erstattung.', 'Your cancellation request was submitted for review. This is not a cancellation confirmation or refund.'));

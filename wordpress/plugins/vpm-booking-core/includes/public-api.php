@@ -26,7 +26,8 @@ final class PublicApi {
         $start = self::instant( (string) ( $d['departure'] ?? '' ), $a['timezone'], 'departure', (string) ( $d['departure_offset'] ?? '' ) );
         $end = self::instant( (string) ( $d['return'] ?? '' ), $a['timezone'], 'return', (string) ( $d['return_offset'] ?? '' ) );
         Config::require( $start > time() && $start <= time() + 366 * DAY_IN_SECONDS && $end > $start && $end - $start <= 180 * DAY_IN_SECONDS, 'invalid_travel_period' );
-        return array( 'airport' => $a['code'], 'timezone' => $a['timezone'], 'departure_utc' => $start, 'return_utc' => $end );
+        $basis=$d['time_basis']??'parking';Config::require(in_array($basis,array('parking','flight'),true),'invalid_time_basis');$service=$d['service']??'any';Config::require(in_array($service,array('any','parking','valet','shuttle'),true),'invalid_service');$extra=array('service'=>$service,'charging_required'=>!empty($d['charging_required']));if($basis==='flight'){$extra+=array('time_basis'=>'flight','flight_departure_utc'=>$start,'flight_return_utc'=>$end);$start-=3*HOUR_IN_SECONDS;$end+=30*MINUTE_IN_SECONDS;Config::require($start>time(),'invalid_departure');}
+        return $extra + array( 'airport' => $a['code'], 'timezone' => $a['timezone'], 'departure_utc' => $start, 'return_utc' => $end );
     }
     public static function enabled(): bool { return (bool) get_option( 'vpm_booking_frontend_enabled', false ); }
     public static function limit(): void {
@@ -39,16 +40,17 @@ final class PublicApi {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data ); $scope = (string) ( $data['airport_scope'] ?? '' ); Products::check_scope( $scope, $context['airport'] ); $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de';
         // Only installed, server-side adapters may supply prices. No fallback/test offers shipped.
         Config::require( Adapters::has_source($context['airport']), 'booking_adapter_not_configured' );
-        $offers = apply_filters( 'vpm_booking_quote_offers', array(), $context ); Config::require( is_array( $offers ) && count( $offers ) <= 20, 'invalid_adapter_response' ); $out = array();
+        $offers = apply_filters( 'vpm_booking_quote_offers', array(), $context ); Config::require( is_array( $offers ) && count( $offers ) <= 100, 'invalid_adapter_response' ); $out = array();
         foreach ( $offers as $offer ) {
             Config::require( is_array( $offer ) && ( $offer['currency'] ?? '' ) === 'eur', 'unsupported_offer_currency' );
             $partner = DB::row( 'partners', 'id', Config::integer( $offer['partner_id'] ?? null, 1 ) );
             Config::require( $partner && $partner['airport'] === $context['airport'], 'adapter_partner_mismatch' );
             if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
-            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array() );
+            if($locale==='en'&&($offer['_source']['mode']??'')==='manual'&&isset($offer['price_breakdown']))$terms='Parking price including the selected service and itemized surcharges.';
+            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','price_breakdown'=>$offer['price_breakdown']??array() );
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
-            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms ) + Products::public_data( $product, $locale );
+            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']) ) + Products::public_data( $product, $locale );
         }
         return array( 'offers' => $out, 'timezone' => $context['timezone'] );
     }
@@ -64,7 +66,7 @@ final class PublicApi {
         $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
         $context = json_decode( $quote['context'], true ); Config::require( is_array( $context ) && $context['departure_utc'] > time(), 'quote_expired' );
         $details = json_decode( $quote['details'] ?? '', true ) ?: array(); $scope = (string) ( $details['airport_scope'] ?? '' ); Config::require( $scope === (string) ( $data['airport_scope'] ?? '' ), 'airport_scope_mismatch' ); Products::check_scope( $scope, $context['airport'] );
-        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );
+        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );$selection['charging_space']=!empty($context['charging_required']);$selection['service']=$details['service']??'parking';$selection['price_breakdown']=$details['price_breakdown']??array();
         return array( $quote, $context, $details, $selection );
     }
     public static function preview( array $data ): array {

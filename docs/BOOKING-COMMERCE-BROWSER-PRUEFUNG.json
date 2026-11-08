@@ -1,0 +1,28 @@
+{
+  "count": 19,
+  "checks": [
+    "Partner navigation covers eleven management sections",
+    "Every partner menu link targets an existing section",
+    "Partner can enable valet/shuttle, fees, hours and handover lead time",
+    "Charging capacity saved as subset of total capacity",
+    "Tariff update preserves capacity and saves five-percent duration discount",
+    "Direct Maps link is editable in partner portal",
+    "Partner portal has no page overflow at 1440",
+    "Partner portal has no page overflow at 390",
+    "Valet landing page preselects valet and leaves it changeable",
+    "Search labels explicitly ask for flight times",
+    "Only available selected service offered",
+    "Required charging space is identified in offer",
+    "Offer exposes server-calculated price components",
+    "Return landing plus thirty minutes outside service hours yields no offers",
+    "Protected customer form submits booking question",
+    "Customer question appears in own partner inbox",
+    "Partner can close an addressed customer question",
+    "No JavaScript errors in service and partner workflow",
+    "No Maps requests while editing or viewing booking offers"
+  ],
+  "limitations": [
+    "Local test inventory only",
+    "No actual provider API, email delivery or public payment checkout"
+  ]
+}

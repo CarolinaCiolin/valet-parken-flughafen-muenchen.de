@@ -1,4 +1,6 @@
-Aktuelle Dachmarken-Erweiterung: [Buchungskern 0.7.0 mit Partnerkontakten, Übergabeorten und Fahrhinweisen](docs/BOOKING-LOGISTICS-0.7.0.md), separat unter [pakete](pakete/README.md).
+Aktueller optionaler Buchungskern: [0.8.0 – Services, gemeinsame Bestände und Preise](docs/BOOKING-COMMERCE-0.8.0.md).
+
+Installierbare Pakete und Versionshinweise: [pakete](pakete/README.md).
 
 # Flughafenparken – gemeinsamer Theme-Kern
 

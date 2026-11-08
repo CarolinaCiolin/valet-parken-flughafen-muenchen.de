@@ -14,9 +14,10 @@ final class Flow {
             global $wpdb; $connection = Adapters::connection( $input['partner_id'] ); Config::require( $connection && $connection['mode'] === $source['mode'], 'connection_changed_recheck' );
             $rate = null; if ( $source['mode'] === 'manual' ) { $rate = DB::row( 'rates', 'id', Config::integer( $source['rate_id'] ?? null, 1 ), true ); Config::require( $rate && (int) $rate['partner_id'] === $input['partner_id'], 'rate_not_owned' ); }
             $old = DB::row( 'bookings', 'request_key', $key, true ); if ( $old ) { return Core::create( $input, $key ); }
+            if(isset($source['service']))Config::require(isset(Commerce::services($input['partner_id'],$input['travel'])[$source['service']]),'service_unavailable');
             if ( $rate ) { Config::require( Adapters::available( $rate, $input['travel'], true ), 'capacity_unavailable' ); }
             $b = Core::create( $input, $key );
-            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'starts_at' => $input['travel']['departure_utc'], 'ends_at' => $input['travel']['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
+            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'charging'=>empty($input['travel']['charging_required'])?0:1, 'starts_at' => $input['travel']['departure_utc'], 'ends_at' => $input['travel']['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
             else { self::enqueue( $b, 'hold' ); } return $b;
         } );
     }

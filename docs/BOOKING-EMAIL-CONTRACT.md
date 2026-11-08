@@ -1,3 +1,5 @@
+Aktuell ab 0.8.0: [Flugzeiten, Anfahrt, Kundenanfragen und getrennte Partnerbenachrichtigungen](BOOKING-COMMERCE-0.8.0.md). Flugmodus liefert ursprüngliche Flugzeiten, berechnete Parkplatzzeiten und konkreten Übergabetermin in `partner_service.handover_utc` mit `timezone`; Maps-Link je Ort in `directions_url`. Zusätzliche Partnerereignisse: `partner.booking_requested` (unbezahlt), `partner.payment.received`, `partner.booking.confirmed`, `partner.booking.cancelled`, `partner.customer_inquiry`. Alle über die Plattform-Versandstrecke; Outbox ist keine Zustellbestätigung.
+
 Aktuell ab 0.7.0: [Partnerzuständigkeit und neue Dokument-/Fahrhinweis-Ereignisse](BOOKING-LOGISTICS-0.7.0.md). Die dortige Zuordnung ersetzt die hier historisch genannten generischen invoice.requested/invoice.adjustment_requested-Ereignisse.
 
 # Schnittstelle für E-Mail-Automatisierung und Belege

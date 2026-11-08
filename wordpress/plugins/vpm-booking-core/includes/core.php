@@ -27,7 +27,7 @@ final class Core {
         $code = strtoupper( trim( (string) ( $input['coupon'] ?? '' ) ) );
         $travel = $input['travel'] ?? array(); $terms = sanitize_text_field( $input['offer_terms'] ?? '' );
         Config::require( is_array( $travel ) && strlen( $terms ) <= 1200, 'invalid_offer_snapshot' );
-        if ( $travel ) { Config::require( isset( $travel['airport'], $travel['timezone'], $travel['departure_utc'], $travel['return_utc'] ) && is_string( $travel['airport'] ) && in_array( $travel['timezone'], \DateTimeZone::listIdentifiers(), true ) && is_int( $travel['departure_utc'] ) && is_int( $travel['return_utc'] ) && $travel['departure_utc'] > 0 && $travel['return_utc'] > $travel['departure_utc'], 'invalid_travel_snapshot' ); $travel = array_intersect_key( $travel, array_flip( array( 'airport', 'timezone', 'departure_utc', 'return_utc' ) ) ); }
+        if ( $travel ) { Config::require( isset( $travel['airport'], $travel['timezone'], $travel['departure_utc'], $travel['return_utc'] ) && is_string( $travel['airport'] ) && in_array( $travel['timezone'], \DateTimeZone::listIdentifiers(), true ) && is_int( $travel['departure_utc'] ) && is_int( $travel['return_utc'] ) && $travel['departure_utc'] > 0 && $travel['return_utc'] > $travel['departure_utc'], 'invalid_travel_snapshot' ); $travel = array_intersect_key( $travel, array_flip( array( 'airport', 'timezone', 'departure_utc', 'return_utc', 'time_basis','flight_departure_utc','flight_return_utc','service','charging_required' ) ) ); }
         $selection = $input['offer_selection'] ?? array(); Config::require( is_array( $selection ), 'invalid_offer_selection' ); if ( $selection ) { Config::require( ( $selection['total_cents'] ?? null ) === $base && is_array( $selection['addons'] ?? null ), 'invalid_offer_selection' ); }
         $fulfilment = $input['fulfilment'] ?? array(); $demo = !empty($input['sandbox_demo']); Config::require(!$demo || (defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true),'demo_disabled');
         $fingerprint_data = array( $email, $partner_id, $base, $locale, $code ); if ( $travel || $terms ) { $fingerprint_data[] = $travel; $fingerprint_data[] = $terms; }
@@ -44,14 +44,14 @@ final class Core {
                 $coupon = DB::row( 'coupons', 'code', $code, true );
                 $discount = Vouchers::evaluate( $coupon, $partner, $base, $email );
             }
-            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); if($fulfilment)$q['fulfilment']=$fulfilment; if($demo)$q['sandbox_demo']=true; $q['partner_service']=Logistics::snapshot($partner); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
+            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); if($fulfilment)$q['fulfilment']=$fulfilment; if($demo)$q['sandbox_demo']=true; $q['partner_service']=Logistics::appointment(Logistics::snapshot($partner),$travel,(string)($selection['service']??$fulfilment['service']??'parking'),$partner_id); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );
             if($demo) DB::insert('demo',array('booking_id'=>$id,'state'=>'created','created_at'=>time()));
             if ( $coupon ) {
                 DB::insert( 'coupon_uses', array( 'coupon_id' => $coupon['id'], 'booking_id' => $id, 'customer_hash' => $customer_hash, 'amount_cents' => $discount, 'state' => 'reserved' ) );
                 DB::update( 'coupons', array( 'held_uses' => (int) $coupon['held_uses'] + 1, 'held_cents' => (int) $coupon['held_cents'] + $discount ), array( 'id' => $coupon['id'] ) );
             }
-            $booking = DB::row( 'bookings', 'id', $id ); Automation::booking_event( $booking, 'booking.requested' ); return $booking;
+            $booking = DB::row( 'bookings', 'id', $id ); Automation::booking_event( $booking, 'booking.requested' ); Logistics::partner_event($booking,'partner.booking_requested',array('booking_state'=>'requested','payment_state'=>'unpaid','travel'=>$travel)); return $booking;
         } );
     }
     public static function confirm( string $public ): array {

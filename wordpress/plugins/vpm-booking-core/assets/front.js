@@ -49,7 +49,7 @@
   const summary = root => {
     const selection = selected.get(root); if (!selection) return;
     const {offer, card} = selection, chosen = collect(card), box = root.querySelector('.vpm-booking-summary'); box.replaceChildren();
-    const title = document.createElement('strong'); title.textContent = offer.partner + (offer.product_name ? ' · ' + offer.product_name : ''); box.append(title);
+    const title = document.createElement('strong'); title.textContent = offer.partner + (offer.product_name ? ' · ' + offer.product_name : '') + (offer.service ? ' · ' + ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service] : ''); box.append(title);
     const list = document.createElement('ul'); const base = document.createElement('li'); base.textContent = parkingLabel(root, offer.parking_type) + ': ' + money(root, offer.amount_cents, offer.currency); list.append(base);
     chosen.forEach(item => {const addon = offer.addons.find(a => a.id === item.id); const row = document.createElement('li'); row.textContent = item.quantity + ' × ' + addon.label + ': ' + money(root, addon.unit_amount_cents * item.quantity, offer.currency); list.append(row);}); box.append(list);
     const sum = document.createElement('p'); sum.className = 'vpm-booking-total'; sum.textContent = (root.dataset.locale === 'en' ? 'Total before voucher: ' : 'Gesamt vor Gutschein: ') + money(root, total(offer, chosen), offer.currency); box.append(sum);
@@ -111,9 +111,11 @@
           const price = document.createElement('p'); price.className = 'vpm-booking-price'; price.textContent = money(root, offer.amount_cents, offer.currency);
           const terms = document.createElement('p'); terms.textContent = offer.terms;
           const choose = document.createElement('button'); choose.type = 'button'; choose.className = 'vpm-booking-choose'; choose.textContent = text(root).choose; choose.dataset.quoteId = offer.quote_id; choose.setAttribute('aria-pressed', 'false');
-          const product = document.createElement('p'); product.textContent = [offer.product_name, parkingLabel(root, offer.parking_type)].filter(Boolean).join(' · ');
+          const product = document.createElement('p'); product.textContent = [offer.product_name, parkingLabel(root, offer.parking_type), offer.charging_space?(root.dataset.locale==='en'?'With charging point':'Mit Ladesäule'):'', ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service]].filter(Boolean).join(' · ');
           const attributes = document.createElement('ul'); (offer.attributes || []).forEach(value => {const item = document.createElement('li'); item.textContent = value; attributes.append(item);});
           card.dataset.parkingType = offer.parking_type || 'unspecified'; offers.set(card, offer); card.append(title, product, price, attributes, terms);
+          if(offer.price_breakdown&&Object.keys(offer.price_breakdown).length){const details=document.createElement('details'),heading=document.createElement('summary');heading.textContent=root.dataset.locale==='en'?'Price details':'Preisdetails';details.append(heading);const list=document.createElement('ul');const labels={parking_cents:['Parkpreis','Parking'],duration_discount_cents:['Aufenthaltsrabatt','Stay discount'],service_fee_cents:['Servicegebühr','Service fee'],arrival_surcharge_cents:['Nachtzuschlag Abgabe','Night surcharge: drop-off'],return_surcharge_cents:['Nachtzuschlag Abholung','Night surcharge: collection']};Object.entries(labels).forEach(([key,label])=>{const cents=offer.price_breakdown[key];if(!cents)return;const row=document.createElement('li');row.textContent=label[root.dataset.locale==='en'?1:0]+': '+money(root,key==='duration_discount_cents'?-cents:cents,offer.currency);list.append(row);});details.append(list);card.append(details);}
+
           if (offer.addons?.length) {
             const group = document.createElement('fieldset'); group.className = 'vpm-booking-addons'; const legend = document.createElement('legend'); legend.textContent = root.dataset.locale === 'en' ? 'Optional extras' : 'Optionale Zusatzleistungen'; group.append(legend);
             offer.addons.forEach(addon => {

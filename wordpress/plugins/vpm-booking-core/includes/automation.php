@@ -9,6 +9,7 @@ final class Automation {
     }
     public static function booking_event( array $b, string $topic, array $extra = array(), string $suffix = '' ): void {
         if(!empty(Core::snapshot($b)['sandbox_demo']))return;
+        if(in_array($topic,array('payment.received','booking.confirmed','booking.cancelled'),true))Logistics::partner_event($b,'partner.'.$topic,array('booking_state'=>$b['state'],'payment_state'=>$b['payment_state'],'travel'=>Core::snapshot($b)['travel']??array()),$suffix);
         self::event( $b['public_id'] . ':' . $topic . ':' . $suffix, $topic, 'transactional', array_merge( array( 'booking_id' => $b['public_id'], 'recipient' => $b['customer_email'], 'locale' => $b['locale'], 'amounts' => array_intersect_key( Core::snapshot( $b ), array_flip( array( 'base', 'discount', 'charged', 'currency' ) ) ), 'partner_id' => (int) $b['partner_id'], 'airport' => Core::snapshot( $b )['airport'], 'travel' => Core::snapshot( $b )['travel'] ?? array(), 'offer_terms' => Core::snapshot( $b )['offer_terms'] ?? '', 'offer_selection' => Core::snapshot( $b )['offer_selection'] ?? array(), 'sender_role' => 'platform', 'document_issuer' => 'partner', 'cancellation_responsible' => 'partner', 'partner_service' => Logistics::customer_data($b), 'booking_state' => $b['state'], 'payment_state' => $b['payment_state'] ), $extra ) );
     }
     public static function campaign( string $campaign ): int {

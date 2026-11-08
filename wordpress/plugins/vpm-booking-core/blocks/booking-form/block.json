@@ -21,6 +21,14 @@
     "flow": {
       "type": "string",
       "default": "inline"
+    },
+    "service": {
+      "type": "string",
+      "default": "any"
+    },
+    "time_basis": {
+      "type": "string",
+      "default": "flight"
     }
   },
   "supports": {

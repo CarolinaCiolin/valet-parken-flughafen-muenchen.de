@@ -50,6 +50,8 @@
     "Automation signed event",
     "Automation signed event",
     "Automation signed event",
+    "Automation signed event",
+    "Automation signed event",
     "Acknowledged outbox events not resent",
     "Transactional receipt event independent of newsletter consent",
     "Explicit DOI confirmation activates once",
@@ -65,7 +67,7 @@
     "Public cannot read customer booking data",
     "Public cannot manage partners or amounts"
   ],
-  "count": 64,
+  "count": 66,
   "external_http": "All intercepted by local fake transport; no real Stripe/email request",
   "limitations": [
     "Sandbox-only backend, no live money or partner capacity API",
