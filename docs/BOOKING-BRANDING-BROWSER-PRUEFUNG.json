@@ -1,0 +1,47 @@
+{
+  "count": 21,
+  "checks": [
+    "WordPress media picker selects frontend logo",
+    "Platform saves independent logo, colors and sender settings",
+    "Email preview uses independent configured mail logo",
+    "Portal starts with task overview",
+    "Partner dashboard presents seven relevant task cards",
+    "Menu shows only selected management section",
+    "Current section has accessible active marker",
+    "Saving returns to same management section",
+    "Dashboard no horizontal overflow 1440",
+    "Dashboard no horizontal overflow 768",
+    "Dashboard no horizontal overflow 390",
+    "Partner overview is separate from platform administration",
+    "New task dashboard preserves customer email privacy",
+    "Frontend displays selected media logo",
+    "Frontend loads brand button color through same-origin CSS",
+    "Frontend button text has checked contrast",
+    "Public stylesheet emits CSS without sender address",
+    "Brand stylesheet is excluded from indexing",
+    "Branded booking form no overflow 1280",
+    "Branded booking form no overflow 390",
+    "No JavaScript errors in branding/dashboard flow"
+  ],
+  "local_timings": [
+    {
+      "page": "platform-and-partner-overview",
+      "ttfb_ms": 73,
+      "dom_content_loaded_ms": 104,
+      "load_ms": 133,
+      "resource_count": 3
+    },
+    {
+      "page": "public-booking-form",
+      "ttfb_ms": 183,
+      "dom_content_loaded_ms": 837,
+      "load_ms": 839,
+      "resource_count": 11
+    }
+  ],
+  "limitations": [
+    "Local Docker timings only, not Hostinger or load-test results",
+    "Branding payload is not actual email delivery",
+    "Test media and identities only"
+  ]
+}

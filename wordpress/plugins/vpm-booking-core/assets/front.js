@@ -213,7 +213,7 @@
   };
   const wizard = root => {
     if(root.dataset.flow!=='steps')return;
-    const heading=document.createElement('h2');heading.className='vpm-wizard-heading';heading.setAttribute('aria-live','polite');root.prepend(heading);
+    const heading=document.createElement('h2');heading.className='vpm-wizard-heading';heading.setAttribute('aria-live','polite');const brand=root.querySelector('.vpm-booking-brand');if(brand)brand.after(heading);else root.prepend(heading);
     const nav=document.createElement('div');nav.className='vpm-wizard-nav';
     const back=document.createElement('button');back.type='button';back.className='vpm-wizard-back';back.textContent=root.dataset.locale==='en'?'Back':'Zurück';
     const next=document.createElement('button');next.type='button';next.className='vpm-wizard-next';next.textContent=root.dataset.locale==='en'?'Continue':'Weiter';

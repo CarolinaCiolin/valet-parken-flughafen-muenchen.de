@@ -27,6 +27,7 @@ final class Operations {
     public static function handle( array $d ): void {
         Config::require( current_user_can( 'manage_options' ), 'permission_denied' );
         switch ( $d['vpm_operation'] ?? '' ) {
+            case 'branding': Branding::save($d);break;
             case 'message_review': Broker::review(self::number($d['id']??'',1),($d['decision']??'')==='approve',(string)($d['body']??''));break;
             case 'profile_review': Broker::profile_review(self::number($d['partner_id']??'',1),($d['decision']??'')==='approve');break;
             case 'promotion_settings': Promotions::settings($d);break;
@@ -59,7 +60,7 @@ final class Operations {
     public static function register(): void {
         add_action( 'admin_menu', function() { $hook = add_management_page( 'Buchungsverwaltung', 'VPM Buchungsverwaltung', 'manage_options', 'vpm-booking-operations', array( self::class, 'page' ) ); add_action( 'load-' . $hook, function() {
             if ( ! isset( $_POST['vpm_operation'] ) ) { return; } check_admin_referer( 'vpm_booking_operations' );
-            try { self::handle( wp_unslash( $_POST ) ); wp_safe_redirect( admin_url( 'tools.php?page=vpm-booking-operations&saved=1' ) ); exit; }
+            try { self::handle( wp_unslash( $_POST ) ); wp_safe_redirect( admin_url( 'tools.php?page=vpm-booking-operations&saved=1' ).'#'.(array('branding'=>'branding','message_review'=>'communication','profile_review'=>'communication','promotion_settings'=>'promotions','promotion_create'=>'promotions','promotion_toggle'=>'promotions','partner'=>'partners','product'=>'products','coupon'=>'coupons','airports'=>'airports','membership'=>'partners','review'=>'changes')[(string)($_POST['vpm_operation']??'')]??'') ); exit; }
             catch ( \Throwable $e ) { $GLOBALS['vpm_operation_error'] = preg_match( '/^[a-z_]+$/D', $e->getMessage() ) ? $e->getMessage() : 'operation_failed'; }
         } ); } );
     }
@@ -95,11 +96,12 @@ final class Operations {
     }
     public static function page(): void {
         if ( ! current_user_can( 'manage_options' ) ) { return; } global $wpdb;
-        echo '<div class="wrap"><h1>VPM Buchungsverwaltung</h1><p>Entwicklung / Sandbox. Keine Partnerkapazität oder Live-Zahlung angebunden. Anfragen und Stornowünsche sind keine bestätigten Buchungen oder ausgeführten Stornos.</p>';
+        echo '<div class="wrap vpm-admin"><h1>VPM Buchungsverwaltung</h1><p>Entwicklungsstand. Live-Zahlungen sind gesperrt. Anfragen und Stornowünsche sind keine bestätigten Buchungen oder ausgeführten Stornos.</p>';
+        Dashboard::render_platform();
         if ( isset( $_GET['saved'] ) ) { echo '<div class="notice notice-success"><p>Gespeichert.</p></div>'; }
-        if ( isset( $GLOBALS['vpm_operation_error'] ) ) { echo '<div class="notice notice-error"><p>Speichern fehlgeschlagen: ' . esc_html( $GLOBALS['vpm_operation_error'] ) . '</p></div>'; }
+        if ( isset( $GLOBALS['vpm_operation_error'] ) ) { echo '<div class="notice notice-error"><p>Speichern fehlgeschlagen: ' . esc_html(array('brand_text_contrast'=>'Schrift und Hintergrund benötigen mehr Kontrast.','brand_accent_contrast'=>'Die Fehlerfarbe benötigt mehr Kontrast zum Hintergrund.','invalid_brand_color'=>'Bitte gültige Farben auswählen.','invalid_brand_logo'=>'Bitte ein Bild aus der Mediathek wählen: PNG/JPEG für E-Mail, PNG/JPEG/WebP für das Buchungstool.','invalid_brand_name'=>'Bitte Marken- und Absendername ausfüllen.','invalid_brand_email'=>'Bitte die Absender- und Antwortadressen prüfen.')[$GLOBALS['vpm_operation_error']]??$GLOBALS['vpm_operation_error']) . '</p></div>'; }
         echo '<h2>Partnerzugänge und Einrichtungsteam</h2><p>Vorhandene WordPress-Benutzer mit reinen Leserechten verwenden, keine Administratorrolle für Partner. Zuordnung nur durch die Plattform. Owner/Manager/Support dürfen eigene Einstellungen bearbeiten; Viewer liest nur. Support erhält Zugriff ausschließlich auf zugeordnete Partner.</p>'; self::form('membership'); self::input('partner_id','Partner-ID',0,'number'); self::input('user_id','WordPress-Benutzer-ID',0,'number'); echo '<select name="role"><option value="owner">Partnerinhaber</option><option value="manager">Partnermitarbeiter</option><option value="viewer">Nur Lesen</option><option value="support">Plattform-Einrichtungsteam</option><option value="remove">Zugriff entziehen</option></select>'; submit_button('Zugang zuordnen'); echo '</form><p><a href="' . esc_url(add_query_arg('vpm_partner_portal',1,home_url('/'))) . '">Partnerportal und Plattformübersicht öffnen</a></p>';
-        echo '<p><a href="#airports">Flughäfen</a> · <a href="#partners">Partner</a> · <a href="#products">Angebotsvorlagen</a> · <a href="#coupons">Gutscheine</a> · <a href="#bookings">Anfragen</a> · <a href="#changes">Stornowünsche</a> · <a href="#audit">Protokoll</a></p><h2 id="airports">Flughäfen und Standortseiten</h2><p>Namen und Seiten-ID bearbeiten. 0 bedeutet noch keine Zielseite. Englische Ziele werden über Polylang zugeordnet; Veröffentlichung und Inhalte bleiben unverändert.</p>';
+        echo '<nav class="vpm-admin-nav"><a href="#branding">Branding</a> · <a href="#communication">Freigaben</a> · <a href="#promotions">Aktionen</a> · <a href="#airports">Flughäfen</a> · <a href="#partners">Partner</a> · <a href="#products">Angebotsvorlagen</a> · <a href="#coupons">Gutscheine</a> · <a href="#bookings">Anfragen</a> · <a href="#changes">Stornowünsche</a> · <a href="#audit">Protokoll</a></nav><h2 id="airports">Flughäfen und Standortseiten</h2><p>Namen und Seiten-ID bearbeiten. 0 bedeutet noch keine Zielseite. Englische Ziele werden über Polylang zugeordnet; Veröffentlichung und Inhalte bleiben unverändert.</p>';
         self::form( 'airports' ); self::table( array( 'IATA', 'Name Deutsch', 'Name Englisch', 'Seiten-ID' ) );
         foreach ( Airports::all() as $i => $a ) { echo '<tr><th>' . esc_html( $a['code'] ) . '</th>'; foreach ( array( 'name_de', 'name_en', 'page_id' ) as $k ) { echo '<td><input aria-label="' . esc_attr( $a['code'] . ' ' . $k ) . '" name="airports[' . (int) $i . '][' . esc_attr( $k ) . ']" type="' . ( $k === 'page_id' ? 'number' : 'text' ) . '" value="' . esc_attr( (string) $a[$k] ) . '"></td>'; } echo '</tr>'; }
         self::endtable(); submit_button( 'Flughafenauswahl speichern' ); echo '</form><h2 id="partners">Partner</h2>';
@@ -108,7 +110,7 @@ final class Operations {
         echo '<p><label><input type="checkbox" name="active" value="1" ' . checked( (int) ( $p['active'] ?? 0 ), 1, false ) . '> Für neue Anfragen freigeben (erzeugt keine Verfügbarkeit)</label></p>'; submit_button( $p ? 'Partner aktualisieren' : 'Partner als Vorbereitung anlegen' ); echo '</form>';
         self::table( array( 'Partner', 'Flughafen', 'Status', 'Provision', 'Zahlungszuordnung' ) );
         foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'partners' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $p ) { echo '<tr><td><a href="' . esc_url( add_query_arg( array( 'page' => 'vpm-booking-operations', 'partner' => $p['id'] ), admin_url( 'tools.php' ) ) ) . '#partners">' . esc_html( $p['name'] ) . '</a></td><td>' . esc_html( $p['airport'] ) . '</td><td>' . ( (int) $p['active'] ? 'freigegeben' : 'Vorbereitung / pausiert' ) . '</td><td>' . esc_html( (string) ( (int) $p['commission_bps'] / 100 ) ) . ' %</td><td>' . ( $p['stripe_account'] ? 'hinterlegt, nicht verifiziert' : 'offen' ) . '</td></tr>'; } self::endtable();
-        Broker::admin();self::promotions();
+        Branding::admin();Broker::admin();self::promotions();
         self::products();
         echo '<h2 id="coupons">Gutscheine</h2><p>Beträge in Cent, Prozentwerte in Basispunkten. Gültigkeit in UTC eingeben. Bestehende Einlösungen und Budgets werden nicht überschrieben.</p>'; self::form( 'coupon' );
         self::input( 'code', 'Code' ); echo '<p><label>Art <select name="kind"><option value="fixed">Fester Betrag in Cent</option><option value="percent">Prozent in Basispunkten</option></select></label></p>';

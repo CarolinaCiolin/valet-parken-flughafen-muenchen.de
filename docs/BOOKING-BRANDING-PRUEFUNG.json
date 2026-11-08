@@ -1,0 +1,25 @@
+{
+    "count": 20,
+    "checks": [
+        "Partner dashboard queries have tenant and state indexes",
+        "Blue default with readable white button text",
+        "Light brand color receives readable dark button text",
+        "Reject invalid_brand_color",
+        "Reject brand_text_contrast",
+        "Reject brand_accent_contrast",
+        "Reject invalid_email",
+        "Reject invalid_brand_logo",
+        "Media logo renders with brand alt text",
+        "Mail logo and planned sender included without false domain verification",
+        "Public style and brand data omit private sender configuration",
+        "Queued email keeps brand snapshot when later settings change",
+        "Dashboard separates paid confirmed trips from unpaid enquiries",
+        "Task dashboard contains no customer email",
+        "Dashboard links open cancellation workload",
+        "Assigned viewer reads own dashboard",
+        "Reject portal_forbidden",
+        "Reject permission_denied",
+        "Reject permission_denied",
+        "Post-save navigation uses server-owned section mapping"
+    ]
+}

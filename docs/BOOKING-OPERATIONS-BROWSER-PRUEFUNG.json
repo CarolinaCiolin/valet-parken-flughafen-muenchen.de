@@ -7,7 +7,7 @@
     "Bearer fragment removed immediately from browser address",
     "No bearer token persisted in browser storage",
     "Customer frontend loads only authorized booking",
-    "Only local form CSS and customer script loaded",
+    "Only local form CSS, branding CSS and customer script loaded",
     "Customer UI has no horizontal overflow 1440",
     "Customer UI has no horizontal overflow 390",
     "Token absent from every network URL and referrer",

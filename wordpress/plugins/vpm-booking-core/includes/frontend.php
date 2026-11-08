@@ -7,23 +7,24 @@ final class Frontend {
     public static function preview(): bool { return is_admin() || is_preview() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && current_user_can( 'edit_posts' ) ) || isset( $_GET['elementor-preview'] ); }
     public static function register(): void {
         $url = plugins_url( '', dirname( __DIR__ ) . '/vpm-booking-core.php' );
-        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.10.0' );
-        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.10.0', array( 'strategy' => 'defer', 'in_footer' => true ) );
-        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.10.0', true );
+        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.11.0' );
+        wp_register_style('vpm-booking-brand',Branding::css_url(),array('vpm-booking-front'),'0.11.0');
+        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.11.0', array( 'strategy' => 'defer', 'in_footer' => true ) );
+        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.11.0', true );
         foreach ( array( 'booking-form' => 'form', 'airport-selector' => 'selector', 'newsletter' => 'newsletter' ) as $folder => $method ) { register_block_type( dirname( __DIR__ ) . '/blocks/' . $folder, array( 'render_callback' => function( $a ) use ( $method ) { return self::$method( $a ); } ) ); }
         add_shortcode( 'vpm_booking_form', array( self::class, 'form' ) );
         add_shortcode( 'vpm_airport_selector', array( self::class, 'selector' ) );
         add_shortcode( 'vpm_booking_newsletter', array( self::class, 'newsletter' ) );
     }
     public static function assets(): string {
-        wp_enqueue_style( 'vpm-booking-front' ); wp_enqueue_script( 'vpm-booking-front' );
-        if ( did_action( 'wp_head' ) && ! doing_action( 'wp_head' ) && ! wp_style_is( 'vpm-booking-front', 'done' ) ) { ob_start(); wp_print_styles( 'vpm-booking-front' ); return (string) ob_get_clean(); }
+        wp_enqueue_style( 'vpm-booking-front' );wp_enqueue_style('vpm-booking-brand'); wp_enqueue_script( 'vpm-booking-front' );
+        if ( did_action( 'wp_head' ) && ! doing_action( 'wp_head' ) && ! wp_style_is( 'vpm-booking-front', 'done' ) ) { ob_start(); wp_print_styles( array('vpm-booking-front','vpm-booking-brand') ); return (string) ob_get_clean(); }
         return '';
     }
     public static function detect_assets(): void {
         $post = get_queried_object(); if ( ! $post instanceof \WP_Post ) { return; }
         $content = $post->post_content . ' ' . (string) get_post_meta( $post->ID, '_elementor_data', true );
-        if ( preg_match( '/vpm_booking_form|vpm_airport_selector|vpm_booking_newsletter|wp:vpm-booking\//', $content ) ) { wp_enqueue_style( 'vpm-booking-front' ); wp_enqueue_script( 'vpm-booking-front' ); }
+        if ( preg_match( '/vpm_booking_form|vpm_airport_selector|vpm_booking_newsletter|wp:vpm-booking\//', $content ) ) { wp_enqueue_style( 'vpm-booking-front' );wp_enqueue_style('vpm-booking-brand'); wp_enqueue_script( 'vpm-booking-front' ); }
     }
     private static function options( string $locale, string $selected = '' ): string {
         $groups = array( 'DE' => self::text( $locale, 'Deutschland', 'Germany' ), 'AT' => self::text( $locale, 'Österreich', 'Austria' ), 'CH' => self::text( $locale, 'Schweiz und Grenzregion', 'Switzerland and border region' ) );
@@ -46,6 +47,7 @@ final class Frontend {
         $flow = ($a['flow']??'inline')==='steps'?'steps':'inline'; $demo = defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'); if($demo){if(!defined('DONOTCACHEPAGE'))define('DONOTCACHEPAGE',true);do_action('litespeed_control_set_nocache','Private booking demo');if(!headers_sent())nocache_headers();}
         $id = wp_unique_id( 'vpm-booking-' ); $t = function( $de, $en ) use ( $locale ) { return esc_html( self::text( $locale, $de, $en ) ); };
         $html = self::assets() . '<section class="vpm-booking-surface vpm-booking-widget"' . self::data( $locale ) . ' data-flow="' . $flow . '" data-demo-ready="' . ($demo?'1':'0') . '" data-rest-nonce="' . ($demo?esc_attr(wp_create_nonce('wp_rest')):'') . '" data-airport-mode="' . ( $fixed ? 'fixed' : 'select' ) . '" data-enabled="' . ( PublicApi::enabled() ? '1' : '0' ) . '">';
+        $html .= Branding::header();
         $html .= '<form class="vpm-booking-search" method="post"><fieldset ' . ( self::preview() ? 'disabled' : '' ) . '><legend>' . $t( 'Parkangebot anfragen', 'Request airport parking' ) . '</legend><div class="vpm-booking-fields"><div>';
         if ( $fixed ) { $html .= '<span class="vpm-booking-field-label">' . $t( 'Flughafen', 'Airport' ) . '</span><strong class="vpm-booking-airport-name">' . esc_html( $airport_data['name_' . $locale] . ' (' . $airport . ')' ) . '</strong><input type="hidden" name="airport" value="' . esc_attr( $airport ) . '"><input type="hidden" name="airport_scope" value="' . esc_attr( Products::scope( $airport ) ) . '">'; }
         else { $html .= '<label for="' . $id . '-airport">' . $t( 'Flughafen', 'Airport' ) . '</label><select id="' . $id . '-airport" name="airport" required>' . self::options( $locale, $airport ) . '</select>'; }

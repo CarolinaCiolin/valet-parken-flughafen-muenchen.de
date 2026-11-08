@@ -21,14 +21,14 @@ try:
  with sync_playwright()as p:
   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);ctx=browser.new_context(viewport={'width':1440,'height':1000});page=ctx.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(BASE+'/?vpm_partner_portal=1',wait_until='domcontentloaded');check('wp-login.php'in page.url,'Portal requires real WordPress login')
-  page.locator('#user_login').fill(data['login']);page.locator('#user_pass').fill('local-fixture-password-only');page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['partner']),wait_until='networkidle')
+  page.locator('#user_login').fill(data['login']);page.locator('#user_pass').fill('local-fixture-password-only');page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['partner'])+'#bookings',wait_until='networkidle')
   text=page.locator('body').inner_text();check('Demo Stuttgart Partner A'in text and '@relay.example.invalid'in text and 'alpha-only@example.invalid'not in text and 'beta-secret@example.invalid'not in text and 'Vertraulicher Partner B'not in text,'Partner portal displays own bookings with relay contact and no customer email')
   check('Plattformgesamtübersicht'not in text,'Owner cannot see platform-wide metrics')
   check('noindex'in page.request.get(BASE+'/?vpm_partner_portal=1').headers.get('x-robots-tag',''),'Portal is excluded from index')
   nonce=page.locator('input[name="_wpnonce"]').first.input_value();bad=page.request.post(BASE+'/?vpm_partner_portal=1',form={'_wpnonce':nonce,'portal_action':'connection','partner':str(data['other']),'mode':'manual'})
   check(bad.status==403 and 'beta-secret'not in bad.text(),'Forged cross-tenant POST rejected with 403')
   page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['other']),wait_until='networkidle');check('beta-secret'not in page.locator('body').inner_text(),'Direct foreign partner query reveals no booking data')
-  page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['partner']),wait_until='networkidle')
+  page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['partner'])+'#bookings',wait_until='networkidle')
   for width in [1440,390]:
    page.set_viewport_size({'width':width,'height':1000});check(page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'Portal responsive without page overflow '+str(width))
   directory=ROOT/'zwischenstand/buchungskern';page.set_viewport_size({'width':1440,'height':1100});page.screenshot(path=str(directory/'partnerportal-test.png'))

@@ -5,6 +5,7 @@ final class Automation {
     public static function configured(): bool { $url = Config::secret( 'VPM_BOOKING_AUTOMATION_URL' ); return (bool) get_option( 'vpm_booking_automation_enabled', false ) && 'https' === wp_parse_url( $url, PHP_URL_SCHEME ) && strlen( Config::secret( 'VPM_BOOKING_AUTOMATION_SECRET' ) ) >= 32; }
     public static function event( string $key, string $topic, string $purpose, array $payload, int $contact = 0 ): bool {
         global $wpdb; Config::require( in_array( $purpose, array( 'transactional', 'consent', 'marketing' ), true ) && strlen( $key ) <= 150, 'invalid_outbox_event' );
+        $payload['branding']=Branding::mail_data();
         $sql = $wpdb->prepare( 'INSERT IGNORE INTO ' . DB::table( 'outbox' ) . ' (event_key,topic,purpose,contact_id,payload,status,created_at) VALUES (%s,%s,%s,%d,%s,%s,%d)', $key, $topic, $purpose, $contact, Config::seal( $payload ), 'pending', time() ); return DB::query( $sql ) > 0;
     }
     public static function booking_event( array $b, string $topic, array $extra = array(), string $suffix = '' ): void {

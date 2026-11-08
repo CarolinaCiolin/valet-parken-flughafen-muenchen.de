@@ -1,4 +1,4 @@
-Aktueller optionaler Buchungskern: [0.10.0 – geschützte Partnerkommunikation und Testweg](docs/BOOKING-BROKER-0.10.0.md).
+Aktueller optionaler Buchungskern: [0.11.0 – Branding und Dashboards](docs/BOOKING-BRANDING-0.11.0.md).
 
 Installierbare Pakete und Versionshinweise: [pakete](pakete/README.md).
 

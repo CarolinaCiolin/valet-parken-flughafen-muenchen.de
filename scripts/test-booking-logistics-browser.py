@@ -14,7 +14,7 @@ try:
  partner=int(php('$p=VPM\\Booking\\Core::partner(["airport"=>"STR","name"=>"Standort- und Übergabe-Demo","stripe_account"=>"acct_locationbrowser","commission_bps"=>2000]);echo $p["id"];'))
  with sync_playwright()as p:
   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1100});page.on('pageerror',lambda e:errors.append(str(e)))
-  page.goto(BASE+'/wp-login.php',wait_until='domcontentloaded');page.locator('#user_login').fill('vpm_local_admin');page.locator('#user_pass').fill((ROOT/'.runtime/admin-password').read_text().strip());page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(partner),wait_until='networkidle')
+  page.goto(BASE+'/wp-login.php',wait_until='domcontentloaded');page.locator('#user_login').fill('vpm_local_admin');page.locator('#user_pass').fill((ROOT/'.runtime/admin-password').read_text().strip());page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(partner)+'#logistics',wait_until='networkidle')
   form=page.locator('form:has(input[name="portal_action"][value="logistics"])')
   form.locator('[name="support_phone"]').fill('+49 000 1234567');form.locator('[name="booking_email"]').fill('operations@example.invalid');form.locator('[name="billing_email"]').fill('billing@example.invalid')
   for code,label in [('parking','Parkplatz – Testadresse'),('handover','Schlüsselübergabe – Testterminal'),('return','Rückgabe – Testtreffpunkt')]:
@@ -33,7 +33,7 @@ try:
   for width in [1440,390]:
    customer.set_viewport_size({'width':width,'height':1000});check(customer.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'Customer travel instructions responsive '+str(width))
   token=data['link'].split('#token=')[1];result=customer.request.post(BASE+'/wp-json/vpm-booking/v1/customer/cancellation',data={'token':token});check(result.status==200,'Customer can submit cancellation wish without executing cancellation')
-  page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(partner),wait_until='networkidle');check(page.get_by_role('heading',name='Offene Stornowünsche').count()==1 and page.get_by_role('button',name='Storno prüfen und ausführen lassen').count()==1,'Partner sees actionable cancellation wish in own portal')
+  page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(partner)+'#requests',wait_until='networkidle');check(page.get_by_role('heading',name='Offene Stornowünsche').count()==1 and page.get_by_role('button',name='Storno prüfen und ausführen lassen').count()==1,'Partner sees actionable cancellation wish in own portal')
   check(not errors,'No JavaScript errors in portal/customer travel flow');browser.close()
  report={'count':len(checks),'checks':checks,'limitations':['Local test addresses and payment state only','No actual route lookup, mail delivery or partner document generation']};(ROOT/'docs/BOOKING-LOGISTICS-BROWSER-PRUEFUNG.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(str(len(checks))+' logistics/customer browser checks passed.')
 finally:

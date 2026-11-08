@@ -25,7 +25,7 @@ try:
   check('#' not in page.url,'Bearer fragment removed immediately from browser address')
   check(page.evaluate('localStorage.length===0 && sessionStorage.length===0'),'No bearer token persisted in browser storage')
   check(page.locator('.vpm-customer-details').inner_text().find(fixture['booking'])>=0,'Customer frontend loads only authorized booking')
-  check(page.locator('script[src],link[href]').count()==2,'Only local form CSS and customer script loaded')
+  check(page.locator('script[src],link[href]').count()==3,'Only local form CSS, branding CSS and customer script loaded')
   for width in [1440,390]:
    page.set_viewport_size({'width':width,'height':1000})
    check(page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'Customer UI has no horizontal overflow '+str(width))
