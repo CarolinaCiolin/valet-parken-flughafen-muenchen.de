@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "id": "frankfurt",
+  "kind": "airport",
+  "brand_title": "VALET PARKEN",
+  "brand_subtitle": "FRANKFURT",
+  "airport_de": "Flughafen Frankfurt",
+  "airport_en": "Frankfurt Airport",
+  "service_de": "Valet-Parken am Flughafen Frankfurt",
+  "service_en": "Valet parking at Frankfurt Airport",
+  "legacy_munich": false,
+  "paths": {
+    "de": {
+      "prices": "/preise/",
+      "safety": "/sicherheit/",
+      "about": "/ueber-uns/",
+      "guide": "/ratgeber/"
+    },
+    "en": {
+      "prices": "/en/prices/",
+      "safety": "/en/safety/",
+      "about": "/en/about-us/",
+      "guide": "/en/guide/"
+    }
+  },
+  "cta_anchor": "anbieter",
+  "cta_de": "Verfügbarkeit prüfen",
+  "cta_en": "Check availability"
+}

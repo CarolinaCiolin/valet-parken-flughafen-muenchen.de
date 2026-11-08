@@ -4,9 +4,8 @@ function vpm_theme_english() { return function_exists( 'pll_current_language' ) 
 function vpm_theme_text( $de, $en ) { return vpm_theme_english() ? $en : $de; }
 function vpm_theme_home() { return function_exists( 'pll_home_url' ) ? pll_home_url() : home_url( '/' ); }
 function vpm_theme_url( $path ) {
-    if ( ! vpm_theme_english() ) { return home_url( $path ); }
-    $paths = array( '/preise/' => '/en/prices/', '/ueber-uns/' => '/en/about-us/', '/valet-parken-sicherheit/' => '/en/valet-parking-safety/' );
-    return home_url( $paths[ $path ] ?? $path );
+    $roles = array( '/preise/' => 'prices', '/ueber-uns/' => 'about', '/valet-parken-sicherheit/' => 'safety', '/ratgeber/' => 'guide' );
+    return home_url( isset( $roles[ $path ] ) ? vpm_profile_path( $roles[ $path ] ) : $path );
 }
 function vpm_language_switcher() {
     if ( ! function_exists( 'pll_the_languages' ) ) { return; }

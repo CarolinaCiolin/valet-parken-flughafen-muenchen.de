@@ -1,25 +1,23 @@
-# Aktuelles Update – Schema, Ab-Preise und Website-Icon
+# Gemeinsamer Flughafenparken-Kern
 
-Vorher Dateien und Datenbank sichern. ZIPs nicht entpacken, in WordPress als Ersatz für die bestehenden Pakete hochladen.
+## Neue Projekte
 
-- [VPM Hybrid 0.5.8](vpm-hybrid.zip) – gezielter Abgleich fehlender Complianz-Banner-Hooks; Complianz-Cookie-Richtlinie im Footer und direkte Cookie-Diagnose auch bei unterschiedlichen Domains, einschließlich Status des öffentlichen PHP-Aufrufs; deutscher Affiliate-Hinweis auch bei leerem Hinweisfeld; Service- und Ab-Preis-Schema, Breadcrumb-Markup ohne sichtbare Themenzeile, Favicon und alle bisherigen Theme-Funktionen.
-- [VPM Anbieter 0.3.2](vpm-providers.zip) – stabile Anbieter-Anker für das Schema; vorhandene Grafiken, Links und Sprachkorrektur bleiben erhalten.
-- [VPM Inhaltsentwürfe 0.4.1](vpm-content-drafts.zip) – natives Website-Icon; bisherige Sprach-, Reparatur-, Rechtstext- und Veröffentlichungsfunktionen enthalten.
+**[flughafenparken-starter.zip](flughafenparken-starter.zip)** – Theme 0.6.0 und Anbieterplugin 0.3.3 mit Anleitung. Erst entpacken, dann die zwei darin enthaltenen ZIPs einzeln in WordPress installieren. Enthält keinen Münchner Contentimport, keine aktive Affiliate-/Tracking-Konfiguration für neue Projekte und keine Zugangsdaten. Technische Profile für Frankfurt und valet-parkservice.com, noch keine fertigen Websites.
 
-**[Aktuelle Ergänzungen und Installation](../docs/UPDATE-0.5.8.md)** · [Schema-/Icon-Grundupdate](../docs/UPDATE-0.5.0.md) · [Prüfsummen](SHA256SUMS.txt)
+[Standardablauf](../docs/STANDARDTHEME.md) · [Standorte](../docs/STANDORTE.md) · [Projektregeln](../AGENTS.md)
 
-Theme unter Design → Themes → Theme hochladen, Plugins unter Plugins → Installieren → Plugin hochladen. Danach LiteSpeed Cache leeren. Kein erneuter Textimport nötig. Optional unter Werkzeuge → VPM Inhaltsentwürfe „VPM-Website-Icon einrichten“ ausführen. Bestehende eigene Icons bleiben erhalten.
+## Einzelpakete / bestehende Münchner Website
 
-Bei der Aktualisierung wird nichts automatisch veröffentlicht. Ratgeber und Rechtstexte behalten ihren Status. Englisch-Veröffentlichung und Reparatur leerer Platzhalter sind weiterhin über getrennte Buttons verfügbar. Tracking wird nicht aktiviert. Betreiberangaben gehören weiterhin nur in die separate private Rechtstext-Importdatei.
+- [VPM Hybrid 0.6.0](vpm-hybrid.zip) – standortkonfigurierbares Theme mit allen bisherigen Funktionen.
+- [VPM Anbieter 0.3.3](vpm-providers.zip) – vorhandene Anbieterkomponente, Münchner Motive auf anderen Profilen nicht automatisch zugeordnet.
+- [VPM Inhaltsentwürfe 0.4.2 – nur München](vpm-content-drafts.zip) – vorhandene Inhalte/Import-/Veröffentlichungsfunktionen, auf anderen Standortprofilen gesperrt.
 
-## Rechtstexte – separat importieren
+[Änderungen und Installation](../docs/UPDATE-0.6.0.md) · [Prüfsummen](SHA256SUMS.txt)
 
-[VPM-Rechtstext-Entwuerfe.json](VPM-Rechtstext-Entwuerfe.json) herunterladen (Download raw file). Diese Datei enthält mit ausdrücklicher Freigabe des Betreibers die öffentlich vorgesehenen Betreiber- und Kontaktangaben. Die privaten Begleitunterlagen werden nicht mit veröffentlicht.
+ZIPs über Download raw file herunterladen. Für ein bewusstes München-Update die einzelnen Theme-/Plugin-ZIPs als Ersatz installieren, nicht entpacken, kein erneuter Inhaltsimport. Zunächst Sicherung anlegen. Die Profilvorlagen auf der bestehenden Website nicht auf andere Standorte umstellen. Ein GitHub-Update ist keine automatische Installation auf Hostinger.
 
-Unter Werkzeuge → VPM Inhaltsentwürfe → Private Rechtstext-Entwürfe die JSON auswählen und importieren. Legt fehlendes Impressum und Datenschutz als deutsche Entwürfe an; bestehende Seiten werden übersprungen. Anschließend Inhalte durchsehen und über „Importiertes Impressum und Datenschutz veröffentlichen“ veröffentlichen. Kein normaler WordPress-Import und kein Theme-/Plugin-Upload dieser JSON.
+## Separat: Münchner Rechtstexte und Icon
 
-Datenschutz-Arbeitsfassung zum besprochenen technischen Stand: Hosting-Speicherfristen und Vertragsdetails zur Datenverarbeitung sind noch nicht abschließend geklärt. Google Analytics, Klaviyo und CleanLinking werden als nicht aktiv behandelt; vor deren Aktivierung muss der Text angepasst werden. Englische Rechtstexte sind nicht enthalten.
+[VPM-Rechtstext-Entwuerfe.json](VPM-Rechtstext-Entwuerfe.json) enthält mit ausdrücklicher Betreiberfreigabe öffentlich vorgesehene Münchner Betreiber-/Kontaktangaben. Kein allgemeines Rechtstextpaket für andere Projekte. Unter Werkzeuge → VPM Inhaltsentwürfe → Private Rechtstext-Entwürfe als JSON importieren; bestehende Seiten werden übersprungen. Die bisherigen offenen Datenschutz-Prüfpunkte bleiben bestehen. Keine englischen Rechtstexte enthalten.
 
-## Helles VPM-Icon
-
-[512-Pixel-PNG direkt herunterladen](../zwischenstand/website-icon/vpm-website-icon-512.png) und in WordPress unter Einstellungen → Allgemein → Website-Icon auswählen. Für diesen Austausch ist kein Paket-Update nötig. Die Pakete enthalten dieselbe neue Grafik für künftige Installationen.
+[Helles VPM-Icon als 512-Pixel-PNG](../zwischenstand/website-icon/vpm-website-icon-512.png) für das Münchner Branding. Andere Marken erhalten ein eigenes WordPress-Logo und Website-Icon; die Beispielprofile übernehmen dieses Icon nicht automatisch.

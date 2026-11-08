@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.3.2
+ * Version: 0.3.3
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers

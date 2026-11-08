@@ -2,6 +2,7 @@
 /** Theme integration, without content or provider storage. */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once get_theme_file_path( 'language.php' );
+require_once get_theme_file_path( 'site-profile.php' );
 require_once get_theme_file_path( 'legal-footer.php' );
 require_once get_theme_file_path( 'consent-diagnostics.php' );
 require_once get_theme_file_path( 'consent-compatibility.php' );
@@ -59,7 +60,7 @@ add_action( 'customize_register', 'vpm_customizer' );
 
 // Keep the stored affiliate URLs; choose one platform only for this homepage card.
 add_filter( 'vpm_provider_booking_platforms', function ( $platforms, $id ) {
-    if ( is_front_page() && 'Park Drive Fly' === get_the_title( $id ) ) { return array( 'parkos' => 'Parkos' ); }
+    if ( vpm_legacy_munich() && is_front_page() && 'Park Drive Fly' === get_the_title( $id ) ) { return array( 'parkos' => 'Parkos' ); }
     return $platforms;
 }, 10, 2 );
 
@@ -73,7 +74,7 @@ add_filter( 'wp_calculate_image_sizes', function ( $sizes, $size, $src, $meta, $
 
 // WordPress manages a chosen icon; only provide the bundled fallback when none exists.
 add_action( 'wp_head', function() {
-    if ( has_site_icon() ) { return; }
+    if ( has_site_icon() || ! vpm_legacy_munich() ) { return; }
     echo '<link rel="icon" type="image/png" sizes="64x64" href="' . esc_url( get_theme_file_uri( 'assets/favicon-64.png' ) ) . '">';
     echo '<link rel="apple-touch-icon" href="' . esc_url( get_theme_file_uri( 'assets/site-icon.png' ) ) . '">';
 }, 98 );

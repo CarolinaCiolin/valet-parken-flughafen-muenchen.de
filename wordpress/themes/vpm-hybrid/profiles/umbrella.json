@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "id": "umbrella",
+  "kind": "umbrella",
+  "brand_title": "VALET",
+  "brand_subtitle": "PARKSERVICE.COM",
+  "airport_de": "",
+  "airport_en": "",
+  "service_de": "Flughafenparken",
+  "service_en": "Airport parking",
+  "legacy_munich": false,
+  "paths": {
+    "de": {
+      "prices": "/preise/",
+      "safety": "/sicherheit/",
+      "about": "/ueber-uns/",
+      "guide": "/ratgeber/"
+    },
+    "en": {
+      "prices": "/en/prices/",
+      "safety": "/en/safety/",
+      "about": "/en/about-us/",
+      "guide": "/en/guide/"
+    }
+  },
+  "cta_anchor": "flughaefen",
+  "cta_de": "Flughafen auswählen",
+  "cta_en": "Choose airport"
+}

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
     <div class="vpm-shell vpm-header-inner">
         <div class="vpm-brand">
             <?php if ( has_custom_logo() ) : the_custom_logo(); else : ?>
-                <a class="vpm-wordmark" href="<?php echo esc_url( vpm_theme_home() ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"><span class="vpm-wordmark-name">VALET PARKEN</span><span class="vpm-wordmark-city">MÜNCHEN</span></a>
+                <a class="vpm-wordmark" href="<?php echo esc_url( vpm_theme_home() ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"><?php vpm_profile_brand(); ?></a>
             <?php endif; ?>
         </div>
         <?php if ( has_nav_menu( 'primary' ) ) : ?>
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
         </nav>
         <?php endif; ?>
         <?php vpm_language_switcher(); ?>
-        <?php $cta_url = vpm_theme_home() . '#anbieter'; $cta_label = vpm_theme_english() ? 'Check availability' : get_theme_mod( 'vpm_cta_label', 'Verfügbarkeit prüfen' ); if ( $cta_label ) : ?>
+        <?php $cta_url = vpm_theme_home() . '#' . vpm_site_profile()['cta_anchor']; $cta_label = vpm_theme_english() ? vpm_profile_text( 'cta' ) : get_theme_mod( 'vpm_cta_label', vpm_profile_text( 'cta' ) ); if ( $cta_label && 'unconfigured' !== vpm_site_profile()['id'] ) : ?>
         <a class="vpm-button vpm-header-cta" href="<?php echo esc_url( $cta_url ); ?>"><?php echo esc_html( $cta_label ); ?></a>
         <?php endif; ?>
     </div>

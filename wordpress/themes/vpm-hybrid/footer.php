@@ -1,7 +1,7 @@
 <?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
 <?php if ( ! function_exists( 'elementor_theme_do_location' ) || ! elementor_theme_do_location( 'footer' ) ) : ?>
 <footer class="vpm-footer"><div class="vpm-shell vpm-footer-inner">
-    <a class="vpm-brand vpm-wordmark" href="<?php echo esc_url( vpm_theme_home() ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"><span class="vpm-wordmark-name">VALET PARKEN</span><span class="vpm-wordmark-city">MÜNCHEN</span></a>
+    <a class="vpm-brand vpm-wordmark" href="<?php echo esc_url( vpm_theme_home() ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>"><?php vpm_profile_brand(); ?></a>
     <div class="vpm-footer-navigation">
     <?php wp_nav_menu( array( 'theme_location' => 'footer', 'container' => 'nav', 'container_aria_label' => vpm_theme_text( 'Footernavigation', 'Footer navigation' ), 'fallback_cb' => false, 'menu_class' => 'vpm-menu' ) ); ?>
     <?php $legal_pages = vpm_footer_legal_pages(); if ( $legal_pages ) : ?>

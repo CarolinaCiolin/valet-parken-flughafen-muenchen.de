@@ -25,7 +25,7 @@ packages = [out / (name + '.zip') for name in ['vpm-hybrid', 'vpm-providers', 'v
 manifest = out / 'SHA256SUMS.txt'
 manifest.write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.name + '\n' for p in packages))
 bundle = out / 'vpm-hostinger-uebergabe.zip'
-docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json', 'RENDERING-KONTRASTE-IMAGIFY.md', 'RENDER-KONTRAST-AUDIT.json', 'IMAGIFY-QUELLSTAND.json', 'RATGEBER.md', 'UPDATE-0.4.0.md', 'ENGLISCH-POLYLANG.md', 'MULTILINGUAL-BROWSER-PRUEFUNG.json', 'MULTILINGUAL-SEO-EDITOR-PRUEFUNG.json', 'TRADETRACKER-CLEANLINKING.md', 'POLYLANG-QUELLSTAND.json', 'UPDATE-0.5.0.md', 'UPDATE-0.5.1.md', 'UPDATE-0.5.2.md', 'UPDATE-0.5.3.md', 'UPDATE-0.5.4.md', 'UPDATE-0.5.5.md', 'UPDATE-0.5.6.md', 'UPDATE-0.5.7.md', 'UPDATE-0.5.8.md', 'COMPLIANZ-LIFECYCLE-PRUEFUNG.json', 'COOKIE-BROWSER-DIAGNOSE-PRUEFUNG.json', 'COMPLIANZ-PRUEFUNG.json', 'SCHEMA-KONTEXT-PRUEFUNG.json']
+docs = ['HOSTINGER-SCHNELLSTART.md', 'INSTALLATION.md', 'SEO-METADATEN.md', 'SEO-METADATEN.json', 'ALLGEMEINER-PARTNERLINK.txt', 'PRUEFUNG.md', 'DATENSCHUTZ-INVENTAR.md', 'PFLEGE.md', 'LINK-INVENTAR.csv', 'PLUGIN-KOMPATIBILITAET.md', 'PLUGIN-QUELLSTAENDE.json', 'SPEED-UND-VORSCHAU.md','DESIGN-POTENZIAL.md', 'DESIGN-UND-TECHNIK-AUDIT.md', 'SPEED-AUDIT.json', 'RENDERING-KONTRASTE-IMAGIFY.md', 'RENDER-KONTRAST-AUDIT.json', 'IMAGIFY-QUELLSTAND.json', 'RATGEBER.md', 'UPDATE-0.4.0.md', 'ENGLISCH-POLYLANG.md', 'MULTILINGUAL-BROWSER-PRUEFUNG.json', 'MULTILINGUAL-SEO-EDITOR-PRUEFUNG.json', 'TRADETRACKER-CLEANLINKING.md', 'POLYLANG-QUELLSTAND.json', 'UPDATE-0.5.0.md', 'UPDATE-0.5.1.md', 'UPDATE-0.5.2.md', 'UPDATE-0.5.3.md', 'UPDATE-0.5.4.md', 'UPDATE-0.5.5.md', 'UPDATE-0.5.6.md', 'UPDATE-0.5.7.md', 'UPDATE-0.5.8.md', 'UPDATE-0.6.0.md', 'STANDARDTHEME.md', 'STANDORTE.md', 'STANDORT-PROFILE-PRUEFUNG.json', 'COMPLIANZ-LIFECYCLE-PRUEFUNG.json', 'COOKIE-BROWSER-DIAGNOSE-PRUEFUNG.json', 'COMPLIANZ-PRUEFUNG.json', 'SCHEMA-KONTEXT-PRUEFUNG.json']
 with ZipFile(bundle, 'w', ZIP_DEFLATED) as archive:
     for file in packages + [manifest]:
         archive.write(file, file.name)
@@ -51,3 +51,18 @@ with ZipFile(bundle) as archive:
     assert archive.testzip() is None
 bundle.chmod(0o644)
 print(bundle.name, bundle.stat().st_size, 'Bytes')
+
+# Reusable starter: shared code only, deliberately excludes the Munich content importer.
+starter = out / 'flughafenparken-starter.zip'
+with ZipFile(starter, 'w', ZIP_DEFLATED) as archive:
+    for file in packages[:2]: archive.write(file, file.name)
+    archive.writestr('SHA256SUMS.txt', ''.join(hashlib.sha256(p.read_bytes()).hexdigest() + '  ' + p.name + '\n' for p in packages[:2]))
+    archive.write(root / 'AGENTS.md', 'AGENTS.md')
+    for name in ['STANDARDTHEME.md', 'STANDORTE.md', 'UPDATE-0.6.0.md', 'STANDORT-PROFILE-PRUEFUNG.json']:
+        archive.write(root / 'docs' / name, name)
+with ZipFile(starter) as archive:
+    assert archive.testzip() is None
+    assert 'vpm-content-drafts.zip' not in archive.namelist()
+starter.chmod(0o644)
+manifest.write_text(manifest.read_text() + hashlib.sha256(starter.read_bytes()).hexdigest() + '  ' + starter.name + '\n')
+print(starter.name, starter.stat().st_size, 'Bytes')

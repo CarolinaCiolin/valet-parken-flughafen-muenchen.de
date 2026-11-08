@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "id": "munich",
+  "kind": "airport",
+  "brand_title": "VALET PARKEN",
+  "brand_subtitle": "MÜNCHEN",
+  "airport_de": "Flughafen München",
+  "airport_en": "Munich Airport",
+  "service_de": "Valet-Parken am Flughafen München",
+  "service_en": "Valet parking at Munich Airport",
+  "legacy_munich": true,
+  "paths": {
+    "de": {
+      "prices": "/preise/",
+      "safety": "/valet-parken-sicherheit/",
+      "about": "/ueber-uns/",
+      "guide": "/ratgeber/"
+    },
+    "en": {
+      "prices": "/en/prices/",
+      "safety": "/en/valet-parking-safety/",
+      "about": "/en/about-us/",
+      "guide": "/en/valet-parking-guide/"
+    }
+  },
+  "cta_anchor": "anbieter",
+  "cta_de": "Verfügbarkeit prüfen",
+  "cta_en": "Check availability"
+}

@@ -5,6 +5,7 @@ function vpm_provider_artwork( $id ) {
     $thumbnail = get_post_thumbnail_id( $id );
     $key = (string) get_post_meta( $thumbnail, '_vpm_asset_key', true );
     if ( $thumbnail && ! str_starts_with( $key, 'provider-symbol-ai-' ) ) { return ''; }
+    if ( function_exists( 'vpm_legacy_munich' ) && ! vpm_legacy_munich() ) { return ''; }
     $names = array( 'Park Drive Fly', 'ParkandGo MUC Valetservice', 'Parkking Munich Meet and Greet', 'Valet Service Clean', 'Parkservice Flieger', 'Parkservice-Unertl' );
     $index = array_search( get_the_title( $id ), $names, true );
     if ( false === $index ) { return ''; }

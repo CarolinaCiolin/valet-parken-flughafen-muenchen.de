@@ -23,7 +23,7 @@ function vpm_schema_provider_items( $url ) {
         if ( 'de' === $lang && function_exists( 'pll_get_post_language' ) && ! in_array( pll_get_post_language( $provider->ID ), array( false, 'de', '' ), true ) ) { continue; }
         $anchor = function_exists( 'vpm_provider_anchor' ) ? vpm_provider_anchor( $provider->ID ) : '';
         if ( ! $anchor ) { continue; }
-        $items[] = array( '@type' => 'ListItem', 'position' => count( $items ) + 1, 'name' => get_the_title( $provider->ID ), 'url' => $url . '#' . $anchor, 'item' => array( '@type' => 'Service', '@id' => $url . '#' . $anchor . '-service', 'name' => get_the_title( $provider->ID ), 'url' => $url . '#' . $anchor, 'serviceType' => vpm_theme_text( 'Valet-Parken am Flughafen München', 'Valet parking at Munich Airport' ), 'provider' => array( '@type' => 'Organization', 'name' => get_the_title( $provider->ID ) ), 'description' => wp_strip_all_tags( get_post_meta( $provider->ID, '_vpm_features', true ) ) ) );
+        $items[] = array( '@type' => 'ListItem', 'position' => count( $items ) + 1, 'name' => get_the_title( $provider->ID ), 'url' => $url . '#' . $anchor, 'item' => array( '@type' => 'Service', '@id' => $url . '#' . $anchor . '-service', 'name' => get_the_title( $provider->ID ), 'url' => $url . '#' . $anchor, 'serviceType' => vpm_profile_text( 'service' ), 'provider' => array( '@type' => 'Organization', 'name' => get_the_title( $provider->ID ) ), 'description' => wp_strip_all_tags( get_post_meta( $provider->ID, '_vpm_features', true ) ) ) );
     }
     return $items;
 }
@@ -35,7 +35,8 @@ function vpm_schema_price_services( $content, $url, $locale ) {
     $services = array();
     foreach ( $doc->getElementsByTagName( 'table' ) as $table ) {
         $headers = $table->getElementsByTagName( 'th' );
-        if ( $headers->length < 4 || ! preg_match( '/8\s*(?:Tage|days)/iu', $headers->item( 1 )->textContent ) || ! preg_match( '/\bab\b|\bfrom\b/iu', $headers->item( 1 )->textContent ) ) { continue; }
+        if ( $headers->length < 4 || ! preg_match( '/([1-9][0-9]{0,2})\s*(?:Tage|days)/iu', $headers->item( 1 )->textContent, $duration ) || ! preg_match( '/\bab\b|\bfrom\b/iu', $headers->item( 1 )->textContent ) ) { continue; }
+        $days = (int) $duration[1];
         foreach ( $table->getElementsByTagName( 'tr' ) as $row ) {
             $cells = $row->getElementsByTagName( 'td' ); if ( $cells->length !== 4 ) { continue; }
             $name = trim( $cells->item( 0 )->textContent ); $price_text = trim( $cells->item( 1 )->textContent );
@@ -44,11 +45,14 @@ function vpm_schema_price_services( $content, $url, $locale ) {
             $link = $cells->item( 3 )->getElementsByTagName( 'a' )->item( 0 );
             if ( ! $name || ! $link ) { continue; } $booking = esc_url_raw( $link->getAttribute( 'href' ), array( 'https' ) ); if ( ! $booking ) { continue; }
             $english = str_starts_with( $locale, 'en' );
-            $description = $english ? 'Starting total for 8 days including parking and valet service. Binding price depends on travel dates, handover times and parking type; check with the booking partner.' : 'Ab-Gesamtpreis für 8 Tage inklusive Parkplatz und Valet-Service. Verbindlicher Preis abhängig von Reisedaten, Übergabezeiten und Stellplatzart; beim Buchungspartner prüfen.';
-            $services[] = array( '@type' => 'Service', '@id' => $url . '#service-' . sanitize_title( $name ), 'name' => $name, 'serviceType' => $english ? 'Valet parking at Munich Airport' : 'Valet-Parken am Flughafen München', 'provider' => array( '@type' => 'Organization', 'name' => $name ), 'areaServed' => array( '@type' => 'Place', 'name' => $english ? 'Munich Airport' : 'Flughafen München' ), 'description' => trim( $cells->item( 2 )->textContent ), 'offers' => array( '@type' => 'Offer', 'url' => $url, 'description' => $description, 'priceSpecification' => array( '@type' => 'UnitPriceSpecification', 'minPrice' => $price, 'priceCurrency' => 'EUR', 'description' => $description, 'referenceQuantity' => array( '@type' => 'QuantitativeValue', 'value' => 8, 'unitCode' => 'DAY', 'unitText' => $english ? 'days' : 'Tage' ) ) ) );
+            $description = $english ? 'Starting total for ' . $days . ' days including parking and valet service. Binding price depends on travel dates, handover times and parking type; check with the booking partner.' : 'Ab-Gesamtpreis für ' . $days . ' Tage inklusive Parkplatz und Valet-Service. Verbindlicher Preis abhängig von Reisedaten, Übergabezeiten und Stellplatzart; beim Buchungspartner prüfen.';
+            if ( ! vpm_legacy_munich() ) { $description = $english ? 'Starting total for ' . $days . ' days as described in the visible price comparison. Binding price depends on the selected offer and travel dates; check with the booking partner.' : 'Ab-Gesamtpreis für ' . $days . ' Tage gemäß sichtbarem Preisvergleich. Verbindlicher Preis abhängig vom gewählten Angebot und den Reisedaten; beim Buchungspartner prüfen.'; }
+            $services[] = array( '@type' => 'Service', '@id' => $url . '#service-' . sanitize_title( $name ), 'name' => $name, 'serviceType' => vpm_profile_text( 'service' ), 'provider' => array( '@type' => 'Organization', 'name' => $name ), 'description' => trim( $cells->item( 2 )->textContent ), 'offers' => array( '@type' => 'Offer', 'url' => $url, 'description' => $description, 'priceSpecification' => array( '@type' => 'UnitPriceSpecification', 'minPrice' => $price, 'priceCurrency' => 'EUR', 'description' => $description, 'referenceQuantity' => array( '@type' => 'QuantitativeValue', 'value' => $days, 'unitCode' => 'DAY', 'unitText' => $english ? 'days' : 'Tage' ) ) ) );
         }
         break;
     }
+    $airport = vpm_profile_text( 'airport' );
+    if ( $airport ) { foreach ( $services as &$service ) { $service['areaServed'] = array( '@type' => 'Place', 'name' => $airport ); } unset( $service ); }
     return $services;
 }
 function vpm_schema_find_query( $blocks ) {
@@ -77,6 +81,7 @@ function vpm_schema_graph() {
         'vpmPublisher' => array( '@type' => 'Organization', '@id' => $publisher, 'name' => get_bloginfo( 'name' ), 'url' => $root, 'logo' => array( '@type' => 'ImageObject', 'url' => get_site_icon_url( 512, get_theme_file_uri( 'assets/site-icon.png' ) ) ) ),
         'vpmWebsite' => array( '@type' => 'WebSite', '@id' => $website, 'url' => $root, 'name' => get_bloginfo( 'name' ), 'publisher' => array( '@id' => $publisher ), 'inLanguage' => array_values( array_unique( array_map( function( $s ) { return str_replace( '_', '-', $s ); }, $locales ?: array( $locale ) ) ) ) ),
     );
+    if ( ! has_site_icon() && ! vpm_legacy_munich() ) { unset( $graph['vpmPublisher']['logo'] ); }
     $type = 'ueber-uns' === $key ? 'AboutPage' : ( in_array( $key, array( 'startseite', 'ratgeber' ), true ) ? 'CollectionPage' : 'WebPage' );
     $context = vpm_page_context(); $parent = $context['parent'] ?? null;
     $page = array( '@type' => $type, '@id' => $page_id, 'url' => $url, 'name' => get_the_title( $id ), 'inLanguage' => $locale, 'isPartOf' => array( array( '@id' => $website ) ), 'publisher' => array( '@id' => $publisher ) );
@@ -89,7 +94,7 @@ function vpm_schema_graph() {
         $page['breadcrumb'] = array( '@id' => $url . '#breadcrumb' );
         $page['about'] = array( '@type' => 'Thing', 'name' => $context['role'] );
     }
-    if ( 'startseite' === $key ) {
+    if ( 'startseite' === $key && ( vpm_legacy_munich() || has_shortcode( get_post_field( 'post_content', $id ), 'vpm_providers' ) ) ) {
         $items = vpm_schema_provider_items( $url );
         if ( $items ) { $graph['vpmProviders'] = array( '@type' => 'ItemList', '@id' => $url . '#providers', 'name' => vpm_theme_text( 'Verfügbare Valet-Angebote', 'Available valet parking offers' ), 'numberOfItems' => count( $items ), 'itemListElement' => $items ); $page['mainEntity'] = array( '@id' => $url . '#providers' ); }
     }

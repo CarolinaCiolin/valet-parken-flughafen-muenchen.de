@@ -48,6 +48,7 @@ function vpm_english_page_empty( $id ) {
     return (bool) preg_match( '~^<!-- wp:paragraph -->\s*<p>\s*(?:<br\s*/?>\s*)?</p>\s*<!-- /wp:paragraph -->$~s', $content );
 }
 function vpm_import_english( $repair_empty = false ) {
+    if ( function_exists( 'vpm_legacy_munich' ) && ! vpm_legacy_munich() ) { return new WP_Error( 'site_profile', 'Das englische Inhaltspaket gehört zu München. Für diesen Standort ein eigenes Inhaltspaket verwenden.' ); }
     $ready = vpm_english_requirements(); if ( is_wp_error( $ready ) ) { return $ready; }
     if ( ! PLL()->model->get_language( 'en' ) || ! PLL()->model->get_language( 'de' ) ) { return new WP_Error( 'languages', 'Bitte zuerst die Sprachvorbereitung ausführen.' ); }
     $data = json_decode( file_get_contents( __DIR__ . '/content-en.json' ), true );

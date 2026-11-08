@@ -3,6 +3,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function vpm_editorial_figure( $doc, $scene, $above_fold = false ) {
+    if ( ! vpm_legacy_munich() ) { return null; }
     // Prefer Media Library attachments so image plugins see metadata and all sizes.
     static $attachments = array();
     if ( ! array_key_exists( $scene, $attachments ) ) {
@@ -130,7 +131,7 @@ add_filter( 'the_content', function ( $html ) {
             if ( 'anbieter' === $element->getAttribute( 'id' ) ) { $provider_area = $element; break; }
         }
         foreach ( $root->getElementsByTagName( 'a' ) as $link ) {
-            if ( vpm_theme_text( 'Münchener Anbieter vergleichen', 'Compare Munich providers' ) === trim( $link->textContent ) ) {
+            if ( vpm_legacy_munich() && vpm_theme_text( 'Münchener Anbieter vergleichen', 'Compare Munich providers' ) === trim( $link->textContent ) ) {
                 $link->setAttribute( 'href', vpm_theme_url( '/preise/' ) );
             }
             if ( vpm_theme_text( 'Detaillierte Preisinformationen', 'Detailed pricing information' ) === trim( $link->textContent ) && 'p' === $link->parentNode->nodeName ) {

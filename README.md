@@ -1,4 +1,16 @@
-Aktuelles gemeinsames Update: **Theme 0.5.0 / Anbieter 0.3.2 / Inhaltsentwürfe 0.4.0**. Anleitung: [UPDATE-0.4.0.md](docs/UPDATE-0.5.0.md). Frühere Prüfberichte unten dokumentieren ihre damaligen Versionen.
+# Flughafenparken – gemeinsamer Theme-Kern
+
+Aktueller Entwicklungsstand: **Theme 0.6.0 / Anbieter 0.3.3 / Münchner Inhaltsentwürfe 0.4.2**. Kein automatisches Deployment.
+
+- [Projektregeln für neue Chats und Bearbeiter](AGENTS.md)
+- [Standardtheme und Installationsablauf](docs/STANDARDTHEME.md)
+- [Standorte München, Frankfurt und Dachmarke](docs/STANDORTE.md)
+- [Update 0.6.0](docs/UPDATE-0.6.0.md) und [aktuelle ZIP-Pakete](pakete/)
+- [Profiltests](docs/STANDORT-PROFILE-PRUEFUNG.json)
+
+Der gemeinsame Kern lässt sich in separaten WordPress-Installationen einsetzen. Profile für Frankfurt und valet-parkservice.com sind technische Startwerte; eigene Inhalte, Anbieter, Bilder, Rechtstexte, Partnerfreigaben und Sprachseiten kommen je Projekt hinzu. Das bestehende München-Paket ist kein allgemeiner Contentimport.
+
+Die folgenden Abschnitte dokumentieren den bisherigen Münchner Projektverlauf und ihre jeweiligen damaligen Versionsstände.
 
 # VPM WordPress-Grundgerüst
 

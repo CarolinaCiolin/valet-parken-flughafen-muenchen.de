@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Inhaltsentwürfe
  * Description: Einmaliger, manuell ausgelöster Import der vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -14,6 +14,7 @@ require_once __DIR__ . '/publish.php';
 require_once __DIR__ . '/site-icon.php';
 function vpm_import_content_drafts() {
     if ( ! current_user_can( 'manage_options' ) ) { return new WP_Error( 'forbidden', 'Keine Berechtigung.' ); }
+    if ( function_exists( 'vpm_legacy_munich' ) && ! vpm_legacy_munich() ) { return new WP_Error( 'site_profile', 'Dieses Inhaltspaket gehört zu München. Für dieses Projekt ein eigenes Inhaltspaket verwenden.' ); }
     $data = json_decode( file_get_contents( __DIR__ . '/content.json' ), true );
     if ( ! post_type_exists( 'vpm_provider' ) ) { return new WP_Error( 'missing', 'Bitte zuerst VPM Anbieter aktivieren.' ); }
     $result = array( 'pages' => array(), 'providers' => array(), 'skipped' => array() );
@@ -56,6 +57,7 @@ function vpm_import_content_drafts() {
 add_action( 'admin_menu', function() {
     add_management_page( 'VPM Inhaltsentwürfe', 'VPM Inhaltsentwürfe', 'manage_options', 'vpm-content-drafts', function() {
         if ( ! current_user_can( 'manage_options' ) ) { return; }
+        if ( function_exists( 'vpm_legacy_munich' ) && ! vpm_legacy_munich() ) { echo '<div class="wrap"><h1>Münchner Inhaltspaket</h1><p>Dieses Paket ist nur für die Münchner Website vorgesehen. Für diesen Standort eigene Seiten, Anbieter, Bilder und Partnerlinks vorbereiten. Es wurde nichts importiert oder veröffentlicht.</p></div>'; return; }
         echo '<div class="wrap"><h1>VPM Inhaltsentwürfe</h1><p>Legt Startseite, Preise, Sicherheit, Über uns und Valet-Ratgeber als Entwürfe an. Vorhandene Seiten und Anbieter werden übersprungen. Es wird nichts veröffentlicht, keine Startseite und kein Menü umgestellt.</p><p>Anbieter ebenfalls als Entwürfe: vor Veröffentlichung Leistungen prüfen. Anbieterzahl gemäß Freigabe entfernt; „24/7 Betrieb“ korrigiert. Rechtstexte folgen nach Einrichtung der Plugins.</p>';
         if ( isset( $_POST['vpm_import'] ) ) {
             check_admin_referer( 'vpm_import_drafts' );

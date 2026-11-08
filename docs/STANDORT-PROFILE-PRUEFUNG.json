@@ -1,0 +1,87 @@
+{
+  "profiles": [
+    {
+      "case": "Munich implicit compatibility",
+      "pages": 8,
+      "unchanged": [
+        "visible copy",
+        "brand",
+        "CTA",
+        "provider cards",
+        "main links/affiliate rel",
+        "entire JSON-LD graph"
+      ],
+      "result": "passed"
+    },
+    {
+      "case": "frankfurt",
+      "languages": [
+        "de",
+        "en"
+      ],
+      "viewports": [
+        1440,
+        390
+      ],
+      "checks": [
+        "wordmark/CTA",
+        "no overflow",
+        "no Munich fallback images/icon/schema",
+        "own service and optional airport schema",
+        "Munich import blocked"
+      ],
+      "result": "passed"
+    },
+    {
+      "case": "umbrella",
+      "languages": [
+        "de",
+        "en"
+      ],
+      "viewports": [
+        1440,
+        390
+      ],
+      "checks": [
+        "wordmark/CTA",
+        "no overflow",
+        "no Munich fallback images/icon/schema",
+        "own service and optional airport schema",
+        "Munich import blocked"
+      ],
+      "result": "passed"
+    },
+    {
+      "case": "fresh neutral default",
+      "result": "passed"
+    },
+    {
+      "case": "admin settings",
+      "checks": [
+        "anonymous denied",
+        "explicit preset saved",
+        "malformed JSON does not alter valid profile",
+        "invalid nonce denied"
+      ],
+      "result": "passed"
+    },
+    {
+      "case": "custom page roles and price duration",
+      "checks": [
+        "draft DE/EN custom routes",
+        "explicit layout metadata has precedence",
+        "visible seven/eight/fourteen-day prices",
+        "malformed paths rejected",
+        "other profiles require their own marketing-gated CleanLinking ID"
+      ],
+      "result": "passed"
+    }
+  ],
+  "original_content_unchanged": true,
+  "limitations": [
+    "Local integration, no Hostinger deployment",
+    "Frankfurt and umbrella remain configuration templates without production content",
+    "English/German only; no general content importer or multi-airport data sync",
+    "Current live Polylang 3.9.1 reported by operator, not independently installed in this test"
+  ]
+}
