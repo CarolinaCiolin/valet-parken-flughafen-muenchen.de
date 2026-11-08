@@ -52,7 +52,7 @@ final class Flow {
                     } );
                 } else {
                     $connection = Adapters::connection( (int)$b['partner_id'] ); $drivers = Adapters::registry(); Config::require( $connection && $connection['adapter'] === $source['adapter'] && isset( $drivers[$source['adapter']] ), 'adapter_configuration_changed' );
-                    $driver=$drivers[$source['adapter']]; $credentials=Config::open($connection['credentials']); $request=$b; $request['partner_hold']=self::proof((int)$b['id'],'hold');
+                    $driver=$drivers[$source['adapter']]; $credentials=Config::open($connection['credentials']); $request=Broker::adapter($b); $request['partner_hold']=self::proof((int)$b['id'],'hold');
                     if($job['action']==='hold') {
                         Config::require($b['state']!=='cancelled','booking_cancelled');$result=$driver->hold($request,$credentials,'vpm-hold-'.$b['public_id']);
                         Config::require(is_string($result['reference']??null)&&preg_match('/^[a-zA-Z0-9_.:-]{1,150}$/D',$result['reference'])&&is_int($result['expires_at']??null)&&$result['expires_at']>time()&&$result['expires_at']<=time()+DAY_IN_SECONDS,'partner_hold_proof_invalid');

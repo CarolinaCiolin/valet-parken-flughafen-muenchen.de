@@ -51,6 +51,7 @@ final class Products {
             if ( ! isset( $a['enabled'] ) ) { continue; }
             $offer['addons'][] = array( 'id' => $code, 'label' => array( 'de' => $a['label_de'] ?? '', 'en' => $a['label_en'] ?? '' ), 'description' => array( 'de' => $a['description_de'] ?? '', 'en' => $a['description_en'] ?? '' ), 'unit_amount_cents' => Operations::number( $a['unit_amount_cents'] ?? '' ), 'max_quantity' => Operations::number( $a['max_quantity'] ?? '', 1, 1000 ) );
         }
+        if(!current_user_can('manage_options')){Tenants::authorize($partner,true);Config::require(!preg_match('~(?:https?://|www\.|mailto:|[\p{L}\p{N}._%+\-]+@[\p{L}\p{N}.\-]+\.[\p{L}]{2,})~iu',wp_json_encode($offer,JSON_UNESCAPED_SLASHES)),'external_contact_not_allowed');}
         self::normalize( $offer ); Config::require( self::label( $offer['product_name'], 'de' ) !== '' && self::label( $offer['product_name'], 'en' ) !== '', 'invalid_product_label' );
         global $wpdb; DB::query($wpdb->prepare('INSERT INTO '.DB::table('product_templates').' (id,partner_id,payload) VALUES (%s,%d,%s) ON DUPLICATE KEY UPDATE payload=IF(partner_id=VALUES(partner_id),VALUES(payload),payload)',$id,$partner,wp_json_encode($offer))); Operations::audit( 'product_template.saved', 'partner', $partner );
     }

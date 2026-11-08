@@ -23,7 +23,7 @@ final class Tenants {
     }
     public static function bookings( int $partner, int $page = 1 ): array {
         self::authorize( $partner ); global $wpdb; $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'bookings' ) . ' WHERE partner_id=%d ORDER BY id DESC LIMIT 25 OFFSET %d', $partner, ( min(100000,max( 1, $page )) - 1 ) * 25 ), ARRAY_A ); $out = array();
-        foreach ( $rows as $b ) { $q = Core::snapshot( $b ); $out[] = array( 'reference' => $b['public_id'], 'email' => $b['customer_email'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'checkout_started' => (bool) $b['stripe_session'], 'partner_expected_cents' => $q['partner'], 'travel' => $q['travel'] ?? array(), 'selection' => $q['offer_selection'] ?? array(), 'created_at' => (int) $b['created_at'] ); } return $out;
+        foreach ( $rows as $b ) { $q = Core::snapshot( $b ); $out[] = array( 'reference' => $b['public_id'], 'email' => current_user_can('manage_options')?$b['customer_email']:Broker::alias($b), 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'checkout_started' => (bool) $b['stripe_session'], 'partner_expected_cents' => $q['partner'], 'travel' => $q['travel'] ?? array(), 'selection' => $q['offer_selection'] ?? array(), 'created_at' => (int) $b['created_at'] ); } return $out;
     }
     public static function stats( ?int $partner ): array {
         if ( $partner !== null ) { self::authorize( $partner ); } else { Config::require( current_user_can( 'manage_options' ), 'portal_forbidden' ); } global $wpdb;

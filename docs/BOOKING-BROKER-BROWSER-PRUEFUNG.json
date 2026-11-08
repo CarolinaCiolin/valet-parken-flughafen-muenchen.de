@@ -1,0 +1,18 @@
+{
+  "count": 9,
+  "checks": [
+    "Owner HTML contains no real customer email",
+    "Owner sees booking relay contact instead",
+    "Submitting partner text never directly sends customer email",
+    "Partner profile changes remain pending review",
+    "Platform has separate pending-message review queue",
+    "Platform approval queues exactly one customer message",
+    "Reviewed profile becomes active only after platform approval",
+    "Customer address remains absent after review workflow",
+    "No browser errors in separate owner and admin sessions: []"
+  ],
+  "limitations": [
+    "No real SMTP, inbound mailbox or Klaviyo connection",
+    "Synthetic identities and addresses only"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+    "count": 22,
+    "checks": [
+        "Random stable booking alias contains no customer identity",
+        "Different bookings get distinct unguessable aliases",
+        "Partner booking projection replaces real address server-side",
+        "Reject portal_forbidden",
+        "Partner REST response contains no customer address",
+        "Reject external_contact_not_allowed",
+        "Vendor serializer carries relay address instead of real email",
+        "Vendor serializer excludes internal hashes and payment identifiers",
+        "Partner notification envelope contains no customer email",
+        "Partner free-text event redacts raw and URL-encoded customer address",
+        "Partner message submission is idempotent",
+        "Pending partner text never triggers customer delivery",
+        "Reject permission_denied",
+        "Reject portal_forbidden",
+        "Reject message_external_contact_requires_separate_review",
+        "Approved customer reply resolves true address only inside platform outbox",
+        "Approval retry never duplicates customer message",
+        "Partner cannot inject unreviewed instructions into confirmation emails",
+        "Reject permission_denied",
+        "Platform approval publishes reviewed partner logistics",
+        "Review never silently changes existing booking snapshot",
+        "Structured cancellation notification still works without free-text forwarding"
+    ]
+}

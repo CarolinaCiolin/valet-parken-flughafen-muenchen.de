@@ -6,6 +6,9 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'relay' => 'booking_id bigint unsigned NOT NULL, address varchar(254) NOT NULL, PRIMARY KEY  (booking_id), UNIQUE KEY address (address)',
+            'messages' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, partner_id bigint unsigned NOT NULL, request_key varchar(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, payload longtext NOT NULL, state varchar(20) NOT NULL, created_at bigint NOT NULL, reviewed_at bigint NOT NULL DEFAULT 0, reviewer_id bigint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY booking_request (booking_id,request_key)',
+            'profile_reviews' => 'partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (partner_id)',
             'conditions' => 'partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (partner_id)',
             'coupon_rules' => 'coupon_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (coupon_id)',
             'rewards' => 'contact_id bigint unsigned NOT NULL, kind varchar(20) NOT NULL, coupon_id bigint unsigned NOT NULL, PRIMARY KEY  (contact_id,kind)',
@@ -46,7 +49,7 @@ final class DB {
         foreach ( $schemas as $name => $body ) { $body = str_replace( ', ', ",\n", $body ); dbDelta( 'CREATE TABLE ' . self::table( $name ) . " ($body) ENGINE=InnoDB $charset;" ); }
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
-        update_option( 'vpm_booking_db_version', 9, false );
+        update_option( 'vpm_booking_db_version', 10, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }

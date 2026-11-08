@@ -1,4 +1,4 @@
-Aktueller optionaler Buchungskern: [0.9.0 – Partnerbedingungen und Plattformaktionen](docs/BOOKING-POLICIES-0.9.0.md).
+Aktueller optionaler Buchungskern: [0.10.0 – geschützte Partnerkommunikation und Testweg](docs/BOOKING-BROKER-0.10.0.md).
 
 Installierbare Pakete und Versionshinweise: [pakete](pakete/README.md).
 

@@ -27,6 +27,8 @@ final class Operations {
     public static function handle( array $d ): void {
         Config::require( current_user_can( 'manage_options' ), 'permission_denied' );
         switch ( $d['vpm_operation'] ?? '' ) {
+            case 'message_review': Broker::review(self::number($d['id']??'',1),($d['decision']??'')==='approve',(string)($d['body']??''));break;
+            case 'profile_review': Broker::profile_review(self::number($d['partner_id']??'',1),($d['decision']??'')==='approve');break;
             case 'promotion_settings': Promotions::settings($d);break;
             case 'promotion_create':
                 foreach(array('starts_at','ends_at')as $field)$d[$field]=PublicApi::instant((string)($d[$field]??''),'Europe/Berlin',$field,(string)($d[$field.'_offset']??''));Promotions::create($d);break;
@@ -106,7 +108,7 @@ final class Operations {
         echo '<p><label><input type="checkbox" name="active" value="1" ' . checked( (int) ( $p['active'] ?? 0 ), 1, false ) . '> Für neue Anfragen freigeben (erzeugt keine Verfügbarkeit)</label></p>'; submit_button( $p ? 'Partner aktualisieren' : 'Partner als Vorbereitung anlegen' ); echo '</form>';
         self::table( array( 'Partner', 'Flughafen', 'Status', 'Provision', 'Zahlungszuordnung' ) );
         foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'partners' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $p ) { echo '<tr><td><a href="' . esc_url( add_query_arg( array( 'page' => 'vpm-booking-operations', 'partner' => $p['id'] ), admin_url( 'tools.php' ) ) ) . '#partners">' . esc_html( $p['name'] ) . '</a></td><td>' . esc_html( $p['airport'] ) . '</td><td>' . ( (int) $p['active'] ? 'freigegeben' : 'Vorbereitung / pausiert' ) . '</td><td>' . esc_html( (string) ( (int) $p['commission_bps'] / 100 ) ) . ' %</td><td>' . ( $p['stripe_account'] ? 'hinterlegt, nicht verifiziert' : 'offen' ) . '</td></tr>'; } self::endtable();
-        self::promotions();
+        Broker::admin();self::promotions();
         self::products();
         echo '<h2 id="coupons">Gutscheine</h2><p>Beträge in Cent, Prozentwerte in Basispunkten. Gültigkeit in UTC eingeben. Bestehende Einlösungen und Budgets werden nicht überschrieben.</p>'; self::form( 'coupon' );
         self::input( 'code', 'Code' ); echo '<p><label>Art <select name="kind"><option value="fixed">Fester Betrag in Cent</option><option value="percent">Prozent in Basispunkten</option></select></label></p>';

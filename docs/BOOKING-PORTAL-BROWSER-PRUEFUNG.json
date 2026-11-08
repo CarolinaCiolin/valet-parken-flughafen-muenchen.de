@@ -2,7 +2,7 @@
   "count": 19,
   "checks": [
     "Portal requires real WordPress login",
-    "Partner portal displays own data only",
+    "Partner portal displays own bookings with relay contact and no customer email",
     "Owner cannot see platform-wide metrics",
     "Portal is excluded from index",
     "Forged cross-tenant POST rejected with 403",

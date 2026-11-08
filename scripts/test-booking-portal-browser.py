@@ -22,7 +22,7 @@ try:
   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);ctx=browser.new_context(viewport={'width':1440,'height':1000});page=ctx.new_page();page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(BASE+'/?vpm_partner_portal=1',wait_until='domcontentloaded');check('wp-login.php'in page.url,'Portal requires real WordPress login')
   page.locator('#user_login').fill(data['login']);page.locator('#user_pass').fill('local-fixture-password-only');page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');page.goto(BASE+'/?vpm_partner_portal=1&partner='+str(data['partner']),wait_until='networkidle')
-  text=page.locator('body').inner_text();check('alpha-only@example.invalid'in text and 'beta-secret@example.invalid'not in text and 'Vertraulicher Partner B'not in text,'Partner portal displays own data only')
+  text=page.locator('body').inner_text();check('Demo Stuttgart Partner A'in text and '@relay.example.invalid'in text and 'alpha-only@example.invalid'not in text and 'beta-secret@example.invalid'not in text and 'Vertraulicher Partner B'not in text,'Partner portal displays own bookings with relay contact and no customer email')
   check('Plattformgesamtübersicht'not in text,'Owner cannot see platform-wide metrics')
   check('noindex'in page.request.get(BASE+'/?vpm_partner_portal=1').headers.get('x-robots-tag',''),'Portal is excluded from index')
   nonce=page.locator('input[name="_wpnonce"]').first.input_value();bad=page.request.post(BASE+'/?vpm_partner_portal=1',form={'_wpnonce':nonce,'portal_action':'connection','partner':str(data['other']),'mode':'manual'})
