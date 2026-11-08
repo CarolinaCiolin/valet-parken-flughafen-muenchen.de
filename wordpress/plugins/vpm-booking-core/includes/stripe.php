@@ -11,7 +11,7 @@ final class Stripe {
     }
     public static function checkout( string $public ): array {
         Config::require( self::ready(), 'stripe_test_key_required_live_disabled' );
-        $b = DB::tx( function() use ( $public ) { $b = Core::booking( $public, true ); Config::require( (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', Core::snapshot( $b )['stripe_account'] ), 'partner_payment_account_missing' ); Config::require( $b['state'] === 'confirmed' && in_array( $b['payment_state'], array( 'unpaid', 'creating', 'pending' ), true ), 'booking_not_ready_for_checkout' ); if ( ! $b['stripe_session'] ) { DB::update( 'bookings', array( 'payment_state' => 'creating' ), array( 'id' => $b['id'] ) ); } return $b; } );
+        $b = DB::tx( function() use ( $public ) { $b = Core::booking( $public, true ); Config::require( (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', Core::snapshot( $b )['stripe_account'] ), 'partner_payment_account_missing' ); Config::require( ( (!Flow::managed($b) && $b['state'] === 'confirmed') || Flow::payment_ready($b) ) && in_array( $b['payment_state'], array( 'unpaid', 'creating', 'pending' ), true ), 'booking_not_ready_for_checkout' ); if ( ! $b['stripe_session'] ) { DB::update( 'bookings', array( 'payment_state' => 'creating' ), array( 'id' => $b['id'] ) ); } return $b; } );
         if ( ! empty( $b['stripe_session'] ) ) { $old = self::api( 'checkout/sessions/' . $b['stripe_session'], array(), 'vpm-session-' . $public, 'GET' ); Config::require( ( $old['status'] ?? '' ) === 'open' && ( $old['id'] ?? '' ) === $b['stripe_session'] && wp_parse_url( $old['url'] ?? '', PHP_URL_HOST ) === 'checkout.stripe.com' && wp_parse_url( $old['url'] ?? '', PHP_URL_SCHEME ) === 'https', 'checkout_no_longer_open' ); return array( 'session_id' => $old['id'], 'url' => $old['url'], 'mode' => 'test' ); }
         $q = Core::snapshot( $b ); Config::require( (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', $q['stripe_account'] ), 'partner_payment_account_missing' ); $home = set_url_scheme( home_url( '/' ), 'https' );
         $session = self::api( 'checkout/sessions', array( 'mode' => 'payment', 'client_reference_id' => $public, 'customer_email' => $b['customer_email'], 'success_url' => add_query_arg( 'vpm_booking_payment', 'returned', $home ), 'cancel_url' => add_query_arg( 'vpm_booking_payment', 'cancelled', $home ), 'metadata' => array( 'booking_id' => $public ), 'line_items' => array( array( 'price_data' => array( 'currency' => 'eur', 'unit_amount' => $q['charged'], 'product_data' => array( 'name' => 'Airport parking – ' . $q['airport'] ) ), 'quantity' => 1 ) ), 'payment_intent_data' => array( 'application_fee_amount' => $q['platform'], 'transfer_data' => array( 'destination' => $q['stripe_account'] ), 'metadata' => array( 'booking_id' => $public ) ) ), 'vpm-checkout-' . $public );
@@ -41,10 +41,11 @@ final class Stripe {
                 elseif ( 'paid' === ( $o['payment_status'] ?? '' ) && ! in_array( $b['payment_state'], array( 'paid', 'partially_refunded', 'refunded' ), true ) ) {
                     $pi = is_array( $o['payment_intent'] ?? null ) ? $o['payment_intent']['id'] : ( $o['payment_intent'] ?? '' ); Config::require( is_string( $pi ) && (bool) preg_match( '/^pi_[a-zA-Z0-9_]+$/D', $pi ), 'invalid_payment_intent' );
                     DB::update( 'bookings', array( 'payment_state' => 'paid', 'stripe_pi' => $pi ), array( 'id' => $b['id'] ) ); $b['payment_state'] = 'paid'; $b['stripe_pi'] = $pi;
+                    Flow::enqueue($b,'confirm');
                     Finance::journal( $b, 'paid:' . $b['public_id'], Finance::paid_entries( $q ) );
                     if ( $b['state'] !== 'cancelled' ) { Core::coupon_state( $b, 'consumed' ); }
                     Automation::booking_event( $b, 'payment.received' ); Automation::booking_event( $b, 'invoice.requested' );
-                    if ( $b['state'] === 'confirmed' ) { Automation::booking_event( $b, 'booking.confirmed' ); }
+                    if ( $b['state'] === 'confirmed' && !Flow::managed($b) ) { Automation::booking_event( $b, 'booking.confirmed' ); }
                     if ( $b['state'] === 'cancelled' ) { Core::refund_row( $b, $q['charged'], 'late-cancelled-payment' ); }
                 }
             } elseif ( in_array( $type, array( 'refund.created', 'refund.updated' ), true ) ) { self::apply_refund( $o ); }

@@ -29,10 +29,12 @@ final class Core {
         Config::require( is_array( $travel ) && strlen( $terms ) <= 1200, 'invalid_offer_snapshot' );
         if ( $travel ) { Config::require( isset( $travel['airport'], $travel['timezone'], $travel['departure_utc'], $travel['return_utc'] ) && is_string( $travel['airport'] ) && in_array( $travel['timezone'], \DateTimeZone::listIdentifiers(), true ) && is_int( $travel['departure_utc'] ) && is_int( $travel['return_utc'] ) && $travel['departure_utc'] > 0 && $travel['return_utc'] > $travel['departure_utc'], 'invalid_travel_snapshot' ); $travel = array_intersect_key( $travel, array_flip( array( 'airport', 'timezone', 'departure_utc', 'return_utc' ) ) ); }
         $selection = $input['offer_selection'] ?? array(); Config::require( is_array( $selection ), 'invalid_offer_selection' ); if ( $selection ) { Config::require( ( $selection['total_cents'] ?? null ) === $base && is_array( $selection['addons'] ?? null ), 'invalid_offer_selection' ); }
+        $fulfilment = $input['fulfilment'] ?? array(); $demo = !empty($input['sandbox_demo']); Config::require(!$demo || (defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true),'demo_disabled');
         $fingerprint_data = array( $email, $partner_id, $base, $locale, $code ); if ( $travel || $terms ) { $fingerprint_data[] = $travel; $fingerprint_data[] = $terms; }
         if ( $selection ) { $fingerprint_data[] = $selection; }
+        if($fulfilment)$fingerprint_data[]=$fulfilment; if($demo)$fingerprint_data[]='sandbox_demo';
         $fingerprint = hash( 'sha256', wp_json_encode( $fingerprint_data ) );
-        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint, $travel, $terms, $selection ) {
+        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint, $travel, $terms, $selection, $fulfilment, $demo ) {
             // Stable request keys are unique at database level; a collision cannot create two bookings.
             $old = DB::row( 'bookings', 'request_key', $key, true );
             if ( $old ) { Config::require( hash_equals( $old['request_hash'], $fingerprint ), 'idempotency_conflict' ); return $old; }
@@ -42,8 +44,9 @@ final class Core {
                 $coupon = DB::row( 'coupons', 'code', $code, true );
                 $discount = Vouchers::evaluate( $coupon, $partner, $base, $email );
             }
-            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
+            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); if($fulfilment)$q['fulfilment']=$fulfilment; if($demo)$q['sandbox_demo']=true; $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );
+            if($demo) DB::insert('demo',array('booking_id'=>$id,'state'=>'created','created_at'=>time()));
             if ( $coupon ) {
                 DB::insert( 'coupon_uses', array( 'coupon_id' => $coupon['id'], 'booking_id' => $id, 'customer_hash' => $customer_hash, 'amount_cents' => $discount, 'state' => 'reserved' ) );
                 DB::update( 'coupons', array( 'held_uses' => (int) $coupon['held_uses'] + 1, 'held_cents' => (int) $coupon['held_cents'] + $discount ), array( 'id' => $coupon['id'] ) );
@@ -52,7 +55,7 @@ final class Core {
         } );
     }
     public static function confirm( string $public ): array {
-        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); Config::require( in_array( $b['state'], array( 'requested', 'confirmed' ), true ), 'invalid_booking_transition' ); DB::update( 'bookings', array( 'state' => 'confirmed' ), array( 'id' => $b['id'] ) ); $b['state'] = 'confirmed'; if ( $b['payment_state'] === 'paid' ) { Automation::booking_event( $b, 'booking.confirmed' ); } return $b; } );
+        return DB::tx( function() use ( $public ) { $b = self::booking( $public, true ); if(Flow::managed($b))Config::require(Flow::confirmation_ready($b),'partner_confirmation_not_ready'); Config::require( in_array( $b['state'], array( 'requested', 'confirmed' ), true ), 'invalid_booking_transition' ); DB::update( 'bookings', array( 'state' => 'confirmed' ), array( 'id' => $b['id'] ) ); $b['state'] = 'confirmed'; if ( $b['payment_state'] === 'paid' ) { Automation::booking_event( $b, 'booking.confirmed' ); } return $b; } );
     }
     public static function coupon_state( array $booking, string $target ): void {
         global $wpdb; $use = (array) $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'coupon_uses' ) . ' WHERE booking_id=%d FOR UPDATE', $booking['id'] ), ARRAY_A );

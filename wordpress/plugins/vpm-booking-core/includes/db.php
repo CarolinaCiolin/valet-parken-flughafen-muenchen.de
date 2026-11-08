@@ -6,6 +6,14 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'operation_locks' => 'booking_id bigint unsigned NOT NULL, lease varchar(64) NOT NULL, expires_at bigint NOT NULL, PRIMARY KEY  (booking_id)',
+            'product_templates' => 'id varchar(50) NOT NULL, partner_id bigint unsigned NOT NULL, payload longtext NOT NULL, PRIMARY KEY  (id), KEY partner_id (partner_id)',
+            'memberships' => 'partner_id bigint unsigned NOT NULL, user_id bigint unsigned NOT NULL, role varchar(20) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (partner_id,user_id), KEY user_id (user_id)',
+            'connections' => 'partner_id bigint unsigned NOT NULL, mode varchar(20) NOT NULL, adapter varchar(50) NOT NULL, credentials longtext NOT NULL, last_error varchar(50) NOT NULL DEFAULT \'\', assistance tinyint unsigned NOT NULL DEFAULT 0, updated_at bigint NOT NULL, PRIMARY KEY  (partner_id)',
+            'rates' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, partner_id bigint unsigned NOT NULL, product_id varchar(50) NOT NULL, price_cents bigint unsigned NOT NULL, pricing varchar(20) NOT NULL, capacity int unsigned NOT NULL, enabled tinyint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY partner_product (partner_id,product_id)',
+            'allocations' => 'booking_id bigint unsigned NOT NULL, rate_id bigint unsigned NOT NULL, starts_at bigint NOT NULL, ends_at bigint NOT NULL, expires_at bigint NOT NULL, state varchar(20) NOT NULL, PRIMARY KEY  (booking_id), KEY occupancy (rate_id,state,starts_at,ends_at)',
+            'fulfilment' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, action varchar(20) NOT NULL, result longtext DEFAULT NULL, status varchar(20) NOT NULL, attempts int unsigned NOT NULL DEFAULT 0, next_attempt bigint NOT NULL DEFAULT 0, locked_until bigint NOT NULL DEFAULT 0, locked_by varchar(64) NOT NULL DEFAULT \'\', error_code varchar(50) NOT NULL DEFAULT \'\', created_at bigint NOT NULL, PRIMARY KEY  (id), UNIQUE KEY booking_action (booking_id,action)',
+            'demo' => 'booking_id bigint unsigned NOT NULL, state varchar(30) NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (booking_id)',
             'loyalty' => 'contact_id bigint unsigned NOT NULL, coupon_id bigint unsigned NOT NULL, booking_id bigint unsigned NOT NULL, issued_at bigint NOT NULL, PRIMARY KEY  (contact_id), UNIQUE KEY coupon_id (coupon_id)',
             'audit' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, actor_id bigint unsigned NOT NULL, action varchar(50) NOT NULL, object_type varchar(30) NOT NULL, object_id bigint unsigned NOT NULL, created_at bigint NOT NULL, PRIMARY KEY  (id), KEY object_ref (object_type,object_id)',
             'access' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, booking_id bigint unsigned NOT NULL, token_hash varchar(64) NOT NULL, expires_at bigint NOT NULL, revoked_at bigint NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY token_hash (token_hash), KEY booking_id (booking_id)',
@@ -30,13 +38,19 @@ final class DB {
         foreach ( $schemas as $name => $body ) { $body = str_replace( ', ', ",\n", $body ); dbDelta( 'CREATE TABLE ' . self::table( $name ) . " ($body) ENGINE=InnoDB $charset;" ); }
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
-        update_option( 'vpm_booking_db_version', 5, false );
+        update_option( 'vpm_booking_db_version', 6, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }
     public static function insert( string $table, array $data ): int { global $wpdb; if ( false === $wpdb->insert( self::table( $table ), $data ) ) { throw new \RuntimeException( 'database_insert_failed' ); } return (int) $wpdb->insert_id; }
     public static function update( string $table, array $data, array $where ): void { global $wpdb; if ( false === $wpdb->update( self::table( $table ), $data, $where ) ) { throw new \RuntimeException( 'database_update_failed' ); } }
-    public static function tx( callable $fn ) { self::query( 'START TRANSACTION' ); try { $result = $fn(); self::query( 'COMMIT' ); return $result; } catch ( \Throwable $e ) { self::query( 'ROLLBACK' ); throw $e; } }
+    private static int $depth = 0;
+    public static function tx( callable $fn ) {
+        $level = self::$depth; $savepoint = 'vpm_sp_' . $level; self::query( $level ? 'SAVEPOINT ' . $savepoint : 'START TRANSACTION' ); ++self::$depth;
+        try { $result = $fn(); self::query( $level ? 'RELEASE SAVEPOINT ' . $savepoint : 'COMMIT' ); return $result; }
+        catch ( \Throwable $e ) { self::query( $level ? 'ROLLBACK TO SAVEPOINT ' . $savepoint : 'ROLLBACK' ); throw $e; }
+        finally { --self::$depth; }
+    }
     public static function row( string $table, string $field, $value, bool $lock = false ): array { global $wpdb; $allowed = array( 'id', 'public_id', 'request_key', 'code', 'email', 'token_hash', 'unsubscribe_hash', 'reference' ); if ( ! in_array( $field, $allowed, true ) ) { throw new \RuntimeException( 'invalid_lookup' ); } return (array) $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table( $table ) . " WHERE $field = %s" . ( $lock ? ' FOR UPDATE' : '' ), $value ), ARRAY_A ); }
 }
 final class Config {

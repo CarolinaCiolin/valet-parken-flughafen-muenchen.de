@@ -12,10 +12,10 @@ final class Rest {
             '/bookings' => function( $r ) { $d = self::data( $r ); return Core::create( $d, (string) $r->get_header( 'Idempotency-Key' ) ); },
             '/bookings/(?P<id>[a-f0-9-]{36})/confirm' => function( $r ) { return Core::confirm( $r['id'] ); },
             '/bookings/(?P<id>[a-f0-9-]{36})/checkout' => function( $r ) { return Stripe::checkout( $r['id'] ); },
-            '/bookings/(?P<id>[a-f0-9-]{36})/cancel' => function( $r ) { return Core::cancel( $r['id'] ); },
+            '/bookings/(?P<id>[a-f0-9-]{36})/cancel' => function( $r ) { return Flow::cancel_request( $r['id'] ); },
             '/bookings/(?P<id>[a-f0-9-]{36})/refund' => function( $r ) { $d = self::data( $r ); return Core::refund( $r['id'], Config::integer( $d['amount_cents'] ?? null, 1 ), (string) $r->get_header( 'Idempotency-Key' ) ); },
             '/marketing/campaigns' => function( $r ) { $d = self::data( $r ); return array( 'queued_contacts' => Automation::campaign( (string) ( $d['campaign_key'] ?? '' ) ) ); },
-            '/worker' => function() { Stripe::retry_refunds(); Automation::run(); return array( 'processed' => true ); },
+            '/worker' => function() { Flow::run(); Stripe::retry_refunds(); Loyalty::run(); Automation::run(); return array( 'processed' => true ); },
         );
         foreach ( $routes as $path => $callback ) { register_rest_route( 'vpm-booking/v1', $path, array( 'methods' => 'POST', 'permission_callback' => $path === '/coupons' ? function() { return current_user_can( 'manage_options' ); } : $admin, 'callback' => function( $r ) use ( $callback ) { return self::respond( function() use ( $callback, $r ) { return $callback( $r ); } ); } ) ); }
         register_rest_route( 'vpm-booking/v1', '/bookings/(?P<id>[a-f0-9-]{36})', array( 'methods' => 'GET', 'permission_callback' => $admin, 'callback' => function( $r ) { return self::respond( function() use ( $r ) { return Core::booking( $r['id'] ); } ); } ) );
@@ -37,7 +37,7 @@ final class Rest {
     }
     public static function admin(): void {
         if ( ! current_user_can( 'manage_options' ) ) { return; } global $wpdb;
-        echo '<div class="wrap"><h1>VPM Buchungskern – Sandbox</h1><p>Technischer Backend-Baustein. Keine Live-Zahlungen, keine Anbieter-Verfügbarkeit, kein öffentlicher Buchungscheckout und keine Rechnungserstellung eingerichtet. Rückkehr vom Zahlungsdienst ist noch keine Buchungsbestätigung; maßgeblich ist der verifizierte Webhook.</p><table class="widefat striped"><tbody>';
+        echo '<div class="wrap"><h1>VPM Buchungskern – Sandbox</h1><p>Entwicklungsbaustein mit Partnerportal und optionaler manueller Eigenverwaltung. Keine Live-Zahlungen, keine fertigen Herstelleradapter, kein öffentlicher Bezahlcheckout und keine Rechnungserstellung eingerichtet. Rückkehr vom Zahlungsdienst ist noch keine Buchungsbestätigung; maßgeblich ist der verifizierte Webhook.</p><table class="widefat striped"><tbody>';
         $rows = array( 'Payload-Verschlüsselung verfügbar' => function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'Stripe-Testschlüssel hinterlegt (Formatprüfung)' => Stripe::ready(), 'Stripe-Webhook-Secret vorhanden' => str_starts_with( Config::secret( 'VPM_BOOKING_STRIPE_WEBHOOK_SECRET' ), 'whsec_' ), 'Automatisierungsverbindung eingerichtet/aktiviert' => Automation::configured(), 'Newsletter-Einwilligungstext/-Version vorhanden' => (bool) get_option( 'vpm_booking_consent_text' ) && (bool) get_option( 'vpm_booking_consent_version' ) );
         foreach ( $rows as $label => $value ) { echo '<tr><th>' . esc_html( $label ) . '</th><td>' . ( $value ? 'ja' : 'nein' ) . '</td></tr>'; }
         foreach ( array( 'bookings', 'outbox', 'refunds', 'contacts' ) as $table ) { echo '<tr><th>' . esc_html( $table ) . '</th><td>' . (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . DB::table( $table ) ) . '</td></tr>'; }

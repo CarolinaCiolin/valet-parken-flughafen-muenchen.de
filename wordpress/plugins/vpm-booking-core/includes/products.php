@@ -38,7 +38,7 @@ final class Products {
         usort( $lines, function( $a, $b ) { return strcmp( $a['id'], $b['id'] ); } );
         return array( 'product_name' => $product['name_' . $locale], 'parking_type' => $product['parking_type'], 'attributes' => array_column( $product['attributes'], $locale ), 'parking_cents' => $parking, 'addons' => $lines, 'total_cents' => $total );
     }
-    public static function catalogue(): array { $v = get_option( 'vpm_booking_products', array() ); return is_array( $v ) ? $v : array(); }
+    public static function catalogue(): array { global $wpdb; $v = get_option( 'vpm_booking_products', array() ); $out = is_array($v)?$v:array(); foreach($wpdb->get_results('SELECT * FROM '.DB::table('product_templates'),ARRAY_A) as $r) { $out[$r['id']]=array('partner_id'=>(int)$r['partner_id'],'offer'=>json_decode($r['payload'],true)); } return $out; }
     public static function save_template( array $d ): void {
         $partner = Operations::number( $d['partner_id'] ?? '', 1 ); Config::require( (bool) DB::row( 'partners', 'id', $partner ), 'partner_not_found' );
         $id = $d['product_id'] ?? ''; Config::require( is_string( $id ) && ( $id === '' || preg_match( '/^product_[a-f0-9]{12}$/D', $id ) ), 'invalid_product_id' );
@@ -52,7 +52,7 @@ final class Products {
             $offer['addons'][] = array( 'id' => $code, 'label' => array( 'de' => $a['label_de'] ?? '', 'en' => $a['label_en'] ?? '' ), 'description' => array( 'de' => $a['description_de'] ?? '', 'en' => $a['description_en'] ?? '' ), 'unit_amount_cents' => Operations::number( $a['unit_amount_cents'] ?? '' ), 'max_quantity' => Operations::number( $a['max_quantity'] ?? '', 1, 1000 ) );
         }
         self::normalize( $offer ); Config::require( self::label( $offer['product_name'], 'de' ) !== '' && self::label( $offer['product_name'], 'en' ) !== '', 'invalid_product_label' );
-        $catalogue[$id] = array( 'partner_id' => $partner, 'offer' => $offer ); update_option( 'vpm_booking_products', $catalogue, false ); Operations::audit( 'product_template.saved', 'partner', $partner );
+        global $wpdb; DB::query($wpdb->prepare('INSERT INTO '.DB::table('product_templates').' (id,partner_id,payload) VALUES (%s,%d,%s) ON DUPLICATE KEY UPDATE payload=IF(partner_id=VALUES(partner_id),VALUES(payload),payload)',$id,$partner,wp_json_encode($offer))); Operations::audit( 'product_template.saved', 'partner', $partner );
     }
     public static function enrich( array $offer, int $partner ): array {
         if ( ! isset( $offer['catalog_product_id'] ) ) { return $offer; }

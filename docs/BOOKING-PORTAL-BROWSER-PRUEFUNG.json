@@ -1,0 +1,27 @@
+{
+  "count": 19,
+  "checks": [
+    "Portal requires real WordPress login",
+    "Partner portal displays own data only",
+    "Owner cannot see platform-wide metrics",
+    "Portal is excluded from index",
+    "Forged cross-tenant POST rejected with 403",
+    "Direct foreign partner query reveals no booking data",
+    "Portal responsive without page overflow 1440",
+    "Portal responsive without page overflow 390",
+    "Wizard starts with travel dates",
+    "Offer selection does not expose extras prematurely",
+    "Separate extras step defaults to no extras",
+    "Customer details follow extras",
+    "Enter in details step cannot bypass review or create booking",
+    "Review includes parking and selected 70-euro extra",
+    "Enquiry reaches explicit demo-payment step",
+    "Demo payment never presents itself as a real booking",
+    "Demo creates no real payment journal",
+    "Platform administrator sees combined dashboard",
+    "No JavaScript errors in portal and multi-step demo"
+  ],
+  "limitations": [
+    "Local role/login and simulation only; no production subdomain, provider API or Stripe payment tested"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+    "count": 16,
+    "checks": [
+        "Stored vendor credential is encrypted",
+        "Sold-out adapter returns no fabricated offers",
+        "Provider outage fails closed and records generic diagnostic",
+        "Public offer never exposes vendor credential",
+        "External payment unavailable before durable hold proof",
+        "Worker persists validated external hold proof before allowing sandbox payment",
+        "Active managed trips prevent destructive adapter\/mode switch",
+        "Paid booking remains unconfirmed while partner confirmation fails",
+        "Provider exception cannot leak secret into operator-visible error code",
+        "Repeated failure becomes explicit operator attention case",
+        "Explicit retry confirms once after provider acknowledgement",
+        "Completed confirmation is not dispatched again",
+        "Crash recovery after durable confirmation does not call vendor twice",
+        "Failed external cancellation cannot prematurely cancel or refund",
+        "Acknowledged external cancellation creates one refund request",
+        "Worker releases per-booking operation leases"
+    ]
+}

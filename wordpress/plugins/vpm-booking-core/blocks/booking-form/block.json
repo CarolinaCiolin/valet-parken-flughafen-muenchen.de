@@ -17,6 +17,10 @@
     "airport_mode": {
       "type": "string",
       "default": ""
+    },
+    "flow": {
+      "type": "string",
+      "default": "inline"
     }
   },
   "supports": {

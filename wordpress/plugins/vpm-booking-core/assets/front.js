@@ -36,7 +36,7 @@
     const endpoint = new URL(root.dataset.api, location.origin);
     if (endpoint.searchParams.has('rest_route')) endpoint.searchParams.set('rest_route', endpoint.searchParams.get('rest_route').replace(/\/$/, '') + '/' + route);
     else endpoint.pathname = endpoint.pathname.replace(/\/$/, '') + '/' + route;
-    const response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)});
+    const response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', ...(root.dataset.restNonce ? {'X-WP-Nonce':root.dataset.restNonce} : {})}, body: JSON.stringify(data)});
     const value = await response.json(); if (!response.ok) throw value; return value;
   };
   const parkingLabel = (root, type) => ({outdoor: ['Außenstellplatz', 'Outdoor parking'], covered: ['Überdachter Stellplatz', 'Covered parking'], garage: ['Parkhaus', 'Parking garage'], underground: ['Tiefgarage', 'Underground parking'], unspecified: ['Stellplatzart nicht angegeben', 'Parking type not specified']}[type] || ['', ''])[root.dataset.locale === 'en' ? 1 : 0];
@@ -87,6 +87,7 @@
     const form = event.target, root = form.closest('.vpm-booking-surface'); if (!root) return;
     if (!form.matches('.vpm-airport-form,.vpm-booking-search,.vpm-booking-request') && !root.classList.contains('vpm-booking-newsletter')) return;
     event.preventDefault(); if (root.dataset.preview === '1' || !form.reportValidity()) return;
+    if(root.dataset.flow==='steps'&&form.classList.contains('vpm-booking-request')&&root.dataset.step!=='5')return;
     const button = form.querySelector('button[type="submit"]'); if (button?.disabled) return;
     if (form.classList.contains('vpm-airport-form')) {
       const code = form.elements.airport.value; let airports = []; try {airports = JSON.parse(root.dataset.airports || '[]');} catch (_) {}
@@ -127,6 +128,7 @@
         });
         const filters = root.querySelector('.vpm-booking-filters'), filter = filters?.querySelector('select');
         if (filter) {while (filter.options.length > 1) filter.remove(1); filter.value = ''; [...new Set(result.offers.map(o => o.parking_type || 'unspecified'))].forEach(type => {const option = document.createElement('option'); option.value = type; option.textContent = parkingLabel(root, type); filter.append(option);}); filters.hidden = result.offers.length < 2;}
+        if(root.dataset.flow==='steps') wizardStep(root,2);
         status(root, result.offers.length ? text(root).timezone + ': ' + result.timezone : text(root).empty);
       } else if (form.classList.contains('vpm-booking-request')) {
         const selection = selected.get(root); if (!selection) throw {code: 'quote_expired'};
@@ -134,12 +136,12 @@
         const reference = /^[a-f0-9-]{36}$/.test(result.reference || '') ? ' ' + (root.dataset.locale === 'en' ? 'Reference: ' : 'Referenz: ') + result.reference : '';
         status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency) + reference);
         analytics(root, 'vpm_booking_request', root.querySelector('[name="airport"]').value);
-        clearOffers(root); form.reset();
+        clearOffers(root); form.reset(); if(root.dataset.flow==='steps'){root.__demoReference=result.reference;wizardStep(root,6);}
       } else {
         const checkbox = form.querySelector('[name="marketing_agreed"]');
         await post(root, 'marketing/request', {email: data.email, agreed: checkbox?.checked === true}); status(root, text(root).newsletter); form.reset();
       }
-    } catch (error) {handleError(root, error);}
+    } catch (error) {handleError(root, error); if(root.dataset.flow==='steps'&&form.classList.contains('vpm-booking-request'))wizardStep(root,error?.code==='quote_expired'?1:4);}
     finally {button.disabled = false;}
   });
   document.addEventListener('click', async event => {
@@ -154,9 +156,7 @@
       try {
         const result = await post(root, 'public/price', data); if (root.__vpmCouponInput !== fingerprint) return;
         status(root, ''); box.textContent = root.dataset.locale === 'en' ? 'Voucher checked.' : 'Gutschein geprüft.';
-        const line = document.createElement('p'); line.className = 'vpm-coupon-discount'; line.textContent = (root.dataset.locale === 'en' ? 'Discount: −' : 'Rabatt: −') + money(root, result.discount_cents, result.currency);
-        const totalLine = document.createElement('p'); totalLine.className = 'vpm-booking-total'; totalLine.textContent = (root.dataset.locale === 'en' ? 'Total after discount: ' : 'Gesamt nach Rabatt: ') + money(root, result.amount_cents, result.currency);
-        const summaryBox = root.querySelector('.vpm-booking-summary'); summaryBox.append(line, totalLine);
+        showPrice(root,result);
       } catch (error) {if (root.__vpmCouponInput === fingerprint) box.textContent = couponMessage(root, error?.code || '');}
       finally {apply.disabled = false;}
       return;
@@ -167,6 +167,7 @@
     const card = button.closest('.vpm-booking-offer'); selected.set(root, {offer: offers.get(card), card}); summary(root);
     root.querySelectorAll('.vpm-booking-choose').forEach(b => {const active = b === button; b.setAttribute('aria-pressed', active ? 'true' : 'false'); b.textContent = active ? text(root).selected : text(root).choose;});
     const form = root.querySelector('.vpm-booking-request'); form.hidden = false; form.querySelector('button[type="submit"]').disabled = false; form.querySelector('[name="email"]').focus();
+    if(root.dataset.flow==='steps')wizardStep(root,3);
     analytics(root, 'vpm_booking_offer_select', root.querySelector('[name="airport"]').value);
   });
   document.addEventListener('input', event => {const root = event.target.closest('.vpm-booking-widget'); if (root && event.target.matches('[name="email"],[name="coupon"],.vpm-addon-quantity')) {root.__vpmCouponInput = ''; resetCoupon(root);}});
@@ -187,11 +188,43 @@
     if (event.target.name === 'airport') root.querySelectorAll('.vpm-time-offset').forEach(node => {node.hidden = true; node.querySelector('select').required = false; node.querySelector('select').value = '';});
     if (event.target.type === 'datetime-local' && group) {group.hidden = true; group.querySelector('select').required = false; group.querySelector('select').value = '';}
   });
+  const showPrice = (root, result) => {
+    summary(root); const box = root.querySelector('.vpm-booking-summary');
+    if(!result.discount_cents){box.querySelector('.vpm-booking-total').textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);return;}
+    if(result.discount_cents){const p=document.createElement('p');p.className='vpm-coupon-discount';p.textContent=(root.dataset.locale==='en'?'Discount: −':'Rabatt: −')+money(root,result.discount_cents,result.currency);box.append(p);}
+    const p=document.createElement('p');p.className='vpm-booking-total';p.textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);box.append(p);
+  };
+  const wizardStep = (root, step) => {
+    root.__wizardRevision=(root.__wizardRevision||0)+1;root.dataset.step=String(step); const labels=root.dataset.locale==='en'?['Travel dates','Parking offer','Optional extras','Your details','Review','Enquiry / test payment']:['Reisedaten','Parkplatzangebot','Optionale Extras','Ihre Angaben','Preisübersicht','Anfrage / Testzahlung'];
+    const heading=root.querySelector('.vpm-wizard-heading');if(heading)heading.textContent=step+'. '+labels[step-1];
+    root.querySelector('.vpm-booking-search').hidden=step!==1;root.querySelector('.vpm-booking-offers').hidden=![2,3].includes(step);
+    root.querySelector('.vpm-booking-filters').hidden=step!==2||root.querySelector('.vpm-parking-filter').options.length<3;
+    const chosen=selected.get(root);root.querySelectorAll('.vpm-booking-offer').forEach(card=>{card.hidden=step===3&&card!==chosen?.card;card.querySelectorAll('.vpm-booking-addons').forEach(a=>a.hidden=step!==3);card.querySelector('.vpm-booking-choose').hidden=step!==2;});
+    const form=root.querySelector('.vpm-booking-request');form.hidden=![4,5].includes(step);form.querySelector('.vpm-booking-customer-fields').hidden=step!==4;form.querySelector('.vpm-booking-summary').hidden=step!==5;form.querySelector('button[type="submit"]').hidden=step!==5;
+    root.querySelector('.vpm-wizard-back').hidden=step===1||step===6;root.querySelector('.vpm-wizard-next').hidden=![3,4].includes(step);root.querySelector('.vpm-wizard-demo').hidden=step!==6||root.dataset.demoReady!=='1';
+    if(step===4)form.querySelector('[name="email"]').focus();
+  };
+  const wizard = root => {
+    if(root.dataset.flow!=='steps')return;
+    const heading=document.createElement('h2');heading.className='vpm-wizard-heading';heading.setAttribute('aria-live','polite');root.prepend(heading);
+    const nav=document.createElement('div');nav.className='vpm-wizard-nav';
+    const back=document.createElement('button');back.type='button';back.className='vpm-wizard-back';back.textContent=root.dataset.locale==='en'?'Back':'Zurück';
+    const next=document.createElement('button');next.type='button';next.className='vpm-wizard-next';next.textContent=root.dataset.locale==='en'?'Continue':'Weiter';
+    const demo=document.createElement('button');demo.type='button';demo.className='vpm-wizard-demo';demo.textContent=root.dataset.locale==='en'?'Simulate test payment (no charge)':'Testzahlung simulieren (keine Belastung)';nav.append(back,next,demo);root.append(nav);
+    back.addEventListener('click',()=>wizardStep(root,Math.max(1,Number(root.dataset.step)-1)));
+    next.addEventListener('click',async()=>{
+      if(root.dataset.step==='3'){wizardStep(root,4);return;}
+      const form=root.querySelector('.vpm-booking-request'),selection=selected.get(root);if(!form.elements.email.reportValidity()||!selection)return;next.disabled=true;
+      try{const data={quote_id:selection.offer.quote_id,addons:collect(selection.card,true),airport_scope:root.querySelector('[name="airport_scope"]')?.value||'',email:form.elements.email.value,coupon:form.elements.coupon.value,locale:root.dataset.locale};const revision=root.__wizardRevision,fingerprint=JSON.stringify(data);root.__vpmCouponInput=fingerprint;const result=await post(root,'public/price',data);if(root.__wizardRevision!==revision||root.__vpmCouponInput!==fingerprint)return;showPrice(root,result);status(root,'');wizardStep(root,5);}catch(error){handleError(root,error);}finally{next.disabled=false;}
+    });
+    demo.addEventListener('click',async()=>{demo.disabled=true;try{const result=await post(root,'demo/complete',{reference:root.__demoReference});status(root,result.simulation?(root.dataset.locale==='en'?'Demo completed. No real booking or payment.':'Demo abgeschlossen. Keine echte Buchung oder Zahlung.'):'');}catch(error){handleError(root,error);}finally{demo.disabled=false;}});
+    wizardStep(root,1);
+  };
   const view = root => {
     if (!viewed.has(root) && root.getBoundingClientRect().bottom > 0 && root.getBoundingClientRect().top < innerHeight && statisticsConsent()) {analytics(root, 'vpm_booking_view'); viewed.add(root);}
   };
   const init = () => document.querySelectorAll('.vpm-booking-surface').forEach(root => {
-    if (mounted.has(root)) return; mounted.add(root);
+    if (mounted.has(root)) return; mounted.add(root); wizard(root);
     if (root.dataset.preview !== '1') {root.querySelector('.vpm-airport-form button')?.removeAttribute('disabled'); if (root.dataset.enabled === '1') root.querySelector('.vpm-booking-search button')?.removeAttribute('disabled'); view(root);}
   });
   init(); let scheduled = false;

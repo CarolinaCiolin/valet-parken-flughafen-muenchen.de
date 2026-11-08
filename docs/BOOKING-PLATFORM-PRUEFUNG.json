@@ -1,0 +1,33 @@
+{
+    "count": 28,
+    "checks": [
+        "Owner sees assigned partner only",
+        "reject:portal_forbidden",
+        "reject:portal_forbidden",
+        "reject:portal_forbidden",
+        "reject:portal_forbidden",
+        "reject:portal_forbidden",
+        "Partner creates only own product with own extra price",
+        "reject:portal_forbidden",
+        "reject:catalog_product_partner_mismatch",
+        "Manual partner publishes real configured price and available capacity",
+        "Managed enquiry obtains internal manual allocation",
+        "reject:partner_confirmation_not_ready",
+        "Retry does not consume second capacity slot",
+        "Sold-out manual pool cannot advertise another slot",
+        "reject:capacity_below_reserved_total",
+        "Partner booking projection omits platform commission and Stripe account",
+        "Partner cannot see platform newsletter metrics",
+        "Manual fulfilment confirms only after paid status and valid allocation",
+        "Partner entitlement uses ledger; absent checkout denominator stays unknown",
+        "Platform sees combined journal commission, discounts and customers",
+        "Paid request without capacity proof becomes visible attention case",
+        "Demo completion never forges Stripe payment",
+        "Demo suppresses ordinary booking email events",
+        "Demo excluded from operational metrics",
+        "Outer rollback preserves atomicity across nested booking work",
+        "Cancellation waits for fulfilment acknowledgement",
+        "Manual cancellation releases capacity and creates refund request after acknowledgement",
+        "Acknowledged cancellation restores capacity"
+    ]
+}

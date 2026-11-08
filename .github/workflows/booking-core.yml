@@ -1,0 +1,25 @@
+name: Buchungskern prüfen
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['wordpress/plugins/vpm-booking-core/**', 'scripts/test-booking-*.php', 'scripts/test-booking-stock-concurrency.py', 'scripts/check-booking-ci.sh', '.github/workflows/booking-core.yml']
+  push:
+    branches: [main]
+    paths: ['wordpress/plugins/vpm-booking-core/**', 'scripts/test-booking-*.php', 'scripts/test-booking-stock-concurrency.py', 'scripts/check-booking-ci.sh', '.github/workflows/booking-core.yml']
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: WordPress und Datenbank isoliert starten, PHP-Tests ausführen
+        run: bash scripts/check-booking-ci.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: booking-backend-testberichte
+          path: .runtime/ci-reports/*.json
+          if-no-files-found: ignore
+          include-hidden-files: true

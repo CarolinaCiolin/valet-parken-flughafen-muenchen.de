@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class Compatibility {
     public static function private_request(): bool {
         $uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' ); $route = $_GET['rest_route'] ?? '';
-        return str_contains( $uri, '/wp-json/vpm-booking/v1/' ) || ( is_string( $route ) && str_starts_with( $route, '/vpm-booking/v1/' ) ) || isset( $_GET['vpm_booking_consent'] ) || isset( $_GET['vpm_booking_newsletter'] ) || isset( $_GET['vpm_booking_payment'] ) || isset( $_GET['vpm_booking_manage'] );
+        return str_contains( $uri, '/wp-json/vpm-booking/v1/' ) || ( is_string( $route ) && str_starts_with( $route, '/vpm-booking/v1/' ) ) || isset( $_GET['vpm_booking_consent'] ) || isset( $_GET['vpm_booking_newsletter'] ) || isset( $_GET['vpm_booking_payment'] ) || isset( $_GET['vpm_booking_manage'] ) || isset( $_GET['vpm_partner_portal'] );
     }
     public static function cache(): void {
         if ( self::private_request() ) { if ( ! defined( 'DONOTCACHEPAGE' ) ) { define( 'DONOTCACHEPAGE', true ); } do_action( 'litespeed_control_set_nocache', 'VPM dynamic booking endpoint' ); }

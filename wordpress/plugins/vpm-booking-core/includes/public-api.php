@@ -38,7 +38,7 @@ final class PublicApi {
     public static function offers( array $data ): array {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data ); $scope = (string) ( $data['airport_scope'] ?? '' ); Products::check_scope( $scope, $context['airport'] ); $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de';
         // Only installed, server-side adapters may supply prices. No fallback/test offers shipped.
-        Config::require( has_filter( 'vpm_booking_quote_offers' ), 'booking_adapter_not_configured' );
+        Config::require( Adapters::has_source($context['airport']), 'booking_adapter_not_configured' );
         $offers = apply_filters( 'vpm_booking_quote_offers', array(), $context ); Config::require( is_array( $offers ) && count( $offers ) <= 20, 'invalid_adapter_response' ); $out = array();
         foreach ( $offers as $offer ) {
             Config::require( is_array( $offer ) && ( $offer['currency'] ?? '' ) === 'eur', 'unsupported_offer_currency' );
@@ -46,7 +46,7 @@ final class PublicApi {
             Config::require( $partner && $partner['airport'] === $context['airport'], 'adapter_partner_mismatch' );
             if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
-            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope );
+            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array() );
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
             $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms ) + Products::public_data( $product, $locale );
         }
@@ -56,7 +56,7 @@ final class PublicApi {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
         Config::require( ! isset( $data['base_cents'] ) && ! isset( $data['partner_id'] ) && ! isset( $data['state'] ) && ! isset( $data['payment_state'] ), 'client_amount_or_state_forbidden' );
         list( $quote, $context, $details, $selection ) = self::priced_selection( $data );
-        $b = Core::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'] );
+        $b = Flow::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'sandbox_demo' => defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'], $details['source'] ?? array() );
         $q = Core::snapshot( $b );
         return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur' );
     }
