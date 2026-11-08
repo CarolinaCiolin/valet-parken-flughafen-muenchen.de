@@ -54,7 +54,19 @@
     chosen.forEach(item => {const addon = offer.addons.find(a => a.id === item.id); const row = document.createElement('li'); row.textContent = item.quantity + ' × ' + addon.label + ': ' + money(root, addon.unit_amount_cents * item.quantity, offer.currency); list.append(row);}); box.append(list);
     const sum = document.createElement('p'); sum.className = 'vpm-booking-total'; sum.textContent = (root.dataset.locale === 'en' ? 'Total before voucher: ' : 'Gesamt vor Gutschein: ') + money(root, total(offer, chosen), offer.currency); box.append(sum);
   };
-  const clearOffers = root => {selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
+  const clearOffers = root => {root.__vpmCouponInput = ''; selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
+  const couponMessage = (root, code) => {
+    const en = root.dataset.locale === 'en';
+    const messages = {
+      coupon_expired: ['Leider ist der Gutschein bereits abgelaufen.', 'Unfortunately, this voucher has expired.'],
+      coupon_redeemed: ['Leider ist der Gutschein bereits eingelöst.', 'Unfortunately, this voucher has already been redeemed.'],
+      coupon_in_progress: ['Dieser Gutschein wird bereits für eine andere Anfrage verwendet.', 'This voucher is already attached to another enquiry.'],
+      coupon_wrong_customer: ['Dieser Gutschein gehört zu einer anderen E-Mail-Adresse.', 'This voucher belongs to a different email address.'],
+      coupon_unknown: ['Dieser Gutscheincode ist nicht bekannt.', 'This voucher code was not found.'],
+      coupon_not_started: ['Dieser Gutschein ist noch nicht gültig.', 'This voucher is not valid yet.']
+    }; return messages[code]?.[en ? 1 : 0] || (en ? 'This voucher is not available for this offer.' : 'Der Gutschein ist für dieses Angebot nicht verfügbar.');
+  };
+  const resetCoupon = root => {const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = ''; summary(root);};
   const handleError = (root, error) => {
     const msg = text(root), code = typeof error?.code === 'string' ? error.code : '';
     if (code === 'ambiguous_local_time' && ['departure', 'return'].includes(error?.data?.field) && Array.isArray(error.data.offsets)) {
@@ -67,8 +79,9 @@
       }
       status(root, msg.offset, true); return;
     }
+    if (code.startsWith('coupon_') || code.startsWith('subsidy_')) {root.__vpmCouponInput = ''; resetCoupon(root); const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = couponMessage(root, code);}
     const message = code.includes('rate_limited') ? msg.limit : code.startsWith('coupon_') || code.startsWith('subsidy_') ? msg.coupon : code.includes('not_enabled') || code.includes('not_configured') ? msg.unavailable : code.includes('departure') || code.includes('return') || code.includes('travel') || code.includes('offset') ? msg.date : msg.failed;
-    status(root, message, true); analytics(root, 'vpm_booking_error', root.querySelector('[name="airport"]')?.value || '', code);
+    status(root, code.startsWith('coupon_') ? couponMessage(root, code) : message, true); analytics(root, 'vpm_booking_error', root.querySelector('[name="airport"]')?.value || '', code);
   };
   document.addEventListener('submit', async event => {
     const form = event.target, root = form.closest('.vpm-booking-surface'); if (!root) return;
@@ -129,14 +142,34 @@
     } catch (error) {handleError(root, error);}
     finally {button.disabled = false;}
   });
-  document.addEventListener('click', event => {
+  document.addEventListener('click', async event => {
+    const apply = event.target.closest('.vpm-coupon-apply');
+    if (apply) {
+      const root = apply.closest('.vpm-booking-widget'), selection = selected.get(root); if (!selection || root.dataset.preview === '1' || apply.disabled) return;
+      const email = root.querySelector('[name="email"]'); if (!email.reportValidity()) return;
+      const form = root.querySelector('.vpm-booking-request'), box = root.querySelector('.vpm-coupon-status');
+      let addons; try {addons = collect(selection.card, true);} catch (_) {box.textContent = text(root).failed; return;}
+      const data = {quote_id: selection.offer.quote_id, addons, airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: email.value, coupon: form.elements.coupon.value, locale: root.dataset.locale};
+      const fingerprint = JSON.stringify(data); root.__vpmCouponInput = fingerprint; apply.disabled = true; summary(root);
+      try {
+        const result = await post(root, 'public/price', data); if (root.__vpmCouponInput !== fingerprint) return;
+        status(root, ''); box.textContent = root.dataset.locale === 'en' ? 'Voucher checked.' : 'Gutschein geprüft.';
+        const line = document.createElement('p'); line.className = 'vpm-coupon-discount'; line.textContent = (root.dataset.locale === 'en' ? 'Discount: −' : 'Rabatt: −') + money(root, result.discount_cents, result.currency);
+        const totalLine = document.createElement('p'); totalLine.className = 'vpm-booking-total'; totalLine.textContent = (root.dataset.locale === 'en' ? 'Total after discount: ' : 'Gesamt nach Rabatt: ') + money(root, result.amount_cents, result.currency);
+        const summaryBox = root.querySelector('.vpm-booking-summary'); summaryBox.append(line, totalLine);
+      } catch (error) {if (root.__vpmCouponInput === fingerprint) box.textContent = couponMessage(root, error?.code || '');}
+      finally {apply.disabled = false;}
+      return;
+    }
     const button = event.target.closest('.vpm-booking-choose'); if (!button) return;
     const root = button.closest('.vpm-booking-widget'); if (!root || root.dataset.preview === '1') return;
+    root.__vpmCouponInput = ''; const couponStatus = root.querySelector('.vpm-coupon-status'); if (couponStatus) couponStatus.textContent = '';
     const card = button.closest('.vpm-booking-offer'); selected.set(root, {offer: offers.get(card), card}); summary(root);
     root.querySelectorAll('.vpm-booking-choose').forEach(b => {const active = b === button; b.setAttribute('aria-pressed', active ? 'true' : 'false'); b.textContent = active ? text(root).selected : text(root).choose;});
-    const form = root.querySelector('.vpm-booking-request'); form.hidden = false; form.querySelector('button').disabled = false; form.querySelector('[name="email"]').focus();
+    const form = root.querySelector('.vpm-booking-request'); form.hidden = false; form.querySelector('button[type="submit"]').disabled = false; form.querySelector('[name="email"]').focus();
     analytics(root, 'vpm_booking_offer_select', root.querySelector('[name="airport"]').value);
   });
+  document.addEventListener('input', event => {const root = event.target.closest('.vpm-booking-widget'); if (root && event.target.matches('[name="email"],[name="coupon"],.vpm-addon-quantity')) {root.__vpmCouponInput = ''; resetCoupon(root);}});
   document.addEventListener('change', event => {
     const root = event.target.closest('.vpm-booking-widget'); if (!root || root.dataset.preview === '1') return;
     if (event.target.matches('.vpm-parking-filter')) {
@@ -144,6 +177,7 @@
       selected.delete(root); root.querySelector('.vpm-booking-request').hidden = true; root.querySelectorAll('.vpm-booking-choose').forEach(b => {b.setAttribute('aria-pressed', 'false'); b.textContent = text(root).choose;}); return;
     }
     if (event.target.matches('.vpm-addon,.vpm-addon-quantity')) {
+      root.__vpmCouponInput = ''; resetCoupon(root);
       const card = event.target.closest('.vpm-booking-offer'), offer = offers.get(card), row = event.target.closest('.vpm-addon-row');
       row.querySelector('.vpm-addon-quantity').disabled = !row.querySelector('.vpm-addon').checked;
       const chosen = collect(card); card.querySelector('.vpm-offer-total').textContent = (root.dataset.locale === 'en' ? 'Total: ' : 'Gesamt: ') + money(root, total(offer, chosen), offer.currency); summary(root); return;

@@ -25,7 +25,7 @@
     root.querySelector('.vpm-customer-access [name="reference"]').value = value.reference;
     row(t('Referenz', 'Reference'), value.reference); row(t('Flughafen', 'Airport'), value.airport);
     row(t('Anfragestatus', 'Enquiry status'), state(value.state)); row(t('Zahlungsstatus', 'Payment status'), state(value.payment_state));
-    row(t('Betrag', 'Amount'), money(value.amount_cents)); row(t('Erstattet', 'Refunded'), money(value.refunded_cents));
+    row(t('Betrag', 'Amount'), money(value.amount_cents)); if (value.discount_cents > 0) row(t('Gutscheinrabatt', 'Voucher discount'), '−' + money(value.discount_cents)); row(t('Erstattet', 'Refunded'), money(value.refunded_cents));
     if (value.travel?.timezone) {
       const format = timestamp => new Intl.DateTimeFormat(en ? 'en-GB' : 'de-DE', {dateStyle: 'medium', timeStyle: 'short', timeZone: value.travel.timezone}).format(timestamp * 1000);
       row(t('Abgabe', 'Drop-off'), format(value.travel.departure_utc)); row(t('Rückgabe', 'Collection'), format(value.travel.return_utc)); row(t('Zeitzone', 'Timezone'), value.travel.timezone);

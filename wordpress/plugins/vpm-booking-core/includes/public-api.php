@@ -55,16 +55,27 @@ final class PublicApi {
     public static function request( array $data ): array {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
         Config::require( ! isset( $data['base_cents'] ) && ! isset( $data['partner_id'] ) && ! isset( $data['state'] ) && ! isset( $data['payment_state'] ), 'client_amount_or_state_forbidden' );
-        $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
-        $context = json_decode( $quote['context'], true ); Config::require( is_array( $context ) && $context['departure_utc'] > time(), 'quote_expired' );
-        $details = json_decode( $quote['details'] ?? '', true ) ?: array(); $scope = (string) ( $details['airport_scope'] ?? '' ); Config::require( $scope === (string) ( $data['airport_scope'] ?? '' ), 'airport_scope_mismatch' ); Products::check_scope( $scope, $context['airport'] );
-        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );
+        list( $quote, $context, $details, $selection ) = self::priced_selection( $data );
         $b = Core::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'] );
         $q = Core::snapshot( $b );
         return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur' );
     }
+    private static function priced_selection( array $data ): array {
+        $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
+        $context = json_decode( $quote['context'], true ); Config::require( is_array( $context ) && $context['departure_utc'] > time(), 'quote_expired' );
+        $details = json_decode( $quote['details'] ?? '', true ) ?: array(); $scope = (string) ( $details['airport_scope'] ?? '' ); Config::require( $scope === (string) ( $data['airport_scope'] ?? '' ), 'airport_scope_mismatch' ); Products::check_scope( $scope, $context['airport'] );
+        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );
+        return array( $quote, $context, $details, $selection );
+    }
+    public static function preview( array $data ): array {
+        Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
+        list( $quote, $context, $details, $selection ) = self::priced_selection( $data ); $partner = DB::row( 'partners', 'id', $quote['partner_id'] ); Config::require( $partner && (int) $partner['active'], 'partner_inactive' );
+        $code = strtoupper( trim( (string) ( $data['coupon'] ?? '' ) ) ); $discount = $code === '' ? 0 : Vouchers::evaluate( DB::row( 'coupons', 'code', $code ), $partner, $selection['total_cents'], (string) ( $data['email'] ?? '' ) );
+        $q = Finance::quote( $selection['total_cents'], (int) $partner['commission_bps'], $discount );
+        return array( 'base_cents' => $q['base'], 'discount_cents' => $q['discount'], 'amount_cents' => $q['charged'], 'currency' => 'eur' );
+    }
     public static function register(): void {
-        foreach ( array( '/public/offers' => 'offers', '/public/requests' => 'request' ) as $path => $method ) {
+        foreach ( array( '/public/offers' => 'offers', '/public/requests' => 'request', '/public/price' => 'preview' ) as $path => $method ) {
             register_rest_route( 'vpm-booking/v1', $path, array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function( $r ) use ( $method ) {
                 try { Config::require( strlen( $r->get_body() ) < 8192, 'payload_too_large' ); $data = $r->get_json_params(); Config::require( is_array( $data ), 'json_object_required' ); return new \WP_REST_Response( self::$method( $data ), 200 ); }
                 catch ( LocalTime $e ) { return new \WP_Error( 'ambiguous_local_time', 'ambiguous_local_time', array( 'status' => 422, 'field' => $e->field, 'offsets' => $e->offsets ) ); }

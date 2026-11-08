@@ -2,7 +2,7 @@
   "checks": [
     "Idempotent booking creation",
     "rejected:idempotency_conflict",
-    "rejected:coupon_limit",
+    "rejected:coupon_in_progress",
     "Multiple unpaid bookings and case-sensitive request keys supported",
     "100 EUR price, 10 EUR coupon, partner 80, platform margin 10",
     "rejected:subsidy_exceeds_commission_requires_funded_model",

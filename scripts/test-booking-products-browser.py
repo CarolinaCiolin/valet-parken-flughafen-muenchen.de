@@ -45,7 +45,7 @@ add_filter('vpm_booking_quote_offers',function($old,$context){if($context['airpo
   page.set_viewport_size({'width':1440,'height':1000});fixed.screenshot(path=str(directory/'angebote-stuttgart-test.png'))
   page.set_viewport_size({'width':390,'height':1000});fixed.screenshot(path=str(directory/'angebote-stuttgart-mobil-test.png'))
   fixed.locator('[name="email"]').fill('products-browser@example.invalid')
-  with page.expect_response(lambda r:'/public/requests' in r.url)as pending:fixed.locator('.vpm-booking-request button').click()
+  with page.expect_response(lambda r:'/public/requests' in r.url)as pending:fixed.locator('.vpm-booking-request button[type="submit"]').click()
   value=pending.value.json();check(value['amount_cents']==12900,'Submitted enquiry uses authoritative combined price')
   snapshot=json.loads(php('echo json_encode(VPM\\Booking\\Core::snapshot(VPM\\Booking\\Core::booking('+lit(value['reference'])+')));'))
   check(snapshot['airport']=='STR' and len(snapshot['offer_selection']['addons'])==2,'Persisted enquiry keeps fixed airport and selected extras')

@@ -1,0 +1,18 @@
+{
+  "count": 10,
+  "checks": [
+    "EXPIRED5 displays precise German error",
+    "REDEEMED5 displays precise German error",
+    "Final submission rechecks expiry and shows field-level error",
+    "Discount and reduced total appear before submission",
+    "Successful voucher preview clears previous submission error",
+    "Preview does not spend voucher",
+    "Changing email removes stale discounted preview",
+    "Final enquiry revalidates and stores discounted total",
+    "Discount charged exclusively to platform commission",
+    "No browser JavaScript errors"
+  ],
+  "limitations": [
+    "Local fixture codes only; no production payment or email sent"
+  ]
+}

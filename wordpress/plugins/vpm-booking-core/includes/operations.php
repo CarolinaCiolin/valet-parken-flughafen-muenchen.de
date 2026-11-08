@@ -27,6 +27,9 @@ final class Operations {
     public static function handle( array $d ): void {
         Config::require( current_user_can( 'manage_options' ), 'permission_denied' );
         switch ( $d['vpm_operation'] ?? '' ) {
+            case 'loyalty':
+                $enabled = isset( $d['enabled'] ); if ( $enabled && ! get_option( 'vpm_booking_loyalty_enabled', false ) ) { update_option( 'vpm_booking_loyalty_starts', time(), false ); }
+                update_option( 'vpm_booking_loyalty_enabled', $enabled, false ); self::audit( 'loyalty.settings_updated', 'campaign', 0 ); break;
             case 'airports': self::save_airports( is_array( $d['airports'] ?? null ) ? $d['airports'] : array() ); break;
             case 'product': Products::save_template( $d ); break;
             case 'partner': self::partner( $d ); break;
@@ -89,6 +92,7 @@ final class Operations {
         echo '<p><label><input type="checkbox" name="active" value="1" ' . checked( (int) ( $p['active'] ?? 0 ), 1, false ) . '> Für neue Anfragen freigeben (erzeugt keine Verfügbarkeit)</label></p>'; submit_button( $p ? 'Partner aktualisieren' : 'Partner als Vorbereitung anlegen' ); echo '</form>';
         self::table( array( 'Partner', 'Flughafen', 'Status', 'Provision', 'Zahlungszuordnung' ) );
         foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'partners' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $p ) { echo '<tr><td><a href="' . esc_url( add_query_arg( array( 'page' => 'vpm-booking-operations', 'partner' => $p['id'] ), admin_url( 'tools.php' ) ) ) . '#partners">' . esc_html( $p['name'] ) . '</a></td><td>' . esc_html( $p['airport'] ) . '</td><td>' . ( (int) $p['active'] ? 'freigegeben' : 'Vorbereitung / pausiert' ) . '</td><td>' . esc_html( (string) ( (int) $p['commission_bps'] / 100 ) ) . ' %</td><td>' . ( $p['stripe_account'] ? 'hinterlegt, nicht verifiziert' : 'offen' ) . '</td></tr>'; } self::endtable();
+        echo '<h2>Optionale Treueaktion</h2><p>Ein persönlicher 5-%-Gutschein für die nächste Buchung, einmalig je normalisierter E-Mail-Adresse, gültig zwei Kalenderjahre ab Ausstellung. Erst nach bestätigtem Newsletter und erster bezahlter, operativ bestätigter Buchung; nur neue erste Buchungen ab Aktivierung. Gutscheinkosten gehen aus der Plattformprovision ab. Versand über das Marketing-Ereignis loyalty.coupon_issued; ohne Versanddienst keine tatsächliche Zustellung.</p>'; self::form( 'loyalty' ); echo '<p><label><input type="checkbox" name="enabled" ' . checked( get_option( 'vpm_booking_loyalty_enabled', false ), true, false ) . '> Treueaktion bewusst aktivieren</label></p>'; submit_button( 'Treueaktion speichern' ); echo '</form>';
         self::products();
         echo '<h2 id="coupons">Gutscheine</h2><p>Beträge in Cent, Prozentwerte in Basispunkten. Gültigkeit in UTC eingeben. Bestehende Einlösungen und Budgets werden nicht überschrieben.</p>'; self::form( 'coupon' );
         self::input( 'code', 'Code' ); echo '<p><label>Art <select name="kind"><option value="fixed">Fester Betrag in Cent</option><option value="percent">Prozent in Basispunkten</option></select></label></p>';

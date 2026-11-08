@@ -45,7 +45,7 @@ try {
     $input = array( 'partner_id' => (int) $p['id'], 'email' => 'booking-fixture@example.invalid', 'base_cents' => 10000, 'coupon' => 'TEST10' );
     $b = Core::create( $input, 'booking-fixture-01' ); $again = Core::create( $input, 'booking-fixture-01' ); ok( $b['id'] === $again['id'], 'Idempotent booking creation' );
     $changed = $input; $changed['base_cents'] = 12000; fails( function() use ( $changed ) { Core::create( $changed, 'booking-fixture-01' ); }, 'idempotency_conflict' );
-    $other = $input; $other['email'] = 'other@example.invalid'; fails( function() use ( $other ) { Core::create( $other, 'booking-fixture-02' ); }, 'coupon_limit' );
+    $other = $input; $other['email'] = 'other@example.invalid'; fails( function() use ( $other ) { Core::create( $other, 'booking-fixture-02' ); }, 'coupon_in_progress' );
     $plain = $input; unset( $plain['coupon'] ); $plain['email'] = 'second@example.invalid'; $second = Core::create( $plain, 'BOOKING-fixture-01' ); ok( $second['id'] !== $b['id'], 'Multiple unpaid bookings and case-sensitive request keys supported' );
     $q = Core::snapshot( $b ); ok( $q['charged'] === 9000 && $q['partner'] === 8000 && $q['commission'] === 2000 && $q['platform'] === 1000, '100 EUR price, 10 EUR coupon, partner 80, platform margin 10' );
     fails( function() { Finance::quote( 10000, 2000, 2100 ); }, 'subsidy_exceeds_commission_requires_funded_model' );

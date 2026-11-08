@@ -14,7 +14,8 @@ final class Core {
         Config::require( (bool) preg_match( '/^[A-Z0-9_-]{3,40}$/D', $code ) && in_array( $kind, array( 'fixed', 'percent' ), true ), 'invalid_coupon' );
         $start = Config::integer( $input['starts_at'] ?? null, 0, PHP_INT_MAX ); $end = Config::integer( $input['ends_at'] ?? null, 1, PHP_INT_MAX ); Config::require( $end > $start, 'invalid_coupon_dates' );
         $airport = strtoupper( (string) ( $input['airport'] ?? '' ) ); Config::require( '' === $airport || (bool) preg_match( '/^[A-Z]{3}$/D', $airport ), 'invalid_airport' );
-        $id = DB::insert( 'coupons', array( 'code' => $code, 'kind' => $kind, 'value' => Config::integer( $input['value'] ?? null, 1, 'percent' === $kind ? 10000 : 100000000 ), 'starts_at' => $start, 'ends_at' => $end, 'max_uses' => Config::integer( $input['max_uses'] ?? null, 1, 1000000 ), 'max_per_customer' => Config::integer( $input['max_per_customer'] ?? 1, 1, 1000000 ), 'budget_cents' => Config::integer( $input['budget_cents'] ?? null, 1 ), 'airport' => $airport, 'partner_id' => Config::integer( $input['partner_id'] ?? 0, 0 ) ) );
+        $hash = $input['customer_hash'] ?? ''; Config::require( is_string( $hash ) && ( $hash === '' || preg_match( '/^[a-f0-9]{64}$/D', $hash ) ), 'invalid_coupon_customer' );
+        $id = DB::insert( 'coupons', array( 'code' => $code, 'kind' => $kind, 'customer_hash' => $hash, 'value' => Config::integer( $input['value'] ?? null, 1, 'percent' === $kind ? 10000 : 100000000 ), 'starts_at' => $start, 'ends_at' => $end, 'max_uses' => Config::integer( $input['max_uses'] ?? null, 1, 1000000 ), 'max_per_customer' => Config::integer( $input['max_per_customer'] ?? 1, 1, 1000000 ), 'budget_cents' => Config::integer( $input['budget_cents'] ?? null, 1 ), 'airport' => $airport, 'partner_id' => Config::integer( $input['partner_id'] ?? 0, 0 ) ) );
         return DB::row( 'coupons', 'id', $id );
     }
     public static function booking( string $public, bool $lock = false ): array { $b = DB::row( 'bookings', 'public_id', $public, $lock ); Config::require( ! empty( $b ), 'booking_not_found' ); return $b; }
@@ -39,11 +40,7 @@ final class Core {
             $coupon = array(); $discount = 0; $customer_hash = hash_hmac( 'sha256', $email, wp_salt( 'auth' ) );
             if ( $code !== '' ) {
                 $coupon = DB::row( 'coupons', 'code', $code, true );
-                Config::require( $coupon && time() >= (int) $coupon['starts_at'] && time() < (int) $coupon['ends_at'], 'coupon_unavailable' );
-                Config::require( ( ! $coupon['airport'] || $coupon['airport'] === $partner['airport'] ) && ( ! $coupon['partner_id'] || (int) $coupon['partner_id'] === $partner_id ), 'coupon_wrong_offer' );
-                $discount = 'fixed' === $coupon['kind'] ? (int) $coupon['value'] : intdiv( $base * (int) $coupon['value'] + 5000, 10000 );
-                $uses = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . DB::table( 'coupon_uses' ) . " WHERE coupon_id=%d AND customer_hash=%s AND state IN ('reserved','consumed')", $coupon['id'], $customer_hash ) );
-                Config::require( $uses < (int) $coupon['max_per_customer'] && (int) $coupon['held_uses'] + (int) $coupon['used_uses'] < (int) $coupon['max_uses'] && (int) $coupon['held_cents'] + (int) $coupon['used_cents'] + $discount <= (int) $coupon['budget_cents'], 'coupon_limit' );
+                $discount = Vouchers::evaluate( $coupon, $partner, $base, $email );
             }
             $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );

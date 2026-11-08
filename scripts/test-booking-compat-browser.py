@@ -64,7 +64,7 @@ add_filter('vpm_booking_quote_offers',function($offers,$context){$id=(int)get_op
   widget.locator('.vpm-booking-choose').click()
   widget.locator('[name="email"]').fill('compat-browser@example.invalid')
   with page.expect_response(lambda r:'/public/requests' in r.url) as pending:
-   widget.locator('.vpm-booking-request button').click()
+   widget.locator('.vpm-booking-request button[type="submit"]').click()
   result=pending.value.json()
   check(result['state']=='requested' and result['payment_state']=='unpaid' and result['amount_cents']==10000,'Real UI submits trusted-price unpaid enquiry')
   page.wait_for_function('document.querySelector(".vpm-booking-widget .vpm-booking-status").textContent.includes("übermittelt")')

@@ -1,0 +1,25 @@
+{
+    "count": 20,
+    "checks": [
+        "Two-calendar-year coupon remains valid after 1.5 years",
+        "reject:coupon_expired",
+        "reject:coupon_expired",
+        "reject:coupon_not_started",
+        "Confirmed newsletter plus unpaid enquiry cannot earn voucher",
+        "Loyalty campaign is explicitly opt-in for operator",
+        "First paid confirmed booking plus DOI earns 5-percent personal code",
+        "Award lasts two calendar years from issuance",
+        "Repeated worker\/grant never issues second voucher",
+        "reject:coupon_wrong_customer",
+        "Voucher delivery uses encrypted consent-gated marketing outbox",
+        "Read-only preview exposes correct discounted total",
+        "Preview never consumes or reserves voucher",
+        "Public price preview hides commission and account",
+        "Five-percent discount reduces platform commission only; partner remains unchanged",
+        "reject:coupon_in_progress",
+        "reject:coupon_redeemed",
+        "Newsletter unsubscribe does not revoke an already issued valid benefit",
+        "reject:subsidy_exceeds_commission_requires_funded_model",
+        "Booking-management capability alone cannot issue platform coupons"
+    ]
+}
