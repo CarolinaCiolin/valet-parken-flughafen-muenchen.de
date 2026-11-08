@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class Compatibility {
     public static function private_request(): bool {
         $uri = (string) ( $_SERVER['REQUEST_URI'] ?? '' ); $route = $_GET['rest_route'] ?? '';
-        return str_contains( $uri, '/wp-json/vpm-booking/v1/' ) || ( is_string( $route ) && str_starts_with( $route, '/vpm-booking/v1/' ) ) || isset( $_GET['vpm_booking_consent'] ) || isset( $_GET['vpm_booking_newsletter'] ) || isset( $_GET['vpm_booking_payment'] );
+        return str_contains( $uri, '/wp-json/vpm-booking/v1/' ) || ( is_string( $route ) && str_starts_with( $route, '/vpm-booking/v1/' ) ) || isset( $_GET['vpm_booking_consent'] ) || isset( $_GET['vpm_booking_newsletter'] ) || isset( $_GET['vpm_booking_payment'] ) || isset( $_GET['vpm_booking_manage'] );
     }
     public static function cache(): void {
         if ( self::private_request() ) { if ( ! defined( 'DONOTCACHEPAGE' ) ) { define( 'DONOTCACHEPAGE', true ); } do_action( 'litespeed_control_set_nocache', 'VPM dynamic booking endpoint' ); }
@@ -27,7 +27,7 @@ final class Compatibility {
     public static function export( string $email, int $page = 1 ): array {
         global $wpdb; $email = strtolower( trim( $email ) ); $offset = max( 0, $page - 1 ) * 20; $items = array();
         $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'bookings' ) . ' WHERE customer_email=%s ORDER BY id LIMIT 20 OFFSET %d', $email, $offset ), ARRAY_A );
-        foreach ( $rows as $b ) { $q = Core::snapshot( $b ); $data = array( array( 'name' => 'E-Mail', 'value' => $b['customer_email'] ), array( 'name' => 'Buchungsreferenz', 'value' => $b['public_id'] ), array( 'name' => 'Status', 'value' => $b['state'] . ' / ' . $b['payment_state'] ), array( 'name' => 'Kundenzahlung (Cent)', 'value' => (string) $q['charged'] ), array( 'name' => 'Erstattet (Cent)', 'value' => (string) $b['refunded_cents'] ), array( 'name' => 'Reisedaten', 'value' => wp_json_encode( $q['travel'] ?? array() ) ) ); $items[] = array( 'group_id' => 'vpm-bookings', 'group_label' => 'Buchungen', 'item_id' => 'booking-' . $b['id'], 'data' => $data ); }
+        foreach ( $rows as $b ) { $q = Core::snapshot( $b ); $changes = $wpdb->get_results( $wpdb->prepare( 'SELECT kind,state,created_at,reviewed_at FROM ' . DB::table( 'changes' ) . ' WHERE booking_id=%d', $b['id'] ), ARRAY_A ); $data = array( array( 'name' => 'E-Mail', 'value' => $b['customer_email'] ), array( 'name' => 'Buchungsreferenz', 'value' => $b['public_id'] ), array( 'name' => 'Status', 'value' => $b['state'] . ' / ' . $b['payment_state'] ), array( 'name' => 'Kundenzahlung (Cent)', 'value' => (string) $q['charged'] ), array( 'name' => 'Erstattet (Cent)', 'value' => (string) $b['refunded_cents'] ), array( 'name' => 'Reisedaten', 'value' => wp_json_encode( $q['travel'] ?? array() ) ), array( 'name' => 'Änderungswünsche', 'value' => wp_json_encode( $changes ) ) ); $items[] = array( 'group_id' => 'vpm-bookings', 'group_label' => 'Buchungen', 'item_id' => 'booking-' . $b['id'], 'data' => $data ); }
         if ( $page === 1 ) { $c = DB::row( 'contacts', 'email', $email ); if ( $c ) { $items[] = array( 'group_id' => 'vpm-consent', 'group_label' => 'E-Mail-Einstellungen', 'item_id' => 'contact-' . $c['id'], 'data' => array( array( 'name' => 'Status', 'value' => $c['state'] ), array( 'name' => 'Einwilligungsversion', 'value' => $c['consent_version'] ), array( 'name' => 'Einwilligungstext', 'value' => $c['consent_text'] ) ) ); } }
         return array( 'data' => $items, 'done' => count( $rows ) < 20 );
     }
@@ -35,6 +35,7 @@ final class Compatibility {
     public static function erase( string $email, int $page = 1 ): array {
         global $wpdb; $email = strtolower( trim( $email ) ); $contact = DB::row( 'contacts', 'email', $email ); $bookings = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . DB::table( 'bookings' ) . ' WHERE customer_email=%s', $email ) );
         if ( $contact && $contact['state'] !== 'unsubscribed' ) { DB::tx( function() use ( $email ) { Consent::revoke_remote( $email ); $c = DB::row( 'contacts', 'email', $email ); Automation::event( 'privacy-revoke:' . $c['id'] . ':' . $c['revision'], 'marketing.revoked', 'transactional', array( 'recipient' => $email, 'consent_version' => $c['consent_version'], 'consent_revision' => (int) $c['revision'] ), (int) $c['id'] ); } ); }
+        foreach ( $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM ' . DB::table( 'bookings' ) . ' WHERE customer_email=%s', $email ) ) as $id ) { Customer::revoke( (int) $id ); }
         return array( 'items_removed' => false, 'items_retained' => (bool) ( $contact || $bookings ), 'messages' => ( $contact || $bookings ) ? array( 'Marketing ist gesperrt. Buchungs-/Einwilligungsnachweise benötigen vor Löschung eine geprüfte Aufbewahrungsentscheidung; keine automatisierte Löschfrist konfiguriert.' ) : array(), 'done' => true );
     }
     public static function register(): void {

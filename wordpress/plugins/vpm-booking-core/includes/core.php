@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class Core {
     public static function partner( array $input ): array {
         $airport = strtoupper( (string) ( $input['airport'] ?? '' ) ); $account = (string) ( $input['stripe_account'] ?? '' );
-        Config::require( (bool) preg_match( '/^[A-Z]{3}$/D', $airport ) && (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', $account ), 'invalid_partner' );
+        Config::require( (bool) preg_match( '/^[A-Z]{3}$/D', $airport ) && ( $account === '' || (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', $account ) ), 'invalid_partner' );
         $name = sanitize_text_field( $input['name'] ?? '' ); Config::require( $name !== '' && strlen( $name ) <= 180, 'invalid_partner_name' );
-        $id = DB::insert( 'partners', array( 'airport' => $airport, 'name' => $name, 'stripe_account' => $account, 'commission_bps' => Config::integer( $input['commission_bps'] ?? null, 0, 10000 ) ) );
+        $id = DB::insert( 'partners', array( 'airport' => $airport, 'name' => $name, 'stripe_account' => $account, 'commission_bps' => Config::integer( $input['commission_bps'] ?? null, 0, 10000 ), 'active' => Config::integer( $input['active'] ?? 1, 0, 1 ) ) );
         return DB::row( 'partners', 'id', $id );
     }
     public static function coupon( array $input ): array {
@@ -33,7 +33,7 @@ final class Core {
             // Stable request keys are unique at database level; a collision cannot create two bookings.
             $old = DB::row( 'bookings', 'request_key', $key, true );
             if ( $old ) { Config::require( hash_equals( $old['request_hash'], $fingerprint ), 'idempotency_conflict' ); return $old; }
-            $partner = DB::row( 'partners', 'id', $partner_id ); Config::require( ! empty( $partner ), 'partner_not_found' ); if ( $travel ) { Config::require( $travel['airport'] === $partner['airport'], 'travel_partner_mismatch' ); }
+            $partner = DB::row( 'partners', 'id', $partner_id ); Config::require( ! empty( $partner ), 'partner_not_found' ); Config::require( (int) $partner['active'] === 1, 'partner_inactive' ); if ( $travel ) { Config::require( $travel['airport'] === $partner['airport'], 'travel_partner_mismatch' ); }
             $coupon = array(); $discount = 0; $customer_hash = hash_hmac( 'sha256', $email, wp_salt( 'auth' ) );
             if ( $code !== '' ) {
                 $coupon = DB::row( 'coupons', 'code', $code, true );

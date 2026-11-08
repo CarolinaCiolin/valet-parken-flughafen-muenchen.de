@@ -88,7 +88,8 @@
       } else if (form.classList.contains('vpm-booking-request')) {
         const quote = selected.get(root); if (!quote) throw {code: 'quote_expired'};
         const result = await post(root, 'public/requests', {quote_id: quote, email: data.email, coupon: data.coupon || '', locale: root.dataset.locale});
-        status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency));
+        const reference = /^[a-f0-9-]{36}$/.test(result.reference || '') ? ' ' + (root.dataset.locale === 'en' ? 'Reference: ' : 'Referenz: ') + result.reference : '';
+        status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency) + reference);
         analytics(root, 'vpm_booking_request', root.querySelector('[name="airport"]').value);
         clearOffers(root); form.reset();
       } else {

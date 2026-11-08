@@ -2,14 +2,14 @@
 /**
  * Plugin Name: VPM Buchungskern
  * Description: Separater Sandbox-Buchungskern mit Stripe-Connect-Vorbereitung, Gutscheinjournal und E-Mail-Ereignissen. Keine Live-Zahlungen.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * License: GPL-2.0-or-later
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-foreach ( array( 'db', 'finance', 'core', 'stripe', 'automation', 'consent', 'airports', 'public-api', 'frontend', 'compatibility', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
-add_action( 'plugins_loaded', function() { if ( (int) get_option( 'vpm_booking_db_version', 0 ) < 2 ) { \VPM\Booking\DB::install(); } } );
+foreach ( array( 'db', 'finance', 'core', 'stripe', 'automation', 'consent', 'airports', 'public-api', 'frontend', 'compatibility', 'operations', 'customer', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
+add_action( 'plugins_loaded', function() { if ( (int) get_option( 'vpm_booking_db_version', 0 ) < 3 ) { \VPM\Booking\DB::install(); } } );
 \VPM\Booking\Compatibility::register();
 add_action( 'init', array( 'VPM\\Booking\\Frontend', 'register' ), 20 );
 add_action( 'wp_enqueue_scripts', array( 'VPM\\Booking\\Frontend', 'detect_assets' ) );
@@ -23,3 +23,6 @@ add_action( 'rest_api_init', array( 'VPM\\Booking\\PublicApi', 'register' ) );
 add_action( 'init', function() { add_shortcode( 'vpm_booking_newsletter', array( 'VPM\\Booking\\Consent', 'form' ) ); } );
 add_action( 'template_redirect', array( 'VPM\\Booking\\Consent', 'landing' ), 0 );
 add_action( 'admin_menu', array( 'VPM\\Booking\\Rest', 'admin_menu' ) );
+
+\VPM\Booking\Operations::register();
+\VPM\Booking\Customer::register();

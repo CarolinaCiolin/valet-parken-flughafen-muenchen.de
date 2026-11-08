@@ -1,0 +1,33 @@
+{
+  "count": 24,
+  "checks": [
+    "Customer landing excluded from index",
+    "Customer landing private/no-referrer",
+    "Customer landing cannot be embedded by another website",
+    "Bearer fragment removed immediately from browser address",
+    "No bearer token persisted in browser storage",
+    "Customer frontend loads only authorized booking",
+    "Only local form CSS and customer script loaded",
+    "Customer UI has no horizontal overflow 1440",
+    "Customer UI has no horizontal overflow 390",
+    "Token absent from every network URL and referrer",
+    "Unchecked cancellation acknowledgement cannot submit",
+    "Customer cancellation UI does not execute financial cancellation",
+    "Reload without fragment requires fresh link and never exposes cached booking",
+    "Invalid access denied with private response",
+    "Customer secret cannot be submitted via GET URL",
+    "Anonymous visitors cannot open operations admin",
+    "Admin edits airport names in real form fields",
+    "Authenticated nonce-protected airport save works",
+    "Admin rejects invalid CSRF nonce",
+    "Partner admin allows inactive preparation without fake payment account",
+    "Admin booking search finds correct record",
+    "Search safely handles literal percent and quote characters",
+    "Admin review acknowledges request without executing partner cancellation",
+    "No browser JavaScript errors in customer and admin flow"
+  ],
+  "limitations": [
+    "Local WordPress only; test data shown in screenshots",
+    "No live partner, email delivery, Stripe or Hostinger tested"
+  ]
+}

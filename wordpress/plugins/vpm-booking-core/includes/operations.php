@@ -1,0 +1,88 @@
+<?php
+namespace VPM\Booking;
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+final class Operations {
+    public static function audit( string $action, string $type, int $id ): void { DB::insert( 'audit', array( 'actor_id' => get_current_user_id(), 'action' => $action, 'object_type' => $type, 'object_id' => $id, 'created_at' => time() ) ); }
+    public static function number( $v, int $min = 0, int $max = 100000000 ): int {
+        Config::require( is_string( $v ) && preg_match( '/^\d{1,12}$/D', $v ), 'invalid_integer' ); return Config::integer( (int) $v, $min, $max );
+    }
+    public static function save_airports( array $rows ): void {
+        $catalogue = Airports::all(); Config::require( count( $rows ) === count( $catalogue ), 'invalid_airport_catalogue' );
+        foreach ( $catalogue as $i => &$a ) {
+            Config::require( isset( $rows[$i] ) && is_array( $rows[$i] ), 'invalid_airport_record' );
+            $a['name_de'] = $rows[$i]['name_de'] ?? ''; $a['name_en'] = $rows[$i]['name_en'] ?? ''; $a['page_id'] = self::number( $rows[$i]['page_id'] ?? '' );
+        } unset( $a ); $validated = Airports::validate( $catalogue ); update_option( 'vpm_booking_airports', $validated, false ); self::audit( 'airport_catalogue.updated', 'catalogue', 0 ); do_action( 'litespeed_purge_all' );
+    }
+    public static function partner( array $d ): array {
+        $id = self::number( $d['id'] ?? '0' ); $airport = strtoupper( sanitize_text_field( $d['airport'] ?? '' ) ); Airports::get( $airport );
+        $name = sanitize_text_field( $d['name'] ?? '' ); $account = trim( (string) ( $d['stripe_account'] ?? '' ) );
+        Config::require( $name !== '' && strlen( $name ) <= 180 && ( $account === '' || preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', $account ) ), 'invalid_partner' );
+        $data = array( 'airport' => $airport, 'name' => $name, 'stripe_account' => $account, 'commission_bps' => self::number( $d['commission_bps'] ?? '', 0, 10000 ), 'active' => isset( $d['active'] ) ? 1 : 0 );
+        return DB::tx( function() use ( $id, $data ) {
+            if ( $id ) { Config::require( (bool) DB::row( 'partners', 'id', $id, true ), 'partner_not_found' ); DB::update( 'partners', $data, array( 'id' => $id ) ); $p = DB::row( 'partners', 'id', $id ); }
+            else { $p = Core::partner( $data ); }
+            self::audit( $id ? 'partner.updated' : 'partner.created', 'partner', (int) $p['id'] ); return $p;
+        } );
+    }
+    public static function handle( array $d ): void {
+        Config::require( current_user_can( 'manage_options' ), 'permission_denied' );
+        switch ( $d['vpm_operation'] ?? '' ) {
+            case 'airports': self::save_airports( is_array( $d['airports'] ?? null ) ? $d['airports'] : array() ); break;
+            case 'partner': self::partner( $d ); break;
+            case 'coupon':
+                $input = array(); foreach ( array( 'code', 'kind', 'airport' ) as $k ) { $input[$k] = sanitize_text_field( $d[$k] ?? '' ); }
+                foreach ( array( 'value', 'max_uses', 'max_per_customer', 'budget_cents', 'partner_id' ) as $k ) { $input[$k] = self::number( $d[$k] ?? '0', 0, PHP_INT_MAX ); }
+                foreach ( array( 'starts_at', 'ends_at' ) as $k ) { $value = $d[$k] ?? ''; Config::require( is_string( $value ), 'invalid_coupon_dates' ); $dt = \DateTimeImmutable::createFromFormat( '!Y-m-d\TH:i', $value, new \DateTimeZone( 'UTC' ) ); Config::require( $dt && $dt->format( 'Y-m-d\TH:i' ) === $value, 'invalid_coupon_dates' ); $input[$k] = $dt->getTimestamp(); }
+                if ( $input['airport'] ) { Airports::get( strtoupper( $input['airport'] ) ); }
+                if ( $input['partner_id'] ) { $p = DB::row( 'partners', 'id', $input['partner_id'] ); Config::require( $p && ( ! $input['airport'] || $p['airport'] === strtoupper( $input['airport'] ) ), 'coupon_wrong_offer' ); }
+                DB::tx( function() use ( $input ) { $c = Core::coupon( $input ); self::audit( 'coupon.created', 'coupon', (int) $c['id'] ); } ); break;
+            case 'access':
+                $b = Core::booking( (string) ( $d['booking'] ?? '' ) ); Config::require( Automation::configured(), 'automation_not_ready' ); Customer::send( $b ); self::audit( 'customer_access.queued', 'booking', (int) $b['id'] ); break;
+            case 'revoke_access':
+                DB::tx( function() use ( $d ) { $b = Core::booking( (string) ( $d['booking'] ?? '' ), true ); Customer::revoke( (int) $b['id'] ); self::audit( 'customer_access.revoked', 'booking', (int) $b['id'] ); } ); break;
+            case 'review':
+                DB::tx( function() use ( $d ) { $r = DB::row( 'changes', 'id', self::number( $d['id'] ?? '', 1 ), true ); Config::require( ! empty( $r ), 'change_not_found' ); DB::update( 'changes', array( 'state' => 'reviewed', 'reviewed_at' => time() ), array( 'id' => $r['id'] ) ); self::audit( 'change.reviewed', 'change', (int) $r['id'] ); } ); break;
+            default: throw new \RuntimeException( 'invalid_operation' );
+        }
+    }
+    public static function register(): void {
+        add_action( 'admin_menu', function() { $hook = add_management_page( 'Buchungsverwaltung', 'VPM Buchungsverwaltung', 'manage_options', 'vpm-booking-operations', array( self::class, 'page' ) ); add_action( 'load-' . $hook, function() {
+            if ( ! isset( $_POST['vpm_operation'] ) ) { return; } check_admin_referer( 'vpm_booking_operations' );
+            try { self::handle( wp_unslash( $_POST ) ); wp_safe_redirect( admin_url( 'tools.php?page=vpm-booking-operations&saved=1' ) ); exit; }
+            catch ( \Throwable $e ) { $GLOBALS['vpm_operation_error'] = preg_match( '/^[a-z_]+$/D', $e->getMessage() ) ? $e->getMessage() : 'operation_failed'; }
+        } ); } );
+    }
+    private static function form( string $action ): void { echo '<form method="post">'; wp_nonce_field( 'vpm_booking_operations' ); echo '<input type="hidden" name="vpm_operation" value="' . esc_attr( $action ) . '">'; }
+    private static function input( string $name, string $label, $value = '', string $type = 'text' ): void { echo '<p><label>' . esc_html( $label ) . '<br><input class="regular-text" type="' . esc_attr( $type ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"></label></p>'; }
+    private static function airport_select( string $selected = '' ): void { echo '<p><label>Flughafen<br><select name="airport">'; foreach ( Airports::all() as $a ) { echo '<option value="' . esc_attr( $a['code'] ) . '" ' . selected( $selected, $a['code'], false ) . '>' . esc_html( $a['name_de'] . ' (' . $a['code'] . ')' ) . '</option>'; } echo '</select></label></p>'; }
+    private static function table( array $headers ): void { echo '<div style="overflow:auto"><table class="widefat striped"><thead><tr>'; foreach ( $headers as $h ) { echo '<th>' . esc_html( $h ) . '</th>'; } echo '</tr></thead><tbody>'; }
+    private static function endtable(): void { echo '</tbody></table></div>'; }
+    public static function page(): void {
+        if ( ! current_user_can( 'manage_options' ) ) { return; } global $wpdb;
+        echo '<div class="wrap"><h1>VPM Buchungsverwaltung</h1><p>Entwicklung / Sandbox. Keine Partnerkapazität oder Live-Zahlung angebunden. Anfragen und Stornowünsche sind keine bestätigten Buchungen oder ausgeführten Stornos.</p>';
+        if ( isset( $_GET['saved'] ) ) { echo '<div class="notice notice-success"><p>Gespeichert.</p></div>'; }
+        if ( isset( $GLOBALS['vpm_operation_error'] ) ) { echo '<div class="notice notice-error"><p>Speichern fehlgeschlagen: ' . esc_html( $GLOBALS['vpm_operation_error'] ) . '</p></div>'; }
+        echo '<p><a href="#airports">Flughäfen</a> · <a href="#partners">Partner</a> · <a href="#coupons">Gutscheine</a> · <a href="#bookings">Anfragen</a> · <a href="#changes">Stornowünsche</a> · <a href="#audit">Protokoll</a></p><h2 id="airports">Flughäfen und Standortseiten</h2><p>Namen und Seiten-ID bearbeiten. 0 bedeutet noch keine Zielseite. Englische Ziele werden über Polylang zugeordnet; Veröffentlichung und Inhalte bleiben unverändert.</p>';
+        self::form( 'airports' ); self::table( array( 'IATA', 'Name Deutsch', 'Name Englisch', 'Seiten-ID' ) );
+        foreach ( Airports::all() as $i => $a ) { echo '<tr><th>' . esc_html( $a['code'] ) . '</th>'; foreach ( array( 'name_de', 'name_en', 'page_id' ) as $k ) { echo '<td><input aria-label="' . esc_attr( $a['code'] . ' ' . $k ) . '" name="airports[' . (int) $i . '][' . esc_attr( $k ) . ']" type="' . ( $k === 'page_id' ? 'number' : 'text' ) . '" value="' . esc_attr( (string) $a[$k] ) . '"></td>'; } echo '</tr>'; }
+        self::endtable(); submit_button( 'Flughafenauswahl speichern' ); echo '</form><h2 id="partners">Partner</h2>';
+        $edit = isset( $_GET['partner'] ) && is_string( $_GET['partner'] ) ? absint( $_GET['partner'] ) : 0; $p = $edit ? DB::row( 'partners', 'id', $edit ) : array();
+        self::form( 'partner' ); echo '<input type="hidden" name="id" value="' . (int) ( $p['id'] ?? 0 ) . '">'; self::input( 'name', 'Partnername', $p['name'] ?? '' ); self::airport_select( $p['airport'] ?? '' ); self::input( 'commission_bps', 'Provision in Basispunkten (100 = 1 %)', $p['commission_bps'] ?? 0, 'number' ); self::input( 'stripe_account', 'Stripe-Account-ID (optional, kein geheimer Schlüssel)', $p['stripe_account'] ?? '' );
+        echo '<p><label><input type="checkbox" name="active" value="1" ' . checked( (int) ( $p['active'] ?? 0 ), 1, false ) . '> Für neue Anfragen freigeben (erzeugt keine Verfügbarkeit)</label></p>'; submit_button( $p ? 'Partner aktualisieren' : 'Partner als Vorbereitung anlegen' ); echo '</form>';
+        self::table( array( 'Partner', 'Flughafen', 'Status', 'Provision', 'Zahlungszuordnung' ) );
+        foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'partners' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $p ) { echo '<tr><td><a href="' . esc_url( add_query_arg( array( 'page' => 'vpm-booking-operations', 'partner' => $p['id'] ), admin_url( 'tools.php' ) ) ) . '#partners">' . esc_html( $p['name'] ) . '</a></td><td>' . esc_html( $p['airport'] ) . '</td><td>' . ( (int) $p['active'] ? 'freigegeben' : 'Vorbereitung / pausiert' ) . '</td><td>' . esc_html( (string) ( (int) $p['commission_bps'] / 100 ) ) . ' %</td><td>' . ( $p['stripe_account'] ? 'hinterlegt, nicht verifiziert' : 'offen' ) . '</td></tr>'; } self::endtable();
+        echo '<h2 id="coupons">Gutscheine</h2><p>Beträge in Cent, Prozentwerte in Basispunkten. Gültigkeit in UTC eingeben. Bestehende Einlösungen und Budgets werden nicht überschrieben.</p>'; self::form( 'coupon' );
+        self::input( 'code', 'Code' ); echo '<p><label>Art <select name="kind"><option value="fixed">Fester Betrag in Cent</option><option value="percent">Prozent in Basispunkten</option></select></label></p>';
+        foreach ( array( 'value' => array( 'Rabattwert', 1000 ), 'budget_cents' => array( 'Gesamtbudget in Cent', 10000 ), 'max_uses' => array( 'Maximale Einlösungen', 10 ), 'max_per_customer' => array( 'Einlösungen je E-Mail-Adresse', 1 ), 'partner_id' => array( 'Partner-ID, 0 = alle', 0 ) ) as $k => $v ) { self::input( $k, $v[0], $v[1], 'number' ); } self::input( 'starts_at', 'Beginn (UTC)', gmdate( 'Y-m-d\TH:i' ), 'datetime-local' ); self::input( 'ends_at', 'Ende (UTC)', gmdate( 'Y-m-d\TH:i', time() + 30 * DAY_IN_SECONDS ), 'datetime-local' ); self::input( 'airport', 'Flughafen-IATA, leer = alle' ); submit_button( 'Gutschein anlegen' ); echo '</form>';
+        self::table( array( 'Code', 'Art / Wert', 'Reserviert / genutzt', 'Budget in Cent', 'Gültigkeit UTC' ) ); foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'coupons' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $c ) { echo '<tr><td>' . esc_html( $c['code'] ) . '</td><td>' . esc_html( $c['kind'] . ' / ' . $c['value'] ) . '</td><td>' . (int) $c['held_uses'] . ' / ' . (int) $c['used_uses'] . '</td><td>' . (int) $c['budget_cents'] . '</td><td>' . esc_html( gmdate( 'Y-m-d H:i', (int) $c['starts_at'] ) . ' – ' . gmdate( 'Y-m-d H:i', (int) $c['ends_at'] ) ) . '</td></tr>'; } self::endtable();
+        echo '<h2 id="bookings">Anfragen und Buchungen</h2><form method="get"><input type="hidden" name="page" value="vpm-booking-operations"><label>Referenz oder E-Mail <input name="search" value="' . esc_attr( is_string( $_GET['search'] ?? null ) ? wp_unslash( $_GET['search'] ) : '' ) . '"></label> '; submit_button( 'Suchen', 'secondary', '', false ); echo '</form>';
+        $search = is_string( $_GET['search'] ?? null ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : ''; $where = $search ? ' WHERE public_id=%s OR customer_email=%s' : '';
+        $page = max( 1, min( 100000, absint( is_string( $_GET['p'] ?? null ) ? $_GET['p'] : '1' ) ) ); $count_sql = 'SELECT COUNT(*) FROM ' . DB::table( 'bookings' ) . $where; $count = (int) $wpdb->get_var( $search ? $wpdb->prepare( $count_sql, $search, $search ) : $count_sql );
+        $sql = 'SELECT * FROM ' . DB::table( 'bookings' ) . $where . ' ORDER BY id DESC LIMIT 25 OFFSET %d'; $args = $search ? array( $search, $search, ( $page - 1 ) * 25 ) : array( ( $page - 1 ) * 25 ); $bookings = $wpdb->get_results( $wpdb->prepare( $sql, $args ), ARRAY_A );
+        self::table( array( 'Referenz / Kunde', 'Flughafen', 'Status', 'Betrag / erstattet (Cent)', 'Kundenzugang' ) );
+        foreach ( $bookings as $b ) { $q = Core::snapshot( $b ); echo '<tr><td>' . esc_html( $b['public_id'] ) . '<br>' . esc_html( $b['customer_email'] ) . '</td><td>' . esc_html( $q['airport'] ) . '</td><td>' . esc_html( $b['state'] . ' / ' . $b['payment_state'] ) . '</td><td>' . (int) $q['charged'] . ' / ' . (int) $b['refunded_cents'] . '</td><td>'; foreach ( array( 'access' => 'Zugangslink per Automatisierung anfordern', 'revoke_access' => 'Zugänge widerrufen' ) as $a => $label ) { self::form( $a ); echo '<input type="hidden" name="booking" value="' . esc_attr( $b['public_id'] ) . '">'; submit_button( $label, 'secondary small', '', false ); echo '</form>'; } echo '</td></tr>'; } self::endtable();
+        echo '<p>' . (int) $count . ' Einträge. Seite ' . (int) $page . '. '; if ( $page > 1 ) { echo '<a href="' . esc_url( add_query_arg( 'p', $page - 1 ) ) . '#bookings">Zurück</a> '; } if ( $page * 25 < $count ) { echo '<a href="' . esc_url( add_query_arg( 'p', $page + 1 ) ) . '#bookings">Weiter</a>'; } echo '</p><h2 id="changes">Stornowünsche</h2><p>„Geprüft“ führt weder Partnerstorno noch Erstattung aus. Im führenden Partnersystem klären.</p>';
+        self::table( array( 'Buchung', 'Status', 'Eingang UTC', 'Bearbeitung' ) ); foreach ( $wpdb->get_results( 'SELECT c.*,b.public_id FROM ' . DB::table( 'changes' ) . ' c INNER JOIN ' . DB::table( 'bookings' ) . ' b ON b.id=c.booking_id ORDER BY c.id DESC LIMIT 100', ARRAY_A ) as $r ) { echo '<tr><td>' . esc_html( $r['public_id'] ) . '</td><td>' . esc_html( $r['state'] ) . '</td><td>' . esc_html( gmdate( 'Y-m-d H:i', (int) $r['created_at'] ) ) . '</td><td>'; self::form( 'review' ); echo '<input type="hidden" name="id" value="' . (int) $r['id'] . '">'; submit_button( 'Als geprüft markieren', 'secondary small', '', false ); echo '</form></td></tr>'; } self::endtable();
+        echo '<h2 id="audit">Änderungsprotokoll</h2><p>Ohne Kundentexte, Tokens oder geheime Schlüssel. Lokales Protokoll, kein manipulationssicheres Archiv.</p>'; self::table( array( 'UTC', 'WordPress-Nutzer-ID', 'Aktion', 'Objekt / ID' ) ); foreach ( $wpdb->get_results( 'SELECT * FROM ' . DB::table( 'audit' ) . ' ORDER BY id DESC LIMIT 100', ARRAY_A ) as $r ) { echo '<tr><td>' . esc_html( gmdate( 'Y-m-d H:i:s', (int) $r['created_at'] ) ) . '</td><td>' . (int) $r['actor_id'] . '</td><td>' . esc_html( $r['action'] ) . '</td><td>' . esc_html( $r['object_type'] . ' / ' . $r['object_id'] ) . '</td></tr>'; } self::endtable(); echo '</div>';
+    }
+}

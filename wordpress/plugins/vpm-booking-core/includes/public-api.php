@@ -44,6 +44,7 @@ final class PublicApi {
             Config::require( is_array( $offer ) && ( $offer['currency'] ?? '' ) === 'eur', 'unsupported_offer_currency' );
             $partner = DB::row( 'partners', 'id', Config::integer( $offer['partner_id'] ?? null, 1 ) );
             Config::require( $partner && $partner['airport'] === $context['airport'], 'adapter_partner_mismatch' );
+            if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
             $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms );
