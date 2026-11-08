@@ -1,0 +1,30 @@
+{
+    "count": 25,
+    "checks": [
+        "Local shortcode locks airport without airport dropdown",
+        "General shortcode retains airport selection",
+        "Explicit selection mode allows preselected airport",
+        "Invalid local airport never silently becomes a global form",
+        "Partner template stores separately priced extras",
+        "reject:catalog_product_partner_mismatch",
+        "reject:invalid_integer",
+        "reject:airport_scope_mismatch",
+        "Available partner products expose independent types\/prices and translated names",
+        "Only adapter-confirmed extras exposed; configured refuelling omitted",
+        "Unit price and quantity limit preserved",
+        "reject:airport_scope_mismatch",
+        "reject:addon_not_available",
+        "reject:invalid_integer",
+        "reject:invalid_addon_selection",
+        "reject:invalid_addon_selection",
+        "reject:invalid_integer",
+        "Server calculates base plus wash plus two charging units from stored quote",
+        "Reordered addon selection is idempotent",
+        "reject:idempotency_conflict",
+        "Immutable financial snapshot includes complete service breakdown",
+        "Customer view retains selected extras and total",
+        "New quote receives updated configured price",
+        "Legacy pre-products quote preserves idempotent booking retry",
+        "Schema migration preserves existing service snapshot"
+    ]
+}

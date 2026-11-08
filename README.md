@@ -1,4 +1,4 @@
-Aktuelle Dachmarken-Erweiterung: [Buchungskern 0.3.0 mit Verwaltung, Kundenzugang und Flughafenauswahl](docs/BOOKING-OPERATIONS-0.3.0.md), separat unter [pakete](pakete/README.md).
+Aktuelle Dachmarken-Erweiterung: [Buchungskern 0.4.0 mit lokalen Formularen, Stellplatzarten und Zusatzleistungen](docs/BOOKING-PRODUCTS-0.4.0.md), separat unter [pakete](pakete/README.md).
 
 # Flughafenparken – gemeinsamer Theme-Kern
 

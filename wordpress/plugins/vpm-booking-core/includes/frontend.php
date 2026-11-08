@@ -7,9 +7,9 @@ final class Frontend {
     public static function preview(): bool { return is_admin() || is_preview() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && current_user_can( 'edit_posts' ) ) || isset( $_GET['elementor-preview'] ); }
     public static function register(): void {
         $url = plugins_url( '', dirname( __DIR__ ) . '/vpm-booking-core.php' );
-        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.3.0' );
-        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.3.0', array( 'strategy' => 'defer', 'in_footer' => true ) );
-        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.3.0', true );
+        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.4.0' );
+        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.4.0', array( 'strategy' => 'defer', 'in_footer' => true ) );
+        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.4.0', true );
         foreach ( array( 'booking-form' => 'form', 'airport-selector' => 'selector', 'newsletter' => 'newsletter' ) as $folder => $method ) { register_block_type( dirname( __DIR__ ) . '/blocks/' . $folder, array( 'render_callback' => function( $a ) use ( $method ) { return self::$method( $a ); } ) ); }
         add_shortcode( 'vpm_booking_form', array( self::class, 'form' ) );
         add_shortcode( 'vpm_airport_selector', array( self::class, 'selector' ) );
@@ -17,13 +17,13 @@ final class Frontend {
     }
     public static function assets(): string {
         wp_enqueue_style( 'vpm-booking-front' ); wp_enqueue_script( 'vpm-booking-front' );
-        if ( did_action( 'wp_head' ) && ! wp_style_is( 'vpm-booking-front', 'done' ) ) { ob_start(); wp_print_styles( 'vpm-booking-front' ); return (string) ob_get_clean(); }
+        if ( did_action( 'wp_head' ) && ! doing_action( 'wp_head' ) && ! wp_style_is( 'vpm-booking-front', 'done' ) ) { ob_start(); wp_print_styles( 'vpm-booking-front' ); return (string) ob_get_clean(); }
         return '';
     }
     public static function detect_assets(): void {
         $post = get_queried_object(); if ( ! $post instanceof \WP_Post ) { return; }
         $content = $post->post_content . ' ' . (string) get_post_meta( $post->ID, '_elementor_data', true );
-        if ( preg_match( '/vpm_booking_form|vpm_airport_selector|vpm_booking_newsletter|wp:vpm-booking\//', $content ) ) { self::assets(); }
+        if ( preg_match( '/vpm_booking_form|vpm_airport_selector|vpm_booking_newsletter|wp:vpm-booking\//', $content ) ) { wp_enqueue_style( 'vpm-booking-front' ); wp_enqueue_script( 'vpm-booking-front' ); }
     }
     private static function options( string $locale, string $selected = '' ): string {
         $groups = array( 'DE' => self::text( $locale, 'Deutschland', 'Germany' ), 'AT' => self::text( $locale, 'Österreich', 'Austria' ), 'CH' => self::text( $locale, 'Schweiz und Grenzregion', 'Switzerland and border region' ) );
@@ -41,14 +41,19 @@ final class Frontend {
     }
     public static function form( $atts = array() ): string {
         $a = is_array( $atts ) ? $atts : array(); $locale = self::locale( $a ); $airport = strtoupper( sanitize_text_field( $a['airport'] ?? '' ) );
+        $mode = $a['airport_mode'] ?? ''; $fixed = $mode === 'fixed' || ( $mode !== 'select' && $airport !== '' );
+        try { $airport_data = $airport ? Airports::get( $airport ) : null; if ( $fixed && ! $airport_data ) { throw new \RuntimeException(); } } catch ( \Throwable $e ) { return '<p role="alert">' . esc_html( self::text( $locale, 'Bitte den Flughafen dieses Formulars prüfen.', 'Please check the airport configured for this form.' ) ) . '</p>'; }
         $id = wp_unique_id( 'vpm-booking-' ); $t = function( $de, $en ) use ( $locale ) { return esc_html( self::text( $locale, $de, $en ) ); };
-        $html = self::assets() . '<section class="vpm-booking-surface vpm-booking-widget"' . self::data( $locale ) . ' data-enabled="' . ( PublicApi::enabled() ? '1' : '0' ) . '">';
-        $html .= '<form class="vpm-booking-search" method="post"><fieldset ' . ( self::preview() ? 'disabled' : '' ) . '><legend>' . $t( 'Parkangebot anfragen', 'Request airport parking' ) . '</legend><div class="vpm-booking-fields"><div><label for="' . $id . '-airport">' . $t( 'Flughafen', 'Airport' ) . '</label><select id="' . $id . '-airport" name="airport" required>' . self::options( $locale, $airport ) . '</select></div>';
+        $html = self::assets() . '<section class="vpm-booking-surface vpm-booking-widget"' . self::data( $locale ) . ' data-airport-mode="' . ( $fixed ? 'fixed' : 'select' ) . '" data-enabled="' . ( PublicApi::enabled() ? '1' : '0' ) . '">';
+        $html .= '<form class="vpm-booking-search" method="post"><fieldset ' . ( self::preview() ? 'disabled' : '' ) . '><legend>' . $t( 'Parkangebot anfragen', 'Request airport parking' ) . '</legend><div class="vpm-booking-fields"><div>';
+        if ( $fixed ) { $html .= '<span class="vpm-booking-field-label">' . $t( 'Flughafen', 'Airport' ) . '</span><strong class="vpm-booking-airport-name">' . esc_html( $airport_data['name_' . $locale] . ' (' . $airport . ')' ) . '</strong><input type="hidden" name="airport" value="' . esc_attr( $airport ) . '"><input type="hidden" name="airport_scope" value="' . esc_attr( Products::scope( $airport ) ) . '">'; }
+        else { $html .= '<label for="' . $id . '-airport">' . $t( 'Flughafen', 'Airport' ) . '</label><select id="' . $id . '-airport" name="airport" required>' . self::options( $locale, $airport ) . '</select>'; }
+        $html .= '</div>';
         foreach ( array( 'departure' => array( 'Fahrzeug abgeben', 'Vehicle drop-off' ), 'return' => array( 'Fahrzeug zurückerhalten', 'Vehicle collection' ) ) as $field => $label ) {
             $html .= '<div><label for="' . $id . '-' . $field . '">' . $t( $label[0], $label[1] ) . '</label><input type="datetime-local" id="' . $id . '-' . $field . '" name="' . $field . '" required><div class="vpm-time-offset" data-field="' . $field . '" hidden><label for="' . $id . '-' . $field . '-offset">' . $t( 'Uhrzeit bei Zeitumstellung', 'Time during clock change' ) . '</label><select id="' . $id . '-' . $field . '-offset" name="' . $field . '_offset"></select></div></div>';
         }
-        $html .= '</div><p class="vpm-booking-timezone">' . $t( 'Alle Uhrzeiten gelten am ausgewählten Flughafen.', 'All times are local to the selected airport.' ) . '</p><button type="submit" disabled>' . $t( 'Angebote prüfen', 'Check offers' ) . '</button></fieldset></form><p class="vpm-booking-status" role="status" aria-live="polite">' . ( PublicApi::enabled() ? '' : $t( 'Die Online-Anfrage wird vorbereitet.', 'Online enquiries are being prepared.' ) ) . '</p><div class="vpm-booking-offers"></div>';
-        $html .= '<form class="vpm-booking-request" method="post" hidden><fieldset><legend>' . $t( 'Ihre Anfrage', 'Your enquiry' ) . '</legend><label for="' . $id . '-email">' . $t( 'E-Mail-Adresse', 'Email address' ) . '</label><input id="' . $id . '-email" type="email" name="email" autocomplete="email" maxlength="254" required><label for="' . $id . '-coupon">' . $t( 'Gutscheincode (optional)', 'Voucher code (optional)' ) . '</label><input id="' . $id . '-coupon" name="coupon" maxlength="40" autocomplete="off"><p>' . $t( 'Die Anfrage ist noch keine bestätigte Buchung. Eine Zahlung wird hier nicht ausgelöst.', 'This enquiry is not a confirmed booking. No payment is taken here.' ) . '</p>';
+        $html .= '</div><p class="vpm-booking-timezone">' . $t( 'Alle Uhrzeiten gelten am ausgewählten Flughafen.', 'All times are local to the selected airport.' ) . '</p><button type="submit" disabled>' . $t( 'Angebote prüfen', 'Check offers' ) . '</button></fieldset></form><p class="vpm-booking-status" role="status" aria-live="polite">' . ( PublicApi::enabled() ? '' : $t( 'Die Online-Anfrage wird vorbereitet.', 'Online enquiries are being prepared.' ) ) . '</p><div class="vpm-booking-filters" hidden><label for="' . $id . '-parking">' . $t( 'Stellplatzart filtern', 'Filter parking type' ) . '</label><select id="' . $id . '-parking" class="vpm-parking-filter"><option value="">' . $t( 'Alle verfügbaren Stellplatzarten', 'All available parking types' ) . '</option></select></div><div class="vpm-booking-offers"></div>';
+        $html .= '<form class="vpm-booking-request" method="post" hidden><fieldset><legend>' . $t( 'Ihre Anfrage', 'Your enquiry' ) . '</legend><div class="vpm-booking-summary" aria-live="polite"></div><label for="' . $id . '-email">' . $t( 'E-Mail-Adresse', 'Email address' ) . '</label><input id="' . $id . '-email" type="email" name="email" autocomplete="email" maxlength="254" required><label for="' . $id . '-coupon">' . $t( 'Gutscheincode (optional)', 'Voucher code (optional)' ) . '</label><input id="' . $id . '-coupon" name="coupon" maxlength="40" autocomplete="off"><p>' . $t( 'Die Anfrage ist noch keine bestätigte Buchung. Eine Zahlung wird hier nicht ausgelöst.', 'This enquiry is not a confirmed booking. No payment is taken here.' ) . '</p>';
         $privacy = get_privacy_policy_url(); if ( $privacy ) { $html .= '<p><a href="' . esc_url( $privacy ) . '">' . $t( 'Datenschutzhinweise', 'Privacy information' ) . '</a></p>'; }
         $html .= '<button type="submit" disabled>' . $t( 'Anfrage senden', 'Send enquiry' ) . '</button></fieldset></form><noscript><p>' . $t( 'Bitte aktivieren Sie JavaScript für die Online-Anfrage.', 'Please enable JavaScript for online enquiries.' ) . '</p></noscript></section>';
         return $html;

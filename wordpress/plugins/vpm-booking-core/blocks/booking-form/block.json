@@ -13,6 +13,10 @@
     "locale": {
       "type": "string",
       "default": "auto"
+    },
+    "airport_mode": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

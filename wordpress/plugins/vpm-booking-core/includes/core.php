@@ -27,9 +27,11 @@ final class Core {
         $travel = $input['travel'] ?? array(); $terms = sanitize_text_field( $input['offer_terms'] ?? '' );
         Config::require( is_array( $travel ) && strlen( $terms ) <= 1200, 'invalid_offer_snapshot' );
         if ( $travel ) { Config::require( isset( $travel['airport'], $travel['timezone'], $travel['departure_utc'], $travel['return_utc'] ) && is_string( $travel['airport'] ) && in_array( $travel['timezone'], \DateTimeZone::listIdentifiers(), true ) && is_int( $travel['departure_utc'] ) && is_int( $travel['return_utc'] ) && $travel['departure_utc'] > 0 && $travel['return_utc'] > $travel['departure_utc'], 'invalid_travel_snapshot' ); $travel = array_intersect_key( $travel, array_flip( array( 'airport', 'timezone', 'departure_utc', 'return_utc' ) ) ); }
+        $selection = $input['offer_selection'] ?? array(); Config::require( is_array( $selection ), 'invalid_offer_selection' ); if ( $selection ) { Config::require( ( $selection['total_cents'] ?? null ) === $base && is_array( $selection['addons'] ?? null ), 'invalid_offer_selection' ); }
         $fingerprint_data = array( $email, $partner_id, $base, $locale, $code ); if ( $travel || $terms ) { $fingerprint_data[] = $travel; $fingerprint_data[] = $terms; }
+        if ( $selection ) { $fingerprint_data[] = $selection; }
         $fingerprint = hash( 'sha256', wp_json_encode( $fingerprint_data ) );
-        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint, $travel, $terms ) {
+        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint, $travel, $terms, $selection ) {
             // Stable request keys are unique at database level; a collision cannot create two bookings.
             $old = DB::row( 'bookings', 'request_key', $key, true );
             if ( $old ) { Config::require( hash_equals( $old['request_hash'], $fingerprint ), 'idempotency_conflict' ); return $old; }
@@ -43,7 +45,7 @@ final class Core {
                 $uses = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . DB::table( 'coupon_uses' ) . " WHERE coupon_id=%d AND customer_hash=%s AND state IN ('reserved','consumed')", $coupon['id'], $customer_hash ) );
                 Config::require( $uses < (int) $coupon['max_per_customer'] && (int) $coupon['held_uses'] + (int) $coupon['used_uses'] < (int) $coupon['max_uses'] && (int) $coupon['held_cents'] + (int) $coupon['used_cents'] + $discount <= (int) $coupon['budget_cents'], 'coupon_limit' );
             }
-            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms;
+            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms; if ( $selection ) { $q['offer_selection'] = $selection; }
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );
             if ( $coupon ) {
                 DB::insert( 'coupon_uses', array( 'coupon_id' => $coupon['id'], 'booking_id' => $id, 'customer_hash' => $customer_hash, 'amount_cents' => $discount, 'state' => 'reserved' ) );

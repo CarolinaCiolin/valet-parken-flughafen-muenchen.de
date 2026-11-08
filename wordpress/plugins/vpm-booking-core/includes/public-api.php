@@ -36,7 +36,7 @@ final class PublicApi {
         Config::require( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT hits FROM ' . DB::table( 'rate_limits' ) . ' WHERE bucket=%s', $bucket ) ) <= 30, 'frontend_rate_limited' );
     }
     public static function offers( array $data ): array {
-        Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data );
+        Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data ); $scope = (string) ( $data['airport_scope'] ?? '' ); Products::check_scope( $scope, $context['airport'] ); $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de';
         // Only installed, server-side adapters may supply prices. No fallback/test offers shipped.
         Config::require( has_filter( 'vpm_booking_quote_offers' ), 'booking_adapter_not_configured' );
         $offers = apply_filters( 'vpm_booking_quote_offers', array(), $context ); Config::require( is_array( $offers ) && count( $offers ) <= 20, 'invalid_adapter_response' ); $out = array();
@@ -46,8 +46,9 @@ final class PublicApi {
             Config::require( $partner && $partner['airport'] === $context['airport'], 'adapter_partner_mismatch' );
             if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
-            $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
-            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms );
+            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope );
+            $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
+            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms ) + Products::public_data( $product, $locale );
         }
         return array( 'offers' => $out, 'timezone' => $context['timezone'] );
     }
@@ -56,7 +57,9 @@ final class PublicApi {
         Config::require( ! isset( $data['base_cents'] ) && ! isset( $data['partner_id'] ) && ! isset( $data['state'] ) && ! isset( $data['payment_state'] ), 'client_amount_or_state_forbidden' );
         $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
         $context = json_decode( $quote['context'], true ); Config::require( is_array( $context ) && $context['departure_utc'] > time(), 'quote_expired' );
-        $b = Core::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => (int) $quote['base_cents'], 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'] );
+        $details = json_decode( $quote['details'] ?? '', true ) ?: array(); $scope = (string) ( $details['airport_scope'] ?? '' ); Config::require( $scope === (string) ( $data['airport_scope'] ?? '' ), 'airport_scope_mismatch' ); Products::check_scope( $scope, $context['airport'] );
+        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );
+        $b = Core::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'] );
         $q = Core::snapshot( $b );
         return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur' );
     }

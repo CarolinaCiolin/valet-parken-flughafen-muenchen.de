@@ -30,6 +30,7 @@
       const format = timestamp => new Intl.DateTimeFormat(en ? 'en-GB' : 'de-DE', {dateStyle: 'medium', timeStyle: 'short', timeZone: value.travel.timezone}).format(timestamp * 1000);
       row(t('Abgabe', 'Drop-off'), format(value.travel.departure_utc)); row(t('Rückgabe', 'Collection'), format(value.travel.return_utc)); row(t('Zeitzone', 'Timezone'), value.travel.timezone);
     }
+    if (value.offer_selection?.addons) { value.offer_selection.addons.forEach(item => row(item.quantity + ' × ' + item.label, money(item.amount_cents))); }
     if (value.offer_terms) row(t('Angebotshinweise', 'Offer information'), value.offer_terms);
     if (value.cancellation_request) row(t('Stornowunsch', 'Cancellation request'), state(value.cancellation_request));
     root.querySelector('.vpm-customer-cancel').hidden = value.state === 'cancelled' || !!value.cancellation_request;

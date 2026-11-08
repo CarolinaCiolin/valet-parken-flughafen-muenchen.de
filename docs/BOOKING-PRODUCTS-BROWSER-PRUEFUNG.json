@@ -1,0 +1,26 @@
+{
+  "count": 17,
+  "checks": [
+    "Widget stylesheet is actually applied, not just enqueued",
+    "Fixed Stuttgart block needs no airport selection",
+    "Global shortcode provides 15 selectable airports",
+    "Global selection cannot change local airport widget",
+    "Available partners rendered as separate offer cards",
+    "No optional extra selected by default",
+    "Filter contains available underground parking",
+    "Parking filter shows correct variant",
+    "Offer total includes wash and two individually priced charging units",
+    "Selected offer shows full breakdown before enquiry",
+    "No horizontal overflow with extras 1440",
+    "No horizontal overflow with extras 768",
+    "No horizontal overflow with extras 390",
+    "Submitted enquiry uses authoritative combined price",
+    "Persisted enquiry keeps fixed airport and selected extras",
+    "Admin saves partner template and individual wash price through real form",
+    "No JavaScript errors in local/global/product flow"
+  ],
+  "limitations": [
+    "Local test adapters only, no live availability or payment",
+    "Package prices/quantities, not automatic metered fuel or energy billing"
+  ]
+}
