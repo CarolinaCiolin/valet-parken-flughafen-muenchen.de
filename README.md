@@ -1,3 +1,5 @@
+Aktuelle Dachmarken-Erweiterung: [Buchungskern 0.2.0 mit Flughafenauswahl und WordPress-Einbettung](docs/BOOKING-COMPAT-0.2.0.md), separat unter [pakete](pakete/README.md).
+
 # Flughafenparken – gemeinsamer Theme-Kern
 
 Aktueller Entwicklungsstand: **Theme 0.6.0 / Anbieter 0.3.3 / Münchner Inhaltsentwürfe 0.4.2**. Kein automatisches Deployment.

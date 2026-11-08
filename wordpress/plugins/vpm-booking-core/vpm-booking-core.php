@@ -2,18 +2,24 @@
 /**
  * Plugin Name: VPM Buchungskern
  * Description: Separater Sandbox-Buchungskern mit Stripe-Connect-Vorbereitung, Gutscheinjournal und E-Mail-Ereignissen. Keine Live-Zahlungen.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * License: GPL-2.0-or-later
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-foreach ( array( 'db', 'finance', 'core', 'stripe', 'automation', 'consent', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
+foreach ( array( 'db', 'finance', 'core', 'stripe', 'automation', 'consent', 'airports', 'public-api', 'frontend', 'compatibility', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
+add_action( 'plugins_loaded', function() { if ( (int) get_option( 'vpm_booking_db_version', 0 ) < 2 ) { \VPM\Booking\DB::install(); } } );
+\VPM\Booking\Compatibility::register();
+add_action( 'init', array( 'VPM\\Booking\\Frontend', 'register' ), 20 );
+add_action( 'wp_enqueue_scripts', array( 'VPM\\Booking\\Frontend', 'detect_assets' ) );
+add_action( 'load-tools_page_vpm-booking-core', array( 'VPM\\Booking\\Frontend', 'admin_save' ), 1 );
 register_activation_hook( __FILE__, array( 'VPM\\Booking\\DB', 'install' ) );
 register_deactivation_hook( __FILE__, function() { wp_clear_scheduled_hook( 'vpm_booking_worker' ); } );
 add_filter( 'cron_schedules', function( $s ) { $s['vpm_booking_five_minutes'] = array( 'interval' => 300, 'display' => 'VPM Booking – 5 Minuten' ); return $s; } );
-add_action( 'vpm_booking_worker', function() { \VPM\Booking\Stripe::retry_refunds(); \VPM\Booking\Automation::run(); } );
+add_action( 'vpm_booking_worker', function() { \VPM\Booking\Stripe::retry_refunds(); \VPM\Booking\Automation::run(); update_option( 'vpm_booking_last_worker', time(), false ); global $wpdb; $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . \VPM\Booking\DB::table( 'quotes' ) . ' WHERE expires_at<%d LIMIT 500', time() - DAY_IN_SECONDS ) ); $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . \VPM\Booking\DB::table( 'rate_limits' ) . ' WHERE expires_at<%d LIMIT 500', time() ) ); } );
 add_action( 'rest_api_init', array( 'VPM\\Booking\\Rest', 'register' ) );
+add_action( 'rest_api_init', array( 'VPM\\Booking\\PublicApi', 'register' ) );
 add_action( 'init', function() { add_shortcode( 'vpm_booking_newsletter', array( 'VPM\\Booking\\Consent', 'form' ) ); } );
 add_action( 'template_redirect', array( 'VPM\\Booking\\Consent', 'landing' ), 0 );
 add_action( 'admin_menu', array( 'VPM\\Booking\\Rest', 'admin_menu' ) );

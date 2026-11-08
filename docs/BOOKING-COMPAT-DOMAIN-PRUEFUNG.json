@@ -1,0 +1,30 @@
+{
+    "checks": [
+        "15 unique editable DACH starter airports",
+        "Basel is not falsely located in Switzerland",
+        "Default catalogue validates",
+        "reject:invalid_airport_record",
+        "Repeated selectors use unique IDs and anchors",
+        "Native Gutenberg block:form",
+        "Native Gutenberg block:airport-selector",
+        "Native Gutenberg block:newsletter",
+        "reject:nonexistent_departure",
+        "reject:ambiguous_local_time",
+        "Both autumn occurrences explicitly selectable",
+        "reject:frontend_not_enabled",
+        "reject:booking_adapter_not_configured",
+        "Server adapter creates expiring stored offer",
+        "Public offer exposes no Stripe account or commission",
+        "reject:client_amount_or_state_forbidden",
+        "Public request is idempotent and never a paid confirmation",
+        "Travel timezone and trusted offer snapshot persisted",
+        "WordPress export excludes settlement secrets",
+        "reject:quote_expired",
+        "Draft airport page never linked",
+        "Published airport target linked",
+        "Missing English translation never silently links German page",
+        "WordPress erasure request stops marketing and retains records for review",
+        "Hosting Site Health check registered and InnoDB verified"
+    ],
+    "count": 25
+}

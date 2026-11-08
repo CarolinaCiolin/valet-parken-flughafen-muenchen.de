@@ -8,7 +8,7 @@ final class Automation {
         $sql = $wpdb->prepare( 'INSERT IGNORE INTO ' . DB::table( 'outbox' ) . ' (event_key,topic,purpose,contact_id,payload,status,created_at) VALUES (%s,%s,%s,%d,%s,%s,%d)', $key, $topic, $purpose, $contact, Config::seal( $payload ), 'pending', time() ); return DB::query( $sql ) > 0;
     }
     public static function booking_event( array $b, string $topic, array $extra = array(), string $suffix = '' ): void {
-        self::event( $b['public_id'] . ':' . $topic . ':' . $suffix, $topic, 'transactional', array_merge( array( 'booking_id' => $b['public_id'], 'recipient' => $b['customer_email'], 'locale' => $b['locale'], 'amounts' => array_intersect_key( Core::snapshot( $b ), array_flip( array( 'base', 'discount', 'charged', 'currency' ) ) ), 'partner_id' => (int) $b['partner_id'], 'airport' => Core::snapshot( $b )['airport'], 'booking_state' => $b['state'], 'payment_state' => $b['payment_state'] ), $extra ) );
+        self::event( $b['public_id'] . ':' . $topic . ':' . $suffix, $topic, 'transactional', array_merge( array( 'booking_id' => $b['public_id'], 'recipient' => $b['customer_email'], 'locale' => $b['locale'], 'amounts' => array_intersect_key( Core::snapshot( $b ), array_flip( array( 'base', 'discount', 'charged', 'currency' ) ) ), 'partner_id' => (int) $b['partner_id'], 'airport' => Core::snapshot( $b )['airport'], 'travel' => Core::snapshot( $b )['travel'] ?? array(), 'offer_terms' => Core::snapshot( $b )['offer_terms'] ?? '', 'booking_state' => $b['state'], 'payment_state' => $b['payment_state'] ), $extra ) );
     }
     public static function campaign( string $campaign ): int {
         global $wpdb; Config::key( $campaign ); $count = 0;

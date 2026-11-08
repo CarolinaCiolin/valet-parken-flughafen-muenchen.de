@@ -1,0 +1,24 @@
+{
+  "apiVersion": 3,
+  "name": "vpm-booking/airport-selector",
+  "title": "VPM Flughafenauswahl",
+  "category": "widgets",
+  "icon": "airplane",
+  "description": "Dynamischer Baustein des VPM Buchungskerns.",
+  "attributes": {
+    "airport": {
+      "type": "string",
+      "default": ""
+    },
+    "locale": {
+      "type": "string",
+      "default": "auto"
+    }
+  },
+  "supports": {
+    "html": false,
+    "multiple": true
+  },
+  "editorScript": "vpm-booking-block-editor",
+  "style": "vpm-booking-front"
+}

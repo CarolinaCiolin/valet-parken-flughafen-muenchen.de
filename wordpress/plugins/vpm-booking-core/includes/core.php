@@ -24,12 +24,16 @@ final class Core {
         $partner_id = Config::integer( $input['partner_id'] ?? null, 1 ); $base = Config::integer( $input['base_cents'] ?? null, 50 );
         $locale = $input['locale'] ?? 'de'; Config::require( in_array( $locale, array( 'de', 'en' ), true ), 'invalid_locale' );
         $code = strtoupper( trim( (string) ( $input['coupon'] ?? '' ) ) );
-        $fingerprint = hash( 'sha256', wp_json_encode( array( $email, $partner_id, $base, $locale, $code ) ) );
-        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint ) {
+        $travel = $input['travel'] ?? array(); $terms = sanitize_text_field( $input['offer_terms'] ?? '' );
+        Config::require( is_array( $travel ) && strlen( $terms ) <= 1200, 'invalid_offer_snapshot' );
+        if ( $travel ) { Config::require( isset( $travel['airport'], $travel['timezone'], $travel['departure_utc'], $travel['return_utc'] ) && is_string( $travel['airport'] ) && in_array( $travel['timezone'], \DateTimeZone::listIdentifiers(), true ) && is_int( $travel['departure_utc'] ) && is_int( $travel['return_utc'] ) && $travel['departure_utc'] > 0 && $travel['return_utc'] > $travel['departure_utc'], 'invalid_travel_snapshot' ); $travel = array_intersect_key( $travel, array_flip( array( 'airport', 'timezone', 'departure_utc', 'return_utc' ) ) ); }
+        $fingerprint_data = array( $email, $partner_id, $base, $locale, $code ); if ( $travel || $terms ) { $fingerprint_data[] = $travel; $fingerprint_data[] = $terms; }
+        $fingerprint = hash( 'sha256', wp_json_encode( $fingerprint_data ) );
+        return DB::tx( function() use ( $wpdb, $key, $email, $partner_id, $base, $locale, $code, $fingerprint, $travel, $terms ) {
             // Stable request keys are unique at database level; a collision cannot create two bookings.
             $old = DB::row( 'bookings', 'request_key', $key, true );
             if ( $old ) { Config::require( hash_equals( $old['request_hash'], $fingerprint ), 'idempotency_conflict' ); return $old; }
-            $partner = DB::row( 'partners', 'id', $partner_id ); Config::require( ! empty( $partner ), 'partner_not_found' );
+            $partner = DB::row( 'partners', 'id', $partner_id ); Config::require( ! empty( $partner ), 'partner_not_found' ); if ( $travel ) { Config::require( $travel['airport'] === $partner['airport'], 'travel_partner_mismatch' ); }
             $coupon = array(); $discount = 0; $customer_hash = hash_hmac( 'sha256', $email, wp_salt( 'auth' ) );
             if ( $code !== '' ) {
                 $coupon = DB::row( 'coupons', 'code', $code, true );
@@ -39,7 +43,7 @@ final class Core {
                 $uses = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . DB::table( 'coupon_uses' ) . " WHERE coupon_id=%d AND customer_hash=%s AND state IN ('reserved','consumed')", $coupon['id'], $customer_hash ) );
                 Config::require( $uses < (int) $coupon['max_per_customer'] && (int) $coupon['held_uses'] + (int) $coupon['used_uses'] < (int) $coupon['max_uses'] && (int) $coupon['held_cents'] + (int) $coupon['used_cents'] + $discount <= (int) $coupon['budget_cents'], 'coupon_limit' );
             }
-            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport'];
+            $q = Finance::quote( $base, (int) $partner['commission_bps'], $discount ); $q['stripe_account'] = $partner['stripe_account']; $q['airport'] = $partner['airport']; $q['travel'] = $travel; $q['offer_terms'] = $terms;
             $id = DB::insert( 'bookings', array( 'public_id' => wp_generate_uuid4(), 'request_key' => $key, 'request_hash' => $fingerprint, 'partner_id' => $partner_id, 'customer_email' => $email, 'locale' => $locale, 'snapshot' => wp_json_encode( $q ), 'state' => 'requested', 'payment_state' => 'unpaid', 'created_at' => time() ) );
             if ( $coupon ) {
                 DB::insert( 'coupon_uses', array( 'coupon_id' => $coupon['id'], 'booking_id' => $id, 'customer_hash' => $customer_hash, 'amount_cents' => $discount, 'state' => 'reserved' ) );

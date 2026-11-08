@@ -1,0 +1,137 @@
+[
+  {
+    "code": "FRA",
+    "name_de": "Frankfurt",
+    "name_en": "Frankfurt",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "MUC",
+    "name_de": "München",
+    "name_en": "Munich",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "BER",
+    "name_de": "Berlin Brandenburg",
+    "name_en": "Berlin Brandenburg",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "DUS",
+    "name_de": "Düsseldorf",
+    "name_en": "Düsseldorf",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "HAM",
+    "name_de": "Hamburg",
+    "name_en": "Hamburg",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "CGN",
+    "name_de": "Köln/Bonn",
+    "name_en": "Cologne/Bonn",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "STR",
+    "name_de": "Stuttgart",
+    "name_en": "Stuttgart",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "HAJ",
+    "name_de": "Hannover",
+    "name_en": "Hanover",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "NUE",
+    "name_de": "Nürnberg",
+    "name_en": "Nuremberg",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "DTM",
+    "name_de": "Dortmund",
+    "name_en": "Dortmund",
+    "region": "DE",
+    "location_country": "DE",
+    "timezone": "Europe/Berlin",
+    "page_id": 0
+  },
+  {
+    "code": "VIE",
+    "name_de": "Wien",
+    "name_en": "Vienna",
+    "region": "AT",
+    "location_country": "AT",
+    "timezone": "Europe/Vienna",
+    "page_id": 0
+  },
+  {
+    "code": "SZG",
+    "name_de": "Salzburg",
+    "name_en": "Salzburg",
+    "region": "AT",
+    "location_country": "AT",
+    "timezone": "Europe/Vienna",
+    "page_id": 0
+  },
+  {
+    "code": "INN",
+    "name_de": "Innsbruck",
+    "name_en": "Innsbruck",
+    "region": "AT",
+    "location_country": "AT",
+    "timezone": "Europe/Vienna",
+    "page_id": 0
+  },
+  {
+    "code": "ZRH",
+    "name_de": "Zürich",
+    "name_en": "Zurich",
+    "region": "CH",
+    "location_country": "CH",
+    "timezone": "Europe/Zurich",
+    "page_id": 0
+  },
+  {
+    "code": "BSL",
+    "name_de": "Basel–Mulhouse–Freiburg",
+    "name_en": "Basel–Mulhouse–Freiburg",
+    "region": "CH",
+    "location_country": "FR",
+    "timezone": "Europe/Paris",
+    "page_id": 0
+  }
+]

@@ -24,4 +24,4 @@ ZIPs über Download raw file herunterladen. Für ein bewusstes München-Update d
 
 ## Optionaler Buchungskern – Dachmarke, nur Entwicklung
 
-[VPM Buchungskern 0.1.0](vpm-booking-core.zip): separater Sandbox-Backend-Baustein für Stripe Connect, Gutschein-/Erstattungsjournal und signierte E-Mail-Ereignisse mit DOI. Keine Live-Zahlungen, kein fertiger Kundencheckout, keine Rechnungserzeugung. Nicht Bestandteil des allgemeinen Starters; für die laufende Münchner Affiliate-Seite nicht erforderlich. [Umfang und Grenzen](../docs/BOOKING-CORE-0.1.0.md).
+[VPM Buchungskern 0.2.0](vpm-booking-core.zip): separater Entwicklungsbaustein mit Flughafenauswahl (15 Startwerte), Gutenberg-Blöcken, Elementor-Shortcodes, Anfragefrontend, Sandbox-Stripe-Connect, Gutschein-/Erstattungsjournal und E-Mail-Ereignissen mit DOI. Keine Live-Zahlungen, kein fertiger Kundencheckout, keine Rechnungserzeugung. Nicht Bestandteil des allgemeinen Starters; für die laufende Münchner Affiliate-Seite nicht erforderlich. [Einrichtung, Kompatibilität und Grenzen](../docs/BOOKING-COMPAT-0.2.0.md).

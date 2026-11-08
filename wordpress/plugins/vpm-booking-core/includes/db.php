@@ -6,6 +6,7 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'quotes' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, public_id varchar(36) NOT NULL, partner_id bigint unsigned NOT NULL, base_cents bigint unsigned NOT NULL, context longtext NOT NULL, terms text NOT NULL, expires_at bigint NOT NULL, PRIMARY KEY  (id), UNIQUE KEY public_id (public_id), KEY expiry (expires_at)',
             'partners' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, airport varchar(3) NOT NULL, name varchar(180) NOT NULL, stripe_account varchar(80) NOT NULL, commission_bps int unsigned NOT NULL, PRIMARY KEY  (id)',
             'coupons' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, code varchar(40) NOT NULL, kind varchar(10) NOT NULL, value int unsigned NOT NULL, max_uses int unsigned NOT NULL, max_per_customer int unsigned NOT NULL DEFAULT 1, budget_cents bigint unsigned NOT NULL, used_uses int unsigned NOT NULL DEFAULT 0, held_uses int unsigned NOT NULL DEFAULT 0, used_cents bigint unsigned NOT NULL DEFAULT 0, held_cents bigint unsigned NOT NULL DEFAULT 0, starts_at bigint NOT NULL, ends_at bigint NOT NULL, airport varchar(3) NOT NULL DEFAULT \'\', partner_id bigint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY code (code)',
             'bookings' => 'id bigint unsigned NOT NULL AUTO_INCREMENT, public_id varchar(36) NOT NULL, request_key varchar(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, request_hash varchar(64) NOT NULL, partner_id bigint unsigned NOT NULL, customer_email varchar(254) NOT NULL, locale varchar(5) NOT NULL, snapshot longtext NOT NULL, state varchar(30) NOT NULL, payment_state varchar(30) NOT NULL, stripe_session varchar(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT \'\', stripe_pi varchar(100) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT \'\', refunded_cents bigint unsigned NOT NULL DEFAULT 0, created_at bigint NOT NULL, PRIMARY KEY  (id), UNIQUE KEY public_id (public_id), UNIQUE KEY request_key (request_key), UNIQUE KEY stripe_session_unique (stripe_session)',
@@ -25,7 +26,7 @@ final class DB {
         foreach ( $schemas as $name => $body ) { $body = str_replace( ', ', ",\n", $body ); dbDelta( 'CREATE TABLE ' . self::table( $name ) . " ($body) ENGINE=InnoDB $charset;" ); }
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
-        update_option( 'vpm_booking_db_version', 1, false );
+        update_option( 'vpm_booking_db_version', 2, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }
