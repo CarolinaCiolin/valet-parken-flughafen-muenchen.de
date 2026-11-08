@@ -1,6 +1,6 @@
 # Dachmarke – eigene Buchungsplattform und späteres Anbietertool
 
-Planungsstand 8. November 2026. Gilt für die geplante Dachmarke valet-parkservice.com, nicht als Änderung der bestehenden Affiliate-Seite München. Keine Buchungssoftware oder Zahlungsanbindung implementiert/aktiviert. Der bestehende Theme-Kern bleibt die Inhalts-/Darstellungsebene.
+Planungsstand 8. November 2026. Gilt für die geplante Dachmarke valet-parkservice.com, nicht als Änderung der bestehenden Affiliate-Seite München. Erster separater Sandbox-Backend-Baustein inzwischen vorbereitet, siehe BOOKING-CORE-0.1.0.md. Keine Live-Zahlungsanbindung oder vollständige Kunden-Buchungsstrecke implementiert/aktiviert. Der bestehende Theme-Kern bleibt die Inhalts-/Darstellungsebene.
 
 ## Anforderungen des Betreibers
 

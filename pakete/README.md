@@ -21,3 +21,7 @@ ZIPs über Download raw file herunterladen. Für ein bewusstes München-Update d
 [VPM-Rechtstext-Entwuerfe.json](VPM-Rechtstext-Entwuerfe.json) enthält mit ausdrücklicher Betreiberfreigabe öffentlich vorgesehene Münchner Betreiber-/Kontaktangaben. Kein allgemeines Rechtstextpaket für andere Projekte. Unter Werkzeuge → VPM Inhaltsentwürfe → Private Rechtstext-Entwürfe als JSON importieren; bestehende Seiten werden übersprungen. Die bisherigen offenen Datenschutz-Prüfpunkte bleiben bestehen. Keine englischen Rechtstexte enthalten.
 
 [Helles VPM-Icon als 512-Pixel-PNG](../zwischenstand/website-icon/vpm-website-icon-512.png) für das Münchner Branding. Andere Marken erhalten ein eigenes WordPress-Logo und Website-Icon; die Beispielprofile übernehmen dieses Icon nicht automatisch.
+
+## Optionaler Buchungskern – Dachmarke, nur Entwicklung
+
+[VPM Buchungskern 0.1.0](vpm-booking-core.zip): separater Sandbox-Backend-Baustein für Stripe Connect, Gutschein-/Erstattungsjournal und signierte E-Mail-Ereignisse mit DOI. Keine Live-Zahlungen, kein fertiger Kundencheckout, keine Rechnungserzeugung. Nicht Bestandteil des allgemeinen Starters; für die laufende Münchner Affiliate-Seite nicht erforderlich. [Umfang und Grenzen](../docs/BOOKING-CORE-0.1.0.md).

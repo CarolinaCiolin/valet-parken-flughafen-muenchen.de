@@ -5,7 +5,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 root = Path(__file__).resolve().parent.parent
 out = root / 'dist'
 out.mkdir(exist_ok=True)
-for relative in ['wordpress/themes/vpm-hybrid', 'wordpress/plugins/vpm-providers', 'wordpress/plugins/vpm-content-drafts']:
+for relative in ['wordpress/themes/vpm-hybrid', 'wordpress/plugins/vpm-providers', 'wordpress/plugins/vpm-content-drafts', 'wordpress/plugins/vpm-booking-core']:
     source = root / relative
     target = out / (source.name + '.zip')
     with ZipFile(target, 'w', ZIP_DEFLATED) as archive:
@@ -66,3 +66,7 @@ with ZipFile(starter) as archive:
 starter.chmod(0o644)
 manifest.write_text(manifest.read_text() + hashlib.sha256(starter.read_bytes()).hexdigest() + '  ' + starter.name + '\n')
 print(starter.name, starter.stat().st_size, 'Bytes')
+
+# Optional booking backend remains a separate upload, not installed by the starter.
+booking = out / 'vpm-booking-core.zip'
+manifest.write_text(manifest.read_text() + hashlib.sha256(booking.read_bytes()).hexdigest() + '  ' + booking.name + '\n')

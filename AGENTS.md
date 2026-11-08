@@ -14,7 +14,7 @@ Dieses Repository enthält den gemeinsamen Flughafenparken-Kern und die bestehen
 ## Verbindliche Nutzerentscheidungen
 
 - Bestehende freigegebene Texte/Überschriften nicht ungefragt umschreiben. Eigene Texte und Angebote pro Standort, keine bloße Stadtnamen-Ersetzung oder identische lokale SEO-Kopien.
-- Keine Datums-/Uhrzeiteingabe und kein fremdes Buchungswidget. Buchung beim Partner. Eigene Partner/Buchungssystem sind ein späterer eigener Auftrag.
+- Auf den bestehenden Affiliate-Standortseiten keine Datums-/Uhrzeiteingabe und kein fremdes Buchungswidget; Buchung beim Partner. Die Dachmarke erhält dagegen einen getrennten eigenen Buchungskern, siehe unten.
 - Keine erfundenen Preise, Bewertungen, Verfügbarkeit, Sicherheitsgarantien oder „mehr als 15 Anbieter“. Ab-Preise nur aus sichtbaren freigegebenen Angaben mit Zeitraum. Schema nicht als Preis-Livefeed darstellen.
 - Affiliate-Links rel="sponsored nofollow". IDs/Tracking-Parameter nicht selbst neu zuordnen. Neue Domains benötigen eigene bestätigte Affiliate-Zuordnung und freigegebene Links.
 - Abstrakte Anbietergrafiken sind freigegeben. Fotorealistische KI-Motive weiterhin kennzeichnen. Andere Standorte erhalten nicht automatisch Münchner Motive oder VPM-Monogramm.
@@ -33,7 +33,9 @@ Dieses Repository enthält den gemeinsamen Flughafenparken-Kern und die bestehen
 - Betreiber möchte Standortseiten je relevantem Flughafen und je zwei bis drei ausführende Partner; eigene Buchungsoberfläche ohne gekaufte Buchungsplattform.
 - Kapazität/Storno im führenden Partnersystem, möglichst keine Doppelpflege. Eigene, plattformfinanzierte Gutscheine sowie automatische Provision-/Stornoverrechnung sind Anforderungen.
 - Eigenes mandantenfähiges Anbietertool mit SaaS-Tarif ist eine langfristige Option, noch kein implementiertes Produkt.
-- Architekturvorschlag und offene Entscheidungen: docs/BUCHUNGSPLATTFORM.md, Partnerfragen: docs/PARTNER-SYSTEMCHECK.md. Herstellerbeispiele sind keine verifizierte Marktanteilsrangliste; Stripe Connect ist ein Kandidat, keine bestätigte Dienstleisterwahl.
+- Architekturvorschlag und offene Entscheidungen: docs/BUCHUNGSPLATTFORM.md, Partnerfragen: docs/PARTNER-SYSTEMCHECK.md. Herstellerbeispiele sind keine verifizierte Marktanteilsrangliste; Stripe Connect ist die vorgesehene Sandbox-Anbindung; Live-Händlerrolle und Dienstleistervertrag sind noch nicht bestätigt.
+- Vorbereiteter Backend-Baustein: wordpress/plugins/vpm-booking-core, Version 0.1.0, separate Installation nur für Entwicklung. docs/BOOKING-CORE-0.1.0.md und docs/BOOKING-EMAIL-CONTRACT.md lesen. Checkout/Refunds sind testmodusschlüsselig; keine Live-Zahlungen. E-Mail-Dienst bleibt offen, Webhook-Outbox standardmäßig aus, Inhalte kommen später.
+- Finanztests scripts/test-booking-core.php, Browser-DOI scripts/test-booking-browser.py und Gleichzeitigkeit scripts/test-booking-concurrency.py nur lokal ausführen. Eigene Tabellen vor Tests müssen leer sein. Kein vollständiger Partner-/Kundencheckout oder Rechnungsgenerator implementiert.
 - Zahlungs-/Buchungslogik getrennt vom Theme. Keine Live-Zahlung, Zahlungsdienstkonten, weiteren Kundendaten oder Tracking-Dienste ungefragt einrichten. Alte Münchner Affiliate-Architektur nicht mit dem neuen Vermittlungs-/Zahlungsmodell gleichsetzen.
 
 ## Arbeiten und Prüfen
