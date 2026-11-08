@@ -2,14 +2,14 @@
 /**
  * Plugin Name: VPM Buchungskern
  * Description: Partnerportal, manuelle Kapazitäten, Adaptervertrag und mehrstufige Demo mit Sandbox-Zahlungsgrundlage. Keine Live-Zahlungen.
- * Version: 0.8.0
+ * Version: 0.9.0
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * License: GPL-2.0-or-later
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-foreach ( array( 'db', 'finance', 'vouchers', 'core', 'stripe', 'automation', 'consent', 'airports', 'products', 'public-api', 'frontend', 'compatibility', 'operations', 'customer', 'tenants', 'adapters', 'flow', 'portal', 'logistics', 'commerce', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
-add_action( 'plugins_loaded', function() { if ( (int) get_option( 'vpm_booking_db_version', 0 ) < 8 ) { \VPM\Booking\DB::install(); } } );
+foreach ( array( 'db', 'finance', 'vouchers', 'core', 'stripe', 'automation', 'consent', 'airports', 'products', 'public-api', 'frontend', 'compatibility', 'operations', 'customer', 'tenants', 'adapters', 'flow', 'portal', 'logistics', 'commerce', 'conditions', 'promotions', 'rest' ) as $file ) { require_once __DIR__ . '/includes/' . $file . '.php'; }
+add_action( 'plugins_loaded', function() { if ( (int) get_option( 'vpm_booking_db_version', 0 ) < 9 ) { \VPM\Booking\DB::install(); } } );
 \VPM\Booking\Compatibility::register();
 add_action( 'init', array( 'VPM\\Booking\\Frontend', 'register' ), 20 );
 add_action( 'wp_enqueue_scripts', array( 'VPM\\Booking\\Frontend', 'detect_assets' ) );
@@ -32,3 +32,5 @@ add_action( 'vpm_booking_worker', array( 'VPM\\Booking\\Loyalty', 'run' ), 30 );
 \VPM\Booking\Portal::register();
 add_filter( 'vpm_booking_quote_offers', array( 'VPM\\Booking\\Adapters', 'offers' ), 30, 2 );
 add_action( 'vpm_booking_worker', array( 'VPM\\Booking\\Flow', 'run' ), 5 );
+
+add_action('vpm_booking_worker',array('VPM\\Booking\\Promotions','run'),25);

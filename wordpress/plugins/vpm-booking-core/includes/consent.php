@@ -40,6 +40,9 @@ final class Consent {
         } );
     }
     public static function revoke_remote( string $email ): void { $c = DB::row( 'contacts', 'email', Config::email( $email ), true ); if ( ! $c || $c['state'] === 'unsubscribed' ) { return; } $c['revision'] = (int) $c['revision'] + 1; DB::update( 'contacts', array( 'state' => 'unsubscribed', 'revoked_at' => time(), 'revision' => $c['revision'] ), array( 'id' => $c['id'] ) ); self::audit( $c, 'revoked_remote' ); }
+    public static function checkout_optin(string $email,bool $agreed):string {
+        if(!$agreed)return 'not_requested';if(!self::ready())return 'not_configured';try{$c=DB::row('contacts','email',Config::email($email));if($c&&$c['state']==='confirmed')return 'confirmed';if($c&&$c['state']==='pending'&&(int)$c['expires_at']>time())return 'pending';self::request($email,true,(string)($_SERVER['REMOTE_ADDR']??''));return 'requested';}catch(\Throwable $e){return 'retry_signup';}
+    }
     public static function form(): string {
         if ( ! self::ready() ) { return '<p>Die Newsletter-Anmeldung ist noch nicht eingerichtet.</p>'; }
         $action = esc_url( add_query_arg( 'vpm_booking_newsletter', 'submit', home_url( '/' ) ) );

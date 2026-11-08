@@ -48,9 +48,9 @@ final class PublicApi {
             if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
             if($locale==='en'&&($offer['_source']['mode']??'')==='manual'&&isset($offer['price_breakdown']))$terms='Parking price including the selected service and itemized surcharges.';
-            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','price_breakdown'=>$offer['price_breakdown']??array() );
+            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','price_breakdown'=>$offer['price_breakdown']??array(), 'booking_rules'=>Conditions::get((int)$partner['id']) );
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
-            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']) ) + Products::public_data( $product, $locale );
+            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']), 'booking_rules'=>$details['booking_rules'] ) + Products::public_data( $product, $locale );
         }
         return array( 'offers' => $out, 'timezone' => $context['timezone'] );
     }
@@ -58,9 +58,12 @@ final class PublicApi {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
         Config::require( ! isset( $data['base_cents'] ) && ! isset( $data['partner_id'] ) && ! isset( $data['state'] ) && ! isset( $data['payment_state'] ), 'client_amount_or_state_forbidden' );
         list( $quote, $context, $details, $selection ) = self::priced_selection( $data );
-        $b = Flow::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'sandbox_demo' => defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'], $details['source'] ?? array() );
+        $b=DB::tx(function()use($quote,$selection,$details,$data,$context){
+        $b = Flow::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'sandbox_demo' => defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'booking_rules'=>$details['booking_rules']??array(), 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'], $details['source'] ?? array() );
+        if(isset($data['expected_amount_cents']))Config::require(Core::snapshot($b)['charged']===Config::integer($data['expected_amount_cents'],50),'price_changed_review_required');return $b;
+        });
         $q = Core::snapshot( $b );
-        return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur' );
+        return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur', 'newsletter_status'=>Consent::checkout_optin($b['customer_email'],($data['marketing_agreed']??false)===true) );
     }
     private static function priced_selection( array $data ): array {
         $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
@@ -72,7 +75,7 @@ final class PublicApi {
     public static function preview( array $data ): array {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
         list( $quote, $context, $details, $selection ) = self::priced_selection( $data ); $partner = DB::row( 'partners', 'id', $quote['partner_id'] ); Config::require( $partner && (int) $partner['active'], 'partner_inactive' );
-        $code = strtoupper( trim( (string) ( $data['coupon'] ?? '' ) ) ); $discount = $code === '' ? 0 : Vouchers::evaluate( DB::row( 'coupons', 'code', $code ), $partner, $selection['total_cents'], (string) ( $data['email'] ?? '' ) );
+        $code = strtoupper( trim( (string) ( $data['coupon'] ?? '' ) ) );if($code===''){$automatic=Promotions::automatic($partner,$selection['total_cents'],(string)($data['email']??''),$selection);if($automatic)$code=$automatic['code'];} $discount = $code === '' ? 0 : Vouchers::evaluate( DB::row( 'coupons', 'code', $code ), $partner, $selection['total_cents'], (string) ( $data['email'] ?? '' ), null, $selection );
         $q = Finance::quote( $selection['total_cents'], (int) $partner['commission_bps'], $discount );
         return array( 'base_cents' => $q['base'], 'discount_cents' => $q['discount'], 'amount_cents' => $q['charged'], 'currency' => 'eur' );
     }

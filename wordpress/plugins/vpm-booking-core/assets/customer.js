@@ -45,6 +45,7 @@
       details.append(section);
     });
     if (value.offer_terms) row(t('Angebotshinweise', 'Offer information'), value.offer_terms);
+    if(value.cancellation_assessment&&value.state!=='cancelled'){row(t('Stornogebühr bei jetzigem Antrag','Cancellation fee if requested now'),money(value.cancellation_assessment.fee_cents));row(t('Erstattungsziel nach bestätigtem Storno','Refund target after confirmed cancellation'),money(value.cancellation_assessment.refund_total_cents));}
     if (value.cancellation_request) row(t('Stornowunsch', 'Cancellation request'), state(value.cancellation_request));
     root.querySelector('.vpm-customer-cancel').hidden = value.state === 'cancelled' || !!value.cancellation_request;
     status(t('Status geladen. Dieser Zugang ist zeitlich begrenzt.', 'Status loaded. This access expires after a limited time.'));

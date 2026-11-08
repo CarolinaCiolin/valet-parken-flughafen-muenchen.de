@@ -1,0 +1,18 @@
+{
+  "count": 9,
+  "checks": [
+    "Partner UI saves human percentages and buffer",
+    "Platform can configure return and welcome percentages independently",
+    "Timed extras campaign created through platform form",
+    "Customer can inspect cancellation terms before enquiry",
+    "Public extras promotion automatically discounts seven euros in review",
+    "Final server request preserves displayed promotion total",
+    "Partner conditions responsive 1440",
+    "Partner conditions responsive 390",
+    "No browser JavaScript errors"
+  ],
+  "limitations": [
+    "Local fixtures only",
+    "No real email, partner cancellation or payment processing"
+  ]
+}

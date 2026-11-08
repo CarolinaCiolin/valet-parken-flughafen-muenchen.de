@@ -54,7 +54,7 @@
     chosen.forEach(item => {const addon = offer.addons.find(a => a.id === item.id); const row = document.createElement('li'); row.textContent = item.quantity + ' × ' + addon.label + ': ' + money(root, addon.unit_amount_cents * item.quantity, offer.currency); list.append(row);}); box.append(list);
     const sum = document.createElement('p'); sum.className = 'vpm-booking-total'; sum.textContent = (root.dataset.locale === 'en' ? 'Total before voucher: ' : 'Gesamt vor Gutschein: ') + money(root, total(offer, chosen), offer.currency); box.append(sum);
   };
-  const clearOffers = root => {root.__vpmCouponInput = ''; selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
+  const clearOffers = root => {root.__vpmCouponInput = ''; root.__expectedAmount=null; selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
   const couponMessage = (root, code) => {
     const en = root.dataset.locale === 'en';
     const messages = {
@@ -63,12 +63,16 @@
       coupon_in_progress: ['Dieser Gutschein wird bereits für eine andere Anfrage verwendet.', 'This voucher is already attached to another enquiry.'],
       coupon_wrong_customer: ['Dieser Gutschein gehört zu einer anderen E-Mail-Adresse.', 'This voucher belongs to a different email address.'],
       coupon_unknown: ['Dieser Gutscheincode ist nicht bekannt.', 'This voucher code was not found.'],
+      coupon_newsletter_required: ['Dieser Code gilt nur für bestätigte Newsletter-Abonnenten.', 'This code requires a confirmed newsletter subscription.'],
+      coupon_no_eligible_extras: ['Bitte wählen Sie ein für die Aktion gültiges Extra aus.', 'Please select an extra eligible for this promotion.'],
+      coupon_campaign_paused: ['Diese Aktion ist derzeit nicht aktiv.', 'This promotion is currently paused.'],
       coupon_not_started: ['Dieser Gutschein ist noch nicht gültig.', 'This voucher is not valid yet.']
     }; return messages[code]?.[en ? 1 : 0] || (en ? 'This voucher is not available for this offer.' : 'Der Gutschein ist für dieses Angebot nicht verfügbar.');
   };
-  const resetCoupon = root => {const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = ''; summary(root);};
+  const resetCoupon = root => {root.__expectedAmount=null;const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = ''; summary(root);};
   const handleError = (root, error) => {
     const msg = text(root), code = typeof error?.code === 'string' ? error.code : '';
+    if(code==='price_changed_review_required'){root.__expectedAmount=null;status(root,root.dataset.locale==='en'?'The price or promotion changed. Please go back and review the price again.':'Preis oder Aktion haben sich geändert. Bitte zurückgehen und die Preisübersicht erneut prüfen.',true);return;}
     if (code === 'ambiguous_local_time' && ['departure', 'return'].includes(error?.data?.field) && Array.isArray(error.data.offsets)) {
       const group = root.querySelector('.vpm-time-offset[data-field="' + error.data.field + '"]');
       if (group) {
@@ -114,6 +118,7 @@
           const product = document.createElement('p'); product.textContent = [offer.product_name, parkingLabel(root, offer.parking_type), offer.charging_space?(root.dataset.locale==='en'?'With charging point':'Mit Ladesäule'):'', ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service]].filter(Boolean).join(' · ');
           const attributes = document.createElement('ul'); (offer.attributes || []).forEach(value => {const item = document.createElement('li'); item.textContent = value; attributes.append(item);});
           card.dataset.parkingType = offer.parking_type || 'unspecified'; offers.set(card, offer); card.append(title, product, price, attributes, terms);
+          if(offer.booking_rules?.cancellation_enabled){const detail=document.createElement('details'),heading=document.createElement('summary'),list=document.createElement('ul'),en=root.dataset.locale==='en';heading.textContent=en?'Cancellation conditions':'Stornobedingungen';detail.append(heading);(offer.booking_rules.tiers||[]).forEach(t=>{const row=document.createElement('li');const fee=t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %';row.textContent=(en?'At least ':'Mindestens ')+t.hours+(en?' hours before handover: ':' Stunden vor Übergabe: ')+(t.value?fee:(en?'free cancellation':'kostenlos'));list.append(row);});if(offer.booking_rules.no_show_enabled){const t=offer.booking_rules.no_show,row=document.createElement('li');row.textContent=(en?'No-show: ':'Nichterscheinen: ')+(t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %');list.append(row);}const basis=document.createElement('p');basis.textContent=en?'Fees apply to the amount paid after vouchers. The final cancellation tier also applies to later requests.':'Gebühren beziehen sich auf den bezahlten Betrag nach Gutschein. Die letzte Stornostufe gilt auch bei späteren Anfragen.';detail.append(list,basis);card.append(detail);}
           if(offer.price_breakdown&&Object.keys(offer.price_breakdown).length){const details=document.createElement('details'),heading=document.createElement('summary');heading.textContent=root.dataset.locale==='en'?'Price details':'Preisdetails';details.append(heading);const list=document.createElement('ul');const labels={parking_cents:['Parkpreis','Parking'],duration_discount_cents:['Aufenthaltsrabatt','Stay discount'],service_fee_cents:['Servicegebühr','Service fee'],arrival_surcharge_cents:['Nachtzuschlag Abgabe','Night surcharge: drop-off'],return_surcharge_cents:['Nachtzuschlag Abholung','Night surcharge: collection']};Object.entries(labels).forEach(([key,label])=>{const cents=offer.price_breakdown[key];if(!cents)return;const row=document.createElement('li');row.textContent=label[root.dataset.locale==='en'?1:0]+': '+money(root,key==='duration_discount_cents'?-cents:cents,offer.currency);list.append(row);});details.append(list);card.append(details);}
 
           if (offer.addons?.length) {
@@ -134,9 +139,9 @@
         status(root, result.offers.length ? text(root).timezone + ': ' + result.timezone : text(root).empty);
       } else if (form.classList.contains('vpm-booking-request')) {
         const selection = selected.get(root); if (!selection) throw {code: 'quote_expired'};
-        const result = await post(root, 'public/requests', {quote_id: selection.offer.quote_id, addons: collect(selection.card, true), airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: data.email, coupon: data.coupon || '', locale: root.dataset.locale});
+        const result = await post(root, 'public/requests', {quote_id: selection.offer.quote_id, addons: collect(selection.card, true), airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: data.email, coupon: data.coupon || '', marketing_agreed: form.elements.marketing_agreed?.checked===true, ...(Number.isInteger(root.__expectedAmount)?{expected_amount_cents:root.__expectedAmount}:{}), locale: root.dataset.locale});
         const reference = /^[a-f0-9-]{36}$/.test(result.reference || '') ? ' ' + (root.dataset.locale === 'en' ? 'Reference: ' : 'Referenz: ') + result.reference : '';
-        status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency) + reference);
+        status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency) + reference + (['requested','pending'].includes(result.newsletter_status)?' '+text(root).newsletter:result.newsletter_status==='retry_signup'?(root.dataset.locale==='en'?' Please retry newsletter signup separately.':' Bitte die Newsletter-Anmeldung separat erneut versuchen.'):''));
         analytics(root, 'vpm_booking_request', root.querySelector('[name="airport"]').value);
         clearOffers(root); form.reset(); if(root.dataset.flow==='steps'){root.__demoReference=result.reference;wizardStep(root,6);}
       } else {
@@ -191,7 +196,7 @@
     if (event.target.type === 'datetime-local' && group) {group.hidden = true; group.querySelector('select').required = false; group.querySelector('select').value = '';}
   });
   const showPrice = (root, result) => {
-    summary(root); const box = root.querySelector('.vpm-booking-summary');
+    root.__expectedAmount=result.amount_cents;summary(root); const box = root.querySelector('.vpm-booking-summary');
     if(!result.discount_cents){box.querySelector('.vpm-booking-total').textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);return;}
     if(result.discount_cents){const p=document.createElement('p');p.className='vpm-coupon-discount';p.textContent=(root.dataset.locale==='en'?'Discount: −':'Rabatt: −')+money(root,result.discount_cents,result.currency);box.append(p);}
     const p=document.createElement('p');p.className='vpm-booking-total';p.textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);box.append(p);

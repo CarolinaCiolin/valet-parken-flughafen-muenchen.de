@@ -16,7 +16,7 @@ try:
  with sync_playwright()as p:
   browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=browser.new_page(viewport={'width':1440,'height':1050});page.on('pageerror',lambda e:errors.append(str(e)))
   page.goto(BASE+'/wp-login.php',wait_until='domcontentloaded');page.locator('#user_login').fill('vpm_local_admin');page.locator('#user_pass').fill((ROOT/'.runtime/admin-password').read_text().strip());page.locator('#wp-submit').click();page.wait_for_load_state('domcontentloaded');portal=BASE+'/?vpm_partner_portal=1&partner='+str(data['partner']);page.goto(portal,wait_until='networkidle')
-  nav=page.locator('.vpm-portal-nav');check(nav.locator('a').count()==11,'Partner navigation covers eleven management sections');check(all(page.locator(a.get_attribute('href')).count()==1 for a in nav.locator('a').all()),'Every partner menu link targets an existing section')
+  nav=page.locator('.vpm-portal-nav');check(nav.locator('a').count()==12,'Partner navigation covers twelve management sections');check(all(page.locator(a.get_attribute('href')).count()==1 for a in nav.locator('a').all()),'Every partner menu link targets an existing section')
   form=page.locator('form:has(input[name="portal_action"][value="services"])');form.locator('[name="services[parking][enabled]"]').uncheck()
   for key,fee in [('valet','1500'),('shuttle','500')]:
    form.locator('[name="services['+key+'][enabled]"]').check();form.locator('[name="services['+key+'][fee_cents]"]').fill(fee)

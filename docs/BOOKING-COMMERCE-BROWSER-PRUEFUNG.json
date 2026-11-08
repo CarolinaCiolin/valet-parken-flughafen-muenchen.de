@@ -1,7 +1,7 @@
 {
   "count": 19,
   "checks": [
-    "Partner navigation covers eleven management sections",
+    "Partner navigation covers twelve management sections",
     "Every partner menu link targets an existing section",
     "Partner can enable valet/shuttle, fees, hours and handover lead time",
     "Charging capacity saved as subset of total capacity",

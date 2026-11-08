@@ -15,7 +15,7 @@ final class Rest {
             '/bookings/(?P<id>[a-f0-9-]{36})/cancel' => function( $r ) { return Flow::cancel_request( $r['id'] ); },
             '/bookings/(?P<id>[a-f0-9-]{36})/refund' => function( $r ) { $d = self::data( $r ); return Core::refund( $r['id'], Config::integer( $d['amount_cents'] ?? null, 1 ), (string) $r->get_header( 'Idempotency-Key' ) ); },
             '/marketing/campaigns' => function( $r ) { $d = self::data( $r ); return array( 'queued_contacts' => Automation::campaign( (string) ( $d['campaign_key'] ?? '' ) ) ); },
-            '/worker' => function() { Flow::run(); Stripe::retry_refunds(); Loyalty::run(); Automation::run(); return array( 'processed' => true ); },
+            '/worker' => function() { Flow::run(); Stripe::retry_refunds(); Loyalty::run(); Promotions::run(); Automation::run(); return array( 'processed' => true ); },
         );
         foreach ( $routes as $path => $callback ) { register_rest_route( 'vpm-booking/v1', $path, array( 'methods' => 'POST', 'permission_callback' => $path === '/coupons' ? function() { return current_user_can( 'manage_options' ); } : $admin, 'callback' => function( $r ) use ( $callback ) { return self::respond( function() use ( $callback, $r ) { return $callback( $r ); } ); } ) ); }
         register_rest_route( 'vpm-booking/v1', '/bookings/(?P<id>[a-f0-9-]{36})', array( 'methods' => 'GET', 'permission_callback' => $admin, 'callback' => function( $r ) { return self::respond( function() use ( $r ) { return Core::booking( $r['id'] ); } ); } ) );

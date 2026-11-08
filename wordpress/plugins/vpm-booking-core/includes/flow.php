@@ -15,9 +15,10 @@ final class Flow {
             $rate = null; if ( $source['mode'] === 'manual' ) { $rate = DB::row( 'rates', 'id', Config::integer( $source['rate_id'] ?? null, 1 ), true ); Config::require( $rate && (int) $rate['partner_id'] === $input['partner_id'], 'rate_not_owned' ); }
             $old = DB::row( 'bookings', 'request_key', $key, true ); if ( $old ) { return Core::create( $input, $key ); }
             if(isset($source['service']))Config::require(isset(Commerce::services($input['partner_id'],$input['travel'])[$source['service']]),'service_unavailable');
-            if ( $rate ) { Config::require( Adapters::available( $rate, $input['travel'], true ), 'capacity_unavailable' ); }
+            Config::require(!Conditions::blocked($input['partner_id']),'partner_delay_needs_review');Config::require(Conditions::eligible($input['travel'],$input['booking_rules']??Conditions::get($input['partner_id'])),'booking_conditions_unavailable');$occupancy=Conditions::occupancy($input['travel'],$input['booking_rules']??Conditions::get($input['partner_id']));
+            if ( $rate ) { Config::require( Adapters::available( $rate, $occupancy, true ), 'capacity_unavailable' ); }
             $b = Core::create( $input, $key );
-            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'charging'=>empty($input['travel']['charging_required'])?0:1, 'starts_at' => $input['travel']['departure_utc'], 'ends_at' => $input['travel']['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
+            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'charging'=>empty($input['travel']['charging_required'])?0:1, 'starts_at' => $occupancy['departure_utc'], 'ends_at' => $occupancy['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
             else { self::enqueue( $b, 'hold' ); } return $b;
         } );
     }
@@ -28,7 +29,7 @@ final class Flow {
         if ( $source['mode'] === 'manual' ) { $a = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'allocations' ) . ' WHERE booking_id=%d', $b['id'] ), ARRAY_A ); return $a && $a['state'] === 'held' && (int) $a['expires_at'] > time(); }
         $proof=self::proof((int)$b['id'],'hold');return !empty($proof['reference'])&&(int)($proof['expires_at']??0)>time();
     }
-    public static function cancel_request( string $reference ): array { $b = Core::booking( $reference ); if ( ! self::managed( $b ) ) { return Core::cancel( $reference ); } self::enqueue( $b, 'cancel' ); return array( 'reference' => $reference, 'cancellation' => 'pending_partner_acknowledgement' ); }
+    public static function cancel_request( string $reference ): array { $b = DB::tx(function()use($reference){$b=Core::booking($reference,true);if($b['state']==='cancelled')return $b;return isset(Core::snapshot($b)['cancellation_decision'])?$b:Conditions::freeze($b);}); if ( ! self::managed( $b ) ) { return Core::cancel( $reference ); } self::enqueue( $b, 'cancel' ); return array( 'reference' => $reference, 'cancellation' => 'pending_partner_acknowledgement' ); }
     public static function run(): void {
         global $wpdb;
         $ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM ' . DB::table( 'fulfilment' ) . " WHERE (status='pending' OR (status='processing' AND locked_until<%d)) AND next_attempt<=%d ORDER BY id LIMIT 20", time(), time() ) );
@@ -60,7 +61,7 @@ final class Flow {
                         Config::require($b['payment_state']==='paid'&&$b['state']!=='cancelled'&&self::payment_ready($b),'paid_capacity_needs_review');
                         $result=$driver->confirm($request,$credentials,'vpm-confirm-'.$b['public_id']);Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
                     } else {
-                        Config::require(!empty($request['partner_hold']['reference']),'partner_hold_not_ready');$result=$driver->cancel($request,$credentials,'vpm-cancel-'.$b['public_id']);Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
+                        Config::require(!empty($request['partner_hold']['reference']),'partner_hold_not_ready');$result=$driver->cancel($request,$credentials,'vpm-cancel-'.$b['public_id']);$rules=Core::snapshot($b)['booking_rules']??array();if(!empty($rules['cancellation_enabled'])||!empty($rules['no_show_enabled']))Config::require(($result['fee_cents']??null)===Conditions::decision($b)['fee_cents'],'partner_cancellation_fee_mismatch');Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
                     }
                     DB::tx(function()use($wpdb,$b,$result,$id,$lease,$job){
                         $current=Core::booking($b['public_id'],true);$active=DB::row('fulfilment','id',(int)$id,true);Config::require($active['locked_by']===$lease,'worker_lease_lost');
@@ -72,9 +73,9 @@ final class Flow {
                 }
                 DB::update( 'fulfilment', array( 'status'=>'succeeded','locked_until'=>0,'error_code'=>'' ), array('id'=>$id,'locked_by'=>$lease) );
             } catch ( \Throwable $e ) {
-                $attempts=(int)$job['attempts']+1; $fatal=in_array($e->getMessage(),array('paid_capacity_needs_review','partner_hold_proof_invalid','adapter_configuration_changed'),true);
+                $attempts=(int)$job['attempts']+1; $fatal=in_array($e->getMessage(),array('paid_capacity_needs_review','partner_hold_proof_invalid','adapter_configuration_changed','partner_cancellation_fee_mismatch'),true);
                 if($fatal||$attempts>=8)Automation::event('attention:'.$id.':'.$attempts,'operations.attention_required','transactional',array('booking_id'=>$b['public_id'],'partner_id'=>(int)$b['partner_id'],'action'=>$job['action']));
-                DB::update('fulfilment',array('status'=>$fatal||$attempts>=8?'attention':'pending','attempts'=>$attempts,'locked_until'=>0,'next_attempt'=>time()+min(3600,30*(2**min($attempts,6))),'error_code'=>in_array($e->getMessage(),array('paid_capacity_needs_review','partner_hold_proof_invalid','adapter_configuration_changed','partner_acknowledgement_missing','manual_rate_missing'),true)?$e->getMessage():'partner_operation_failed'),array('id'=>$id,'locked_by'=>$lease));
+                DB::update('fulfilment',array('status'=>$fatal||$attempts>=8?'attention':'pending','attempts'=>$attempts,'locked_until'=>0,'next_attempt'=>time()+min(3600,30*(2**min($attempts,6))),'error_code'=>in_array($e->getMessage(),array('paid_capacity_needs_review','partner_hold_proof_invalid','adapter_configuration_changed','partner_acknowledgement_missing','manual_rate_missing','partner_cancellation_fee_mismatch'),true)?$e->getMessage():'partner_operation_failed'),array('id'=>$id,'locked_by'=>$lease));
             } finally { $wpdb->delete(DB::table('operation_locks'),array('booking_id'=>$candidate['booking_id'],'lease'=>$lease)); }
         }
     }

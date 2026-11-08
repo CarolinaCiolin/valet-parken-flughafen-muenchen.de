@@ -43,11 +43,12 @@ final class Adapters {
         ksort($events,SORT_NUMERIC);$now=array('total'=>0,'charging'=>0);$peak=$now;foreach($events as $e)foreach($now as $k=>$v){$now[$k]+=$e[$k]??0;$peak[$k]=max($peak[$k],$now[$k]);}return $peak;
     }
     public static function available(array $rate,array $context,bool $lock=false):bool {
-        $used=self::usage($rate,$context,$lock);return (bool)$rate['enabled']&&$used['total']<(int)$rate['capacity']&&(empty($context['charging_required'])||$used['charging']<(int)($rate['charging_capacity']??0));
+        $context=Conditions::occupancy($context,Conditions::get((int)$rate['partner_id']));$used=self::usage($rate,$context,$lock);return (bool)$rate['enabled']&&$used['total']<(int)$rate['capacity']&&(empty($context['charging_required'])||$used['charging']<(int)($rate['charging_capacity']??0));
     }
     public static function offers( array $existing, array $context ): array {
         global $wpdb; $partners = $wpdb->get_results( $wpdb->prepare( 'SELECT p.* FROM ' . DB::table( 'partners' ) . ' p INNER JOIN ' . DB::table( 'connections' ) . " c ON c.partner_id=p.id WHERE p.airport=%s AND p.active=1 AND c.mode IN ('manual','external')", $context['airport'] ), ARRAY_A );
         foreach ( $partners as $p ) {
+            if(Conditions::blocked((int)$p['id'])||!Conditions::eligible($context,Conditions::get((int)$p['id'])))continue;
             $connection = self::connection( (int) $p['id'] );
             if ( $connection['mode'] === 'manual' ) {
                 foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'rates' ) . ' WHERE partner_id=%d AND enabled=1', $p['id'] ), ARRAY_A ) as $rate ) {
