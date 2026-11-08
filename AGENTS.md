@@ -59,3 +59,7 @@ Dieses Repository enthält den gemeinsamen Flughafenparken-Kern und die bestehen
 ## Wiederaufnahme in neuem Chat
 
 Bei verfügbarem GitHub-Zugriff dieses Repository öffnen, diese Datei und docs/STANDORTE.md lesen. Ziel-Domain, gewähltes Profil, letzte installierte Version und freigegebene Inhalte feststellen. GitHub ist die dauerhafte Quelle; kein automatisches chatübergreifendes Gedächtnis oder Zugriff ohne Verbindung versprechen.
+
+## Testdomain-Installation
+
+Vorbereitetes Paket pakete/vpm-testdomain-installation.zip und docs/TESTDOMAIN-INSTALLATION.md. Enthält genau Theme/Anbieter/Buchungskern, keinen Münchner Inhaltsimport. scripts/package.py baut es mit aktuellen dist-ZIPs; separate Anleitung/CLI preflight unter deployment/testdomain. Konkrete Testdomain, sicherer Zugang, Absenderpostfach/SMTP und eigene erlaubte Empfänger sind noch vom Betreiber zu nennen. SMTP-Plugin allein verarbeitet die signierte Buchungs-Outbox nicht; tatsächlicher Test-Versandadapter, Empfängerfilter und Mailrouting sind weiterhin einzurichten. Kein direktes Zweiweg-Relay/Klaviyo behaupten.

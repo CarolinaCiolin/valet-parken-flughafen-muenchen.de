@@ -70,3 +70,9 @@ print(starter.name, starter.stat().st_size, 'Bytes')
 # Optional booking backend remains a separate upload, not installed by the starter.
 booking = out / 'vpm-booking-core.zip'
 manifest.write_text(manifest.read_text() + hashlib.sha256(booking.read_bytes()).hexdigest() + '  ' + booking.name + '\n')
+
+# Testdomain bundle uses freshly generated ZIPs, never stale published copies.
+import subprocess, sys
+subprocess.run([sys.executable, str(root / "scripts/package-testdomain.py"), "--source-dir", "dist", "--output-dir", "dist"], check=True)
+test_bundle = out / "vpm-testdomain-installation.zip"
+manifest.write_text(manifest.read_text() + hashlib.sha256(test_bundle.read_bytes()).hexdigest() + "  " + test_bundle.name + "\n")

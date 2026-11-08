@@ -29,3 +29,7 @@ ZIPs über Download raw file herunterladen. Für ein bewusstes München-Update d
 Buchungskern 0.9.0: [Partnerbedingungen, Aktionen, Einrichtung und Grenzen](../docs/BOOKING-POLICIES-0.9.0.md). Optionales Entwicklungspaket für die Dachmarke; kein benötigtes Update der Münchner Affiliate-Seite.
 
 Buchungskern 0.10.0: [Kontaktvermittlung, Plattformfreigabe und Testweg](../docs/BOOKING-BROKER-0.10.0.md). Alias-/Nachrichtenlogik vorbereitet; noch keine echte Mailweiterleitung oder Klaviyo-Anbindung.
+
+## Separate Testdomain
+
+[Testdomain-Installationspaket](vpm-testdomain-installation.zip) – erst entpacken; enthält Theme, Anbieterkomponente, Buchungskern sowie Anleitung und lesende CLI-Vorprüfung. Kein Münchner Inhaltsimport. [Voraussetzungen und Mailtest](../docs/TESTDOMAIN-INSTALLATION.md). Kein automatischer Hostinger-Upload und noch kein fertiger SMTP-Outbox-Adapter.
