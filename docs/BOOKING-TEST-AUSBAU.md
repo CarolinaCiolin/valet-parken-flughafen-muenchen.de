@@ -79,3 +79,7 @@ Anforderungsstand: 15. November 2026. Grundlage ist das Betreiberfeedback zum Bu
 ## Abnahmetest nach Umsetzung
 
 Bestehende Daten und API-Verträge erhalten. Mit getrennten Partnerkonten zwei Anbieter und vier Stellplatzarten einschließlich ausgebuchter Kombinationen durchspielen. Geldkonvertierung, Saison-/Dauer-/Rabattvorrang, gleichzeitige letzte Plätze, Servicezeiten/DST, erfolgreiche und fehlgeschlagene Speicherung, Suchwechsel, Wiederladen, Gutscheine und Storno/Erstattung gezielt prüfen. Desktop/Mobil, Tastatur, Gutenberg und Elementor Free berücksichtigen. Keine Hostinger-Funktion oder echte Zustellung nur aus lokalen Tests ableiten.
+
+## Umsetzungsstand 0.12.0
+
+Umgesetzt und lokal geprüft: Fehleransicht/0-0-Speicherung, Euroeingaben, gespeicherte Angebots-/Preislisten, auf einen Partner begrenzte Plattformansicht, 7-Tage-Belegung, änderbare Flughafenvorauswahl, Stellplatz-/Anbieterfilter mit verfügbaren Alternativen, kompakte Einbettung, Suchwiederherstellung, Zeitfelder/24-7/Kopieren, Privat-/Firmenkundendaten und Fahrzeug, Shuttle-Personengrenze, Buchungsnummer, Stornoprüfung/Bestätigung, abgeschlossene Stornoliste, Partnerlogin und optional direkter Nachrichtenmodus mit Plattformprotokoll. Grenzen und noch offene Punkte ausdrücklich in BOOKING-EXPERIENCE-0.12.0.md; insbesondere kein realer Versand, öffentlicher Zahlungscheckout, Inbound-Supportfenster, erweiterter Gutschein-Merkmalsabgleich oder frei navigierbarer Belegungskalender.

@@ -29,6 +29,14 @@
     "time_basis": {
       "type": "string",
       "default": "flight"
+    },
+    "partner": {
+      "type": "string",
+      "default": ""
+    },
+    "layout": {
+      "type": "string",
+      "default": "standard"
     }
   },
   "supports": {

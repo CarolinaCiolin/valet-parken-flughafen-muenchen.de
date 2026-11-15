@@ -6,7 +6,7 @@ p=argparse.ArgumentParser();p.add_argument("--source-dir",default="pakete");p.ad
 root=Path(__file__).resolve().parents[1]
 out=root/args.output_dir/'vpm-testdomain-installation.zip'
 files={f'{args.source_dir}/{n}.zip':f'{n}.zip'for n in ['vpm-hybrid','vpm-providers','vpm-booking-core']}
-files.update({'docs/TESTDOMAIN-INSTALLATION.md':'ANLEITUNG.md','deployment/testdomain/wp-config-test.example.php':'wp-config-test.example.php','deployment/testdomain/preflight.php':'preflight.php'})
+files.update({'docs/TESTDOMAIN-INSTALLATION.md':'ANLEITUNG.md','docs/BOOKING-EXPERIENCE-0.12.0.md':'BOOKING-EXPERIENCE-0.12.0.md','deployment/testdomain/wp-config-test.example.php':'wp-config-test.example.php','deployment/testdomain/preflight.php':'preflight.php'})
 with ZipFile(out,'w',ZIP_DEFLATED)as z:
  for source,name in files.items():z.write(root/source,name)
  z.writestr('SHA256SUMS.txt',''.join(hashlib.sha256((root/source).read_bytes()).hexdigest()+'  '+name+'\n'for source,name in files.items()))

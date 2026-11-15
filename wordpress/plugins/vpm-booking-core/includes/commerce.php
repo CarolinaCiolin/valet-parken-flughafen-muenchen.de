@@ -13,10 +13,10 @@ final class Commerce {
     }
     public static function save(int $partner,array $d):void {
         Tenants::authorize($partner,true);$services=array();foreach(array('parking','valet','shuttle')as $key){$s=$d['services'][$key]??array();if(empty($s['enabled']))continue;
-            $basis=$s['fee_basis']??'booking';Config::require(in_array($basis,array('booking','leg'),true),'invalid_service_fee_basis');
-            $services[$key]=array('fee_cents'=>self::number($s['fee_cents']??0,0,10000000),'fee_basis'=>$basis,'hours'=>self::schedule($s['hours']??array()),'night_start'=>self::minutes((string)($s['night_start']??'22:00')),'night_end'=>self::minutes((string)($s['night_end']??'06:00')),'night_arrival_cents'=>self::number($s['night_arrival_cents']??0,0,10000000),'night_return_cents'=>self::number($s['night_return_cents']??0,0,10000000));
+            Config::require(empty($s['hours_explicit'])||count(self::schedule($s['hours']??array()))>0,'invalid_service_hours');$basis=$s['fee_basis']??'booking';Config::require(in_array($basis,array('booking','leg'),true),'invalid_service_fee_basis');
+            $services[$key]=array('passenger_limit'=>self::number($s['passenger_limit']??0,0,99),'fee_cents'=>self::number($s['fee_cents']??0,0,10000000),'fee_basis'=>$basis,'hours'=>self::schedule($s['hours']??array()),'night_start'=>self::minutes((string)($s['night_start']??'22:00')),'night_end'=>self::minutes((string)($s['night_end']??'06:00')),'night_arrival_cents'=>self::number($s['night_arrival_cents']??0,0,10000000),'night_return_cents'=>self::number($s['night_return_cents']??0,0,10000000));
         }
-        $out=array('services'=>$services,'handover_minutes'=>self::number($d['handover_minutes']??180,120,180));global $wpdb;DB::query($wpdb->prepare('INSERT INTO '.DB::table('commerce').' (partner_id,payload) VALUES (%d,%s) ON DUPLICATE KEY UPDATE payload=VALUES(payload)',$partner,wp_json_encode($out)));Operations::audit('partner.services_saved','partner',$partner);
+        $out=array('services'=>$services,'documents_required'=>!empty($d['documents_required']),'handover_minutes'=>self::number($d['handover_minutes']??180,120,180));global $wpdb;DB::query($wpdb->prepare('INSERT INTO '.DB::table('commerce').' (partner_id,payload) VALUES (%d,%s) ON DUPLICATE KEY UPDATE payload=VALUES(payload)',$partner,wp_json_encode($out)));Operations::audit('partner.services_saved','partner',$partner);
     }
     public static function open(array $hours,int $instant,string $timezone):bool {
         if(!$hours)return true; $dt=(new \DateTimeImmutable('@'.$instant))->setTimezone(new \DateTimeZone($timezone));$day=(int)$dt->format('N');$minute=(int)$dt->format('G')*60+(int)$dt->format('i');$previous=$day===1?7:$day-1;

@@ -37,6 +37,8 @@ final class PublicApi {
         Config::require( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT hits FROM ' . DB::table( 'rate_limits' ) . ' WHERE bucket=%s', $bucket ) ) <= 30, 'frontend_rate_limited' );
     }
     public static function offers( array $data ): array {
+        $type=$data['parking_type']??'';Config::require(is_string($type)&&($type===''||in_array($type,array('outdoor','covered','garage','underground'),true)),'invalid_parking_type');
+        $preferred=isset($data['preferred_partner'])&&$data['preferred_partner']!==''?Commerce::number($data['preferred_partner'],1):0;$alternatives=array();
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data ); $scope = (string) ( $data['airport_scope'] ?? '' ); Products::check_scope( $scope, $context['airport'] ); $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de';
         // Only installed, server-side adapters may supply prices. No fallback/test offers shipped.
         Config::require( Adapters::has_source($context['airport']), 'booking_adapter_not_configured' );
@@ -48,28 +50,30 @@ final class PublicApi {
             if ( ! (int) $partner['active'] ) { continue; }
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
             if($locale==='en'&&($offer['_source']['mode']??'')==='manual'&&isset($offer['price_breakdown']))$terms='Parking price including the selected service and itemized surcharges.';
-            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','price_breakdown'=>$offer['price_breakdown']??array(), 'booking_rules'=>Conditions::get((int)$partner['id']) );
+            $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','documents_required'=>!empty($offer['documents_required']),'passenger_limit'=>(int)($offer['passenger_limit']??0),'price_breakdown'=>$offer['price_breakdown']??array(), 'booking_rules'=>Conditions::get((int)$partner['id']) );
+            if(($type!==''&&$product['parking_type']!==$type)||($preferred&&$preferred!==(int)$partner['id'])){$alternatives[$product['parking_type'].':'.$partner['id']]=array('parking_type'=>$product['parking_type'],'preferred_partner'=>(int)$partner['id'],'partner'=>$partner['name']);continue;}
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
-            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']), 'booking_rules'=>$details['booking_rules'] ) + Products::public_data( $product, $locale );
+            $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'],'documents_required'=>$details['documents_required'],'passenger_limit'=>$details['passenger_limit'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']), 'booking_rules'=>$details['booking_rules'] ) + Products::public_data( $product, $locale );
         }
-        return array( 'offers' => $out, 'timezone' => $context['timezone'] );
+        return array('offers'=>$out,'alternatives'=>$out?array():array_values($alternatives),'timezone'=>$context['timezone']);
     }
     public static function request( array $data ): array {
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit();
         Config::require( ! isset( $data['base_cents'] ) && ! isset( $data['partner_id'] ) && ! isset( $data['state'] ) && ! isset( $data['payment_state'] ), 'client_amount_or_state_forbidden' );
         list( $quote, $context, $details, $selection ) = self::priced_selection( $data );
         $b=DB::tx(function()use($quote,$selection,$details,$data,$context){
-        $b = Flow::create( array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'sandbox_demo' => defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'booking_rules'=>$details['booking_rules']??array(), 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'], $details['source'] ?? array() );
+        $customer_input=isset($data['customer'])?array('customer'=>Experience::customer($data['customer'],(string)($details['service']??'parking'),(int)($details['passenger_limit']??0))):array();
+        $b = Flow::create( $customer_input + array( 'partner_id' => (int) $quote['partner_id'], 'base_cents' => $selection['total_cents'], 'offer_selection' => isset( $details['product'] ) ? $selection : array(), 'email' => (string) ( $data['email'] ?? '' ), 'coupon' => (string) ( $data['coupon'] ?? '' ), 'sandbox_demo' => defined('VPM_BOOKING_DEMO_MODE') && VPM_BOOKING_DEMO_MODE === true && current_user_can('manage_options'), 'locale' => $data['locale'] ?? 'de', 'travel' => $context, 'booking_rules'=>$details['booking_rules']??array(), 'offer_terms' => $quote['terms'] ), 'public-' . $quote['public_id'], $details['source'] ?? array() );
         if(isset($data['expected_amount_cents']))Config::require(Core::snapshot($b)['charged']===Config::integer($data['expected_amount_cents'],50),'price_changed_review_required');return $b;
         });
         $q = Core::snapshot( $b );
-        return array( 'reference' => $b['public_id'], 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur', 'newsletter_status'=>Consent::checkout_optin($b['customer_email'],($data['marketing_agreed']??false)===true) );
+        return array( 'reference' => $b['public_id'],'booking_number'=>Experience::number($b), 'state' => $b['state'], 'payment_state' => $b['payment_state'], 'amount_cents' => $q['charged'], 'discount_cents' => $q['discount'], 'currency' => 'eur', 'newsletter_status'=>Consent::checkout_optin($b['customer_email'],($data['marketing_agreed']??false)===true) );
     }
     private static function priced_selection( array $data ): array {
         $quote = DB::row( 'quotes', 'public_id', (string) ( $data['quote_id'] ?? '' ) ); Config::require( $quote && (int) $quote['expires_at'] >= time(), 'quote_expired' );
         $context = json_decode( $quote['context'], true ); Config::require( is_array( $context ) && $context['departure_utc'] > time(), 'quote_expired' );
         $details = json_decode( $quote['details'] ?? '', true ) ?: array(); $scope = (string) ( $details['airport_scope'] ?? '' ); Config::require( $scope === (string) ( $data['airport_scope'] ?? '' ), 'airport_scope_mismatch' ); Products::check_scope( $scope, $context['airport'] );
-        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );$selection['charging_space']=!empty($context['charging_required']);$selection['service']=$details['service']??'parking';$selection['price_breakdown']=$details['price_breakdown']??array();
+        $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de'; $product = $details['product'] ?? Products::normalize( array() ); $selection = Products::selection( (int) $quote['base_cents'], $product, $data['addons'] ?? array(), $locale );$selection['charging_space']=!empty($context['charging_required']);$selection['service']=$details['service']??'parking';$selection['documents_required']=!empty($details['documents_required']);$selection['price_breakdown']=$details['price_breakdown']??array();
         return array( $quote, $context, $details, $selection );
     }
     public static function preview( array $data ): array {
@@ -79,8 +83,11 @@ final class PublicApi {
         $q = Finance::quote( $selection['total_cents'], (int) $partner['commission_bps'], $discount );
         return array( 'base_cents' => $q['base'], 'discount_cents' => $q['discount'], 'amount_cents' => $q['charged'], 'currency' => 'eur' );
     }
+    public static function request_v2(array $data): array {
+        Config::require(isset($data['customer'])&&is_array($data['customer']),'missing_customer_details');return self::request($data);
+    }
     public static function register(): void {
-        foreach ( array( '/public/offers' => 'offers', '/public/requests' => 'request', '/public/price' => 'preview' ) as $path => $method ) {
+        foreach ( array( '/public/offers' => 'offers', '/public/requests' => 'request', '/public/requests-v2'=>'request_v2', '/public/price' => 'preview' ) as $path => $method ) {
             register_rest_route( 'vpm-booking/v1', $path, array( 'methods' => 'POST', 'permission_callback' => '__return_true', 'callback' => function( $r ) use ( $method ) {
                 try { Config::require( strlen( $r->get_body() ) < 8192, 'payload_too_large' ); $data = $r->get_json_params(); Config::require( is_array( $data ), 'json_object_required' ); return new \WP_REST_Response( self::$method( $data ), 200 ); }
                 catch ( LocalTime $e ) { return new \WP_Error( 'ambiguous_local_time', 'ambiguous_local_time', array( 'status' => 422, 'field' => $e->field, 'offsets' => $e->offsets ) ); }

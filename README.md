@@ -64,3 +64,5 @@ Speed-Optimierung: Theme 0.3.4 und VPM Anbieter 0.2.1, kleinere responsive Bildv
 Design: Mockup-Wortmarke im Header, Bildübergang im Hero, konsistente Ausrichtung in `vpm-section-inner`, Bilder auf allen Unterseiten und responsive Preistabelle. Seiteninhalte und Links sind unverändert. Screenshots und klickbare Vorschau unter `zwischenstand/`.
 
 Ratgeber-Entwurf: [Pflege und Veröffentlichung](docs/RATGEBER.md). [Rendering, Kontraste und Imagify-Prüfumfang](docs/RENDERING-KONTRASTE-IMAGIFY.md). Installierbare eigene WordPress-Pakete liegen zusätzlich unter [pakete/](pakete/).
+
+Buchungskern 0.12.0: [Testausbau, Update und Shortcodes](docs/BOOKING-EXPERIENCE-0.12.0.md).
