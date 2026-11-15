@@ -1,0 +1,38 @@
+{
+  "scope": "Local synthetic fixtures; no production access, payment or delivery",
+  "findings": [
+    {
+      "id": "F01",
+      "priority": "P0",
+      "verified": "local_browser",
+      "finding": "Changing airport while a search response is held allows the old-airport offer to render after the change.",
+      "actual": "Selected airport STR; rendered provider from MUC."
+    },
+    {
+      "id": "F02",
+      "priority": "P0",
+      "verified": "source_and_local_markup",
+      "finding": "Final price summary contains provider and amounts but no explicit airport, travel dates, customer or vehicle verification."
+    },
+    {
+      "id": "F03",
+      "priority": "P0",
+      "verified": "local_backend_flow",
+      "finding": "Customer access request rejects the displayed VPM booking number; only the internal UUID can issue a link.",
+      "counts": {
+        "human": 0,
+        "uuid": 1
+      }
+    },
+    {
+      "id": "F04",
+      "priority": "P0",
+      "verified": "local_backend_flow",
+      "finding": "After an unpaid manual-capacity hold expires, running the worker does not expire the enquiry or release its reserved voucher. Explicit cancellation releases it, but abandonment alone is not handled.",
+      "states": {
+        "coupon": "reserved",
+        "booking": "requested"
+      }
+    }
+  ]
+}
