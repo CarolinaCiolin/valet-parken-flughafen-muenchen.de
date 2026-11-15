@@ -6,6 +6,7 @@ final class DB {
     public static function install(): void {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php'; global $wpdb; $charset = $wpdb->get_charset_collate();
         $schemas = array(
+            'cases'=>'id bigint unsigned NOT NULL AUTO_INCREMENT, fingerprint varchar(120) NOT NULL, source_kind varchar(20) NOT NULL, source_id bigint unsigned NOT NULL, partner_id bigint unsigned NOT NULL DEFAULT 0, booking_id bigint unsigned NOT NULL DEFAULT 0, severity varchar(10) NOT NULL, summary varchar(200) NOT NULL, state varchar(20) NOT NULL, first_seen bigint NOT NULL, last_seen bigint NOT NULL, resolved_at bigint NOT NULL DEFAULT 0, acknowledged_by bigint unsigned NOT NULL DEFAULT 0, PRIMARY KEY  (id), UNIQUE KEY fingerprint (fingerprint), KEY open_cases (state,first_seen)',
             'payment_access'=>'booking_id bigint unsigned NOT NULL, token_hash char(64) NOT NULL, expires_at bigint NOT NULL, PRIMARY KEY  (booking_id), UNIQUE KEY token_hash (token_hash)',
             'extra_locks'=>'resource_key varchar(120) NOT NULL, PRIMARY KEY  (resource_key)',
             'extra_allocations'=>'booking_id bigint unsigned NOT NULL, partner_id bigint unsigned NOT NULL, addon_id varchar(50) NOT NULL, service_date date NOT NULL, units int unsigned NOT NULL, PRIMARY KEY  (booking_id,addon_id), KEY resource_day (partner_id,addon_id,service_date)',
@@ -53,7 +54,7 @@ final class DB {
         foreach ( array_keys( $schemas ) as $name ) { $status = $wpdb->get_row( $wpdb->prepare( 'SHOW TABLE STATUS WHERE Name = %s', self::table( $name ) ), ARRAY_A ); Config::require( $status && strcasecmp( $status['Engine'], 'InnoDB' ) === 0, 'transactional_schema_required' ); }
         Config::require( PHP_INT_SIZE >= 8 && function_exists( 'openssl_encrypt' ) && function_exists( 'openssl_decrypt' ), 'openssl_and_64bit_php_required' );
         foreach(array('allocations'=>array('accessible_space'),'rates'=>array('accessible_capacity','accessible_charging_capacity'),'inquiries'=>array('audience'))as $table=>$fields){$present=$wpdb->get_col('SHOW COLUMNS FROM '.self::table($table));foreach($fields as $field)if(!in_array($field,$present,true))throw new \RuntimeException('booking_schema_upgrade_incomplete');}
-        update_option( 'vpm_booking_db_version', 12, false );
+        update_option( 'vpm_booking_db_version', 13, false );
         if ( ! wp_next_scheduled( 'vpm_booking_worker' ) ) { wp_schedule_event( time() + 300, 'vpm_booking_five_minutes', 'vpm_booking_worker' ); }
     }
     public static function query( string $sql ): int { global $wpdb; $r = $wpdb->query( $sql ); if ( false === $r ) { throw new \RuntimeException( 'database_operation_failed' ); } return (int) $r; }

@@ -1,6 +1,6 @@
 # Testinstallation vorbereiten
 
-Aktueller Buchungskern: [0.13.0 – Buchungsstrecke und Partnerportal](BOOKING-JOURNEY-0.13.0.md). Testziel valet-parkservice.com; freigegebener Testmailempfänger/-absender kontakt@valet-parken-flughafen-muenchen.de (Hostinger). Noch keine Installation/SMTP-Konfiguration durch den Agenten. SSH wurde bisher mit Connection refused abgewiesen; WordPress-Upload bleibt möglich.
+Aktueller Buchungskern: [0.14.0 – Support und Automatisierung](BOOKING-WORKFLOWS-0.14.0.md). Testziel valet-parkservice.com; freigegebener Testmailempfänger/-absender kontakt@valet-parken-flughafen-muenchen.de (Hostinger). Noch keine Installation/SMTP-Konfiguration durch den Agenten. SSH wurde bisher mit Connection refused abgewiesen; WordPress-Upload bleibt möglich.
 
 Eigenständige Testinstallation für den Buchungskern, nicht die bestehende Münchner Affiliate-Seite. Diese Anleitung und das Paket erstellen noch keine Domain, Installation, Postfächer oder Zahlungsdienstverbindung.
 

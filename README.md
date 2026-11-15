@@ -68,3 +68,5 @@ Ratgeber-Entwurf: [Pflege und Veröffentlichung](docs/RATGEBER.md). [Rendering, 
 Buchungskern 0.12.0: [Testausbau, Update und Shortcodes](docs/BOOKING-EXPERIENCE-0.12.0.md).
 
 Buchungskern **0.13.0**: [Update, neue Suche/Buchungsstrecke, Partnerportal und Testzahlung/-mail](docs/BOOKING-JOURNEY-0.13.0.md). Eigene Buchungsseite, kein Kundenkonto; aktuelle Screenshots unter [zwischenstand/buchungskern](zwischenstand/buchungskern).
+
+Buchungskern **0.14.0**: [geführter Support, Partner-Preisvorschau und automatische Klärungsfälle](docs/BOOKING-WORKFLOWS-0.14.0.md). Reminder zunächst aus; Fallabgleich läuft über den bestehenden Worker.

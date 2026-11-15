@@ -1,5 +1,5 @@
 {
-  "count": 45,
+  "count": 52,
   "checks": [
     "Embedded widget contains only the small search launcher",
     "Airport preselection remains editable",
@@ -28,6 +28,9 @@
     "No customer account or management portal is offered",
     "Support link automatically preselects booking number",
     "Support offers provider contact, cancellation and platform contact",
+    "Invoice support explains provider responsibility before sending",
+    "Payment guidance routes to platform without asking for card data",
+    "Delay support requests useful information without changing the booking",
     "Guest sends support request without any customer login",
     "Partner login opens personal portal directly",
     "Dashboard has onboarding progress indicator",
@@ -39,12 +42,16 @@
     "Calendar includes occupancy count and percentage",
     "Saving a tariff keeps its editor open in the same section",
     "Saved price is immediately editable again",
+    "Partner price section contains a separate nonbooking preview",
+    "Price preview explains billing days and separate charges",
     "Large embed uses full hero search layout without inline checkout",
     "General large launcher has no airport preselected",
     "Payment return removes its capability fragment immediately",
     "Cancelled payment return offers a scoped retry without a customer account",
     "Payment return isolates its capability from general tracking and WordPress scripts",
     "Payment start rejects a checkout URL outside Stripe",
+    "Platform queue shows readable booking number for a platform-only inquiry",
+    "Taking ownership stays in the queue and does not hide the unresolved case",
     "No JavaScript runtime errors across guest and partner flows"
   ]
 }
