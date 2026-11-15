@@ -1,5 +1,7 @@
 # Komplettcheck Buchung und Partnerverwaltung – Version 0.12.0
 
+> Fortschreibung: [Buchungskern 0.13.0](BOOKING-JOURNEY-0.13.0.md) berücksichtigt die nachfolgenden Nutzerentscheidungen. Kein Inline-Checkout und kein Kundenportal; Ladebedarf nur als Extra. Die vier lokal reproduzierten Lücken sind in der neuen Strecke adressiert: veraltete Suchantworten verwerfen, vollständige Abschlussübersicht, Support mit lesbarer VPM-Nummer statt Kundenportal und Freigabe abgelaufener unbezahlter manueller Anfragen/Gutscheine. Der restliche Katalog bleibt eine Ausbauplanung, keine vollständige Leistungszusage.
+
 Stand: 15. November 2026. Geprüft wurden der Code von 0.12.0, lokale Darstellungen und gezielte lokale Fehlertests mit Phantasiedaten. Dies ist keine Live-Abnahme der Hostinger-Installation. Plugin-Code und Pakete wurden bei diesem Audit nicht geändert. Nachweise der vier gezielt überprüften Lücken: [BOOKING-AUDIT-0.12.0-REPRO.json](BOOKING-AUDIT-0.12.0-REPRO.json).
 
 P0 = funktional zuerst korrigieren; P1 = nächste wesentliche Bedienungsrunde; P2 = Ausbau nach dem Kernablauf; P3 = spätere Option. Die Liste unterscheidet fehlende Funktionen von der Weiterentwicklung bereits vorhandener Grundlagen.

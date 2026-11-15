@@ -66,3 +66,5 @@ Design: Mockup-Wortmarke im Header, Bildübergang im Hero, konsistente Ausrichtu
 Ratgeber-Entwurf: [Pflege und Veröffentlichung](docs/RATGEBER.md). [Rendering, Kontraste und Imagify-Prüfumfang](docs/RENDERING-KONTRASTE-IMAGIFY.md). Installierbare eigene WordPress-Pakete liegen zusätzlich unter [pakete/](pakete/).
 
 Buchungskern 0.12.0: [Testausbau, Update und Shortcodes](docs/BOOKING-EXPERIENCE-0.12.0.md).
+
+Buchungskern **0.13.0**: [Update, neue Suche/Buchungsstrecke, Partnerportal und Testzahlung/-mail](docs/BOOKING-JOURNEY-0.13.0.md). Eigene Buchungsseite, kein Kundenkonto; aktuelle Screenshots unter [zwischenstand/buchungskern](zwischenstand/buchungskern).

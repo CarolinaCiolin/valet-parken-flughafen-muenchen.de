@@ -9,12 +9,13 @@ final class Stripe {
         Config::require( ! is_wp_error( $r ) && wp_remote_retrieve_response_code( $r ) >= 200 && wp_remote_retrieve_response_code( $r ) < 300, 'stripe_request_failed_retry_same_key' );
         $data = json_decode( wp_remote_retrieve_body( $r ), true ); Config::require( is_array( $data ) && ! empty( $data['id'] ), 'stripe_invalid_response' ); return $data;
     }
-    public static function checkout( string $public ): array {
+    public static function checkout( string $public, string $return_token='' ): array {
         Config::require( self::ready(), 'stripe_test_key_required_live_disabled' );
         $b = DB::tx( function() use ( $public ) { $b = Core::booking( $public, true ); Config::require( (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', Core::snapshot( $b )['stripe_account'] ), 'partner_payment_account_missing' ); Config::require( ( (!Flow::managed($b) && $b['state'] === 'confirmed') || Flow::payment_ready($b) ) && in_array( $b['payment_state'], array( 'unpaid', 'creating', 'pending' ), true ), 'booking_not_ready_for_checkout' ); if ( ! $b['stripe_session'] ) { DB::update( 'bookings', array( 'payment_state' => 'creating' ), array( 'id' => $b['id'] ) ); } return $b; } );
         if ( ! empty( $b['stripe_session'] ) ) { $old = self::api( 'checkout/sessions/' . $b['stripe_session'], array(), 'vpm-session-' . $public, 'GET' ); Config::require( ( $old['status'] ?? '' ) === 'open' && ( $old['id'] ?? '' ) === $b['stripe_session'] && wp_parse_url( $old['url'] ?? '', PHP_URL_HOST ) === 'checkout.stripe.com' && wp_parse_url( $old['url'] ?? '', PHP_URL_SCHEME ) === 'https', 'checkout_no_longer_open' ); return array( 'session_id' => $old['id'], 'url' => $old['url'], 'mode' => 'test' ); }
         $q = Core::snapshot( $b ); Config::require( (bool) preg_match( '/^acct_[a-zA-Z0-9]{5,70}$/D', $q['stripe_account'] ), 'partner_payment_account_missing' ); $home = set_url_scheme( home_url( '/' ), 'https' );
-        $session = self::api( 'checkout/sessions', array( 'mode' => 'payment', 'client_reference_id' => $public, 'customer_email' => $b['customer_email'], 'success_url' => add_query_arg( 'vpm_booking_payment', 'returned', $home ), 'cancel_url' => add_query_arg( 'vpm_booking_payment', 'cancelled', $home ), 'metadata' => array( 'booking_id' => $public ), 'line_items' => array( array( 'price_data' => array( 'currency' => 'eur', 'unit_amount' => $q['charged'], 'product_data' => array( 'name' => 'Airport parking – ' . $q['airport'] ) ), 'quantity' => 1 ) ), 'payment_intent_data' => array( 'application_fee_amount' => $q['platform'], 'transfer_data' => array( 'destination' => $q['stripe_account'] ), 'metadata' => array( 'booking_id' => $public ) ) ), 'vpm-checkout-' . $public );
+        $number=Experience::number($b);$success=add_query_arg(array('vpm_booking_payment'=>'returned','booking'=>$number),$home);$cancel=add_query_arg(array('vpm_booking_payment'=>'cancelled','booking'=>$number),$home);if($return_token!==''){Config::require((bool)preg_match('/^[a-f0-9]{64}$/D',$return_token),'invalid_payment_access');$success.='#payment_token='.$return_token;$cancel.='#payment_token='.$return_token;}
+        Config::require(time()<(int)$b['created_at']+1800,'checkout_creation_window_expired');$session = self::api( 'checkout/sessions', array( 'expires_at'=>(int)$b['created_at']+3600, 'mode' => 'payment', 'client_reference_id' => $public, 'customer_email' => $b['customer_email'], 'success_url' => $success, 'cancel_url' => $cancel, 'metadata' => array( 'booking_id' => $public ), 'line_items' => array( array( 'price_data' => array( 'currency' => 'eur', 'unit_amount' => $q['charged'], 'product_data' => array( 'name' => 'Airport parking – ' . $q['airport'] ) ), 'quantity' => 1 ) ), 'payment_intent_data' => array( 'application_fee_amount' => $q['platform'], 'transfer_data' => array( 'destination' => $q['stripe_account'] ), 'metadata' => array( 'booking_id' => $public ) ) ), 'vpm-checkout-' . $public );
         Config::require( (bool) preg_match( '/^cs_test_/', $session['id'] ) && isset( $session['url'] ) && 'https' === wp_parse_url( $session['url'], PHP_URL_SCHEME ) && 'checkout.stripe.com' === wp_parse_url( $session['url'], PHP_URL_HOST ), 'invalid_checkout_session' );
         DB::tx( function() use ( $public, $session ) { $current = Core::booking( $public, true ); Config::require( ! $current['stripe_session'] || $current['stripe_session'] === $session['id'], 'checkout_idempotency_conflict' ); DB::update( 'bookings', array( 'stripe_session' => $session['id'], 'payment_state' => 'pending' ), array( 'id' => $current['id'] ) ); } );
         return array( 'session_id' => $session['id'], 'url' => $session['url'], 'mode' => 'test' );
@@ -29,6 +30,9 @@ final class Stripe {
     public static function webhook( string $body, string $signature ): array {
         self::signature( $body, $signature ); $event = json_decode( $body, true );
         Config::require( is_array( $event ) && false === ( $event['livemode'] ?? null ) && empty( $event['account'] ) && preg_match( '/^evt_[a-zA-Z0-9_]{1,130}$/D', $event['id'] ?? '' ), 'stripe_live_or_invalid_event' );
+        return self::apply_event($event);
+    }
+    private static function apply_event(array $event):array {
         return DB::tx( function() use ( $event ) {
             global $wpdb; $event_key = 'stripe:' . $event['id'];
             if ( $wpdb->get_var( $wpdb->prepare( 'SELECT event_id FROM ' . DB::table( 'events' ) . ' WHERE event_id=%s', $event_key ) ) ) { return array( 'received' => true, 'duplicate' => true ); }
@@ -41,16 +45,20 @@ final class Stripe {
                 elseif ( 'paid' === ( $o['payment_status'] ?? '' ) && ! in_array( $b['payment_state'], array( 'paid', 'partially_refunded', 'refunded' ), true ) ) {
                     $pi = is_array( $o['payment_intent'] ?? null ) ? $o['payment_intent']['id'] : ( $o['payment_intent'] ?? '' ); Config::require( is_string( $pi ) && (bool) preg_match( '/^pi_[a-zA-Z0-9_]+$/D', $pi ), 'invalid_payment_intent' );
                     DB::update( 'bookings', array( 'payment_state' => 'paid', 'stripe_pi' => $pi ), array( 'id' => $b['id'] ) ); $b['payment_state'] = 'paid'; $b['stripe_pi'] = $pi;
-                    Flow::enqueue($b,'confirm');
+                    if($b['state']!=='expired')Flow::enqueue($b,'confirm');
                     Finance::journal( $b, 'paid:' . $b['public_id'], Finance::paid_entries( $q ) );
-                    if ( $b['state'] !== 'cancelled' ) { Core::coupon_state( $b, 'consumed' ); }
+                    if ( !in_array($b['state'],array('cancelled','expired'),true) ) { Core::coupon_state( $b, 'consumed' ); }
                     Automation::booking_event( $b, 'payment.received' ); Logistics::document_required($b);
                     if ( $b['state'] === 'confirmed' && !Flow::managed($b) ) { Automation::booking_event( $b, 'booking.confirmed' ); }
-                    if ( $b['state'] === 'cancelled' ) { Core::refund_row( $b, $q['charged'], 'late-cancelled-payment' ); }
+                    if ( in_array($b['state'],array('cancelled','expired'),true) ) { Core::refund_row( $b, $q['charged'], 'late-cancelled-payment' ); }
                 }
             } elseif ( in_array( $type, array( 'refund.created', 'refund.updated' ), true ) ) { self::apply_refund( $o ); }
             DB::insert( 'events', array( 'event_id' => $event_key, 'source' => 'stripe', 'created_at' => time() ) ); return array( 'received' => true );
         } );
+    }
+    public static function reconcile_pending():void {
+        if(!self::ready())return;global $wpdb;$rows=$wpdb->get_results($wpdb->prepare('SELECT * FROM '.DB::table('bookings')." WHERE payment_state='pending' AND stripe_session IS NOT NULL AND created_at<%d ORDER BY id LIMIT 10",time()-1800),ARRAY_A);
+        foreach($rows as $b)try{$session=self::api('checkout/sessions/'.$b['stripe_session'],array(),'vpm-reconcile-'.$b['public_id'],'GET');Config::require(($session['livemode']??null)===false&&($session['id']??'')===$b['stripe_session'],'stripe_reconciliation_mismatch');if(($session['status']??'')!=='expired'&&($session['payment_status']??'')!=='paid')continue;$type=($session['payment_status']??'')==='paid'?'checkout.session.completed':'checkout.session.expired';$event=array('id'=>'evt_sync_'.hash('sha256',$b['stripe_session'].':'.$type),'livemode'=>false,'type'=>$type,'data'=>array('object'=>$session));self::apply_event($event);Operations::audit('stripe.session_reconciled','booking',(int)$b['id']);}catch(\Throwable $e){Automation::event('stripe-reconcile:'.$b['public_id'].':'.intdiv(time(),3600),'operations.payment_reconciliation_required','transactional',array('booking_id'=>$b['public_id']));}
     }
     // Caller owns transaction; always lock booking before refund, matching local cancellation lock order.
     private static function apply_refund( array $o ): void {

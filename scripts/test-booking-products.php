@@ -8,7 +8,7 @@ $options=[];foreach(['vpm_booking_frontend_enabled','vpm_booking_products']as $k
 $checks=[];function check_product($v,$label){global $checks;if(!$v)throw new Exception($label);$checks[]=$label;}function reject_product($fn,$code){try{$fn();}catch(Throwable $e){check_product($e->getMessage()===$code,'reject:'.$code);return;}throw new Exception('Expected '.$code);}
 add_filter('pre_http_request',function(){return new WP_Error('fixture_block');});add_filter('pre_wp_mail','__return_true');wp_set_current_user(1);
 try{
- $fixed=Frontend::form(['airport'=>'STR','locale'=>'de','airport_mode'=>'fixed']);check_product(str_contains($fixed,'Stuttgart (STR)')&&!preg_match('/<select[^>]+name="airport"/',$fixed)&&str_contains($fixed,'name="airport_scope"'),'Explicit fixed shortcode locks airport without airport dropdown');
+ $fixed=Frontend::legacy_form(['airport'=>'STR','locale'=>'de','airport_mode'=>'fixed']);check_product(str_contains($fixed,'Stuttgart (STR)')&&!preg_match('/<select[^>]+name="airport"/',$fixed)&&str_contains($fixed,'name="airport_scope"'),'Explicit fixed shortcode locks airport without airport dropdown');
  check_product(str_contains(Frontend::form([]),'name="airport" required>'),'General shortcode retains airport selection');
  check_product(str_contains(Frontend::form(['airport'=>'STR','airport_mode'=>'select']),'name="airport" required>'),'Explicit selection mode allows preselected airport');
  check_product(str_contains(Frontend::form(['airport'=>'XXX']),'role="alert"'),'Invalid local airport never silently becomes a global form');

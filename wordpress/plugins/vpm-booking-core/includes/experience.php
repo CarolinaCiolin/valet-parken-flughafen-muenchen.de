@@ -17,7 +17,12 @@ final class Experience {
         return $d;
     }
     public static function errors(string $code): string {
-        return array('invalid_integer'=>'Bitte eine gültige ganze Zahl ab 0 eingeben.',
+        return array('invalid_product_label'=>'Bitte die Angebotsnamen auf Deutsch und Englisch ausfüllen.',
+            'parking_height_required'=>'Bitte eine maximale Fahrzeughöhe von mindestens 0,50 m für dieses Stellplatzangebot angeben.',
+            'invalid_capacity_overlap'=>'Die Teilbestände passen nicht in den Gesamtbestand. Gemeinsam genutzte barrierearme Ladeplätze korrekt angeben.',
+            'extra_capacity_unavailable'=>'Für dieses Extra ist die Tageskapazität ausgeschöpft. Bitte ein anderes Datum oder Angebot wählen.',
+            'mail_sender_required'=>'Bitte ein eigenes Testpostfach und einen gültigen Absender unter Branding hinterlegen.',
+            'invalid_integer'=>'Bitte eine gültige ganze Zahl ab 0 eingeben.',
             'invalid_euro_amount'=>'Bitte einen Eurobetrag eingeben, z. B. 12,50. Keine Tausendertrennzeichen.',
             'capacity_below_reserved_total'=>'Der neue Bestand ist kleiner als die bereits reservierten Plätze. Bestehende Reservierungen zuerst prüfen.',
             'rate_not_owned'=>'Für dieses Stellplatzangebot fehlt ein gespeicherter Grundtarif. Bitte zuerst einen Tarif anlegen.',
@@ -39,7 +44,7 @@ final class Experience {
         Config::require((bool)preg_match('/^[+0-9 ()\/.-]{6,40}$/D',$out['phone']),'invalid_customer_phone');$out['plate']=mb_strtoupper($out['plate']);
         if($kind==='business')foreach(array('company','legal_form','street','postcode','city','country')as $key)Config::require($out[$key]!=='','missing_customer_'.$key);
         else foreach(array('company','legal_form','vat_id','street','postcode','city','country')as $key)unset($out[$key]);
-        $out['passengers']=$service==='shuttle'?Commerce::number($d['passengers']??'',1,$limit?:99):0;
+        $out['height_cm']=Commerce::number($d['height_cm']??0,0,500);$out['passengers']=$service==='shuttle'?Commerce::number($d['passengers']??'',1,$limit?:99):0;
         return $out;
     }
     public static function customer_data(array $b): array {
@@ -50,11 +55,11 @@ final class Experience {
     }
     public static function number(array $b): string {return 'VPM-'.str_pad((string)$b['id'],7,'0',STR_PAD_LEFT);}
     public static function cancel_preview(array $b): void {
-        Tenants::authorize((int)$b['partner_id'],true);$q=Core::snapshot($b);$c=self::customer_data($b);$decision=Conditions::decision($b);$travel=$q['travel']??array();
-        echo '<section class="vpm-cancel-preview"><h2>Stornierung prüfen</h2><p><strong>'.esc_html(self::number($b)).' · '.esc_html(trim(($c['first_name']??'').' '.($c['last_name']??''))).' · '.esc_html($c['plate']??'').'</strong></p>';
+        Tenants::authorize((int)$b['partner_id'],true);$q=Core::snapshot($b);$c=self::customer_data($b);$cause=($GLOBALS['vpm_cancel_cause']??'cancellation');$decision=$cause==='provider'?Conditions::assessment($b,'provider'):Conditions::decision($b);$travel=$q['travel']??array();
+        echo '<section class="vpm-cancel-preview"><h2>Stornierung prüfen</h2><p>'.($cause==='provider'?'Absage durch den Anbieter: keine Stornogebühr für den Kunden.':'Kundenstorno nach gespeicherten Bedingungen.').'</p><p><strong>'.esc_html(self::number($b)).' · '.esc_html(trim(($c['first_name']??'').' '.($c['last_name']??''))).' · '.esc_html($c['plate']??'').'</strong></p>';
         if($travel)echo '<p>'.esc_html(wp_date('d.m.Y H:i',$travel['departure_utc'],new \DateTimeZone($travel['timezone']))).' – '.esc_html(wp_date('d.m.Y H:i',$travel['return_utc'],new \DateTimeZone($travel['timezone']))).'</p>';
         foreach(array('basis_cents'=>'Bezahlt nach Gutschein','fee_cents'=>'Stornogebühr','refund_total_cents'=>'Erstattungsbetrag gesamt')as $key=>$label)echo '<p>'.esc_html($label).': <strong>'.esc_html(number_format($decision[$key]/100,2,',','.')).' €</strong></p>';
-        echo '<p>Es gelten die bei Buchung gespeicherten Bedingungen. Bereits veranlasste Erstattungen werden berücksichtigt. Bei unbezahlten Anfragen wird kein Geld erstattet. Eine externe Anbindung muss den Storno bestätigen; ein Hintergrundauftrag ist noch kein abgeschlossener Vorgang.</p><form method="post">';wp_nonce_field('vpm_partner_portal');echo '<input type="hidden" name="portal_action" value="cancel"><input type="hidden" name="partner" value="'.(int)$b['partner_id'].'"><input type="hidden" name="reference" value="'.esc_attr($b['public_id']).'"><input type="hidden" name="expected_fee" value="'.$decision['fee_cents'].'"><input type="hidden" name="expected_refund" value="'.$decision['refund_total_cents'].'"><label><input type="checkbox" name="acknowledged" value="1" required> Stornierung und berechneten Erstattungsbetrag geprüft.</label><button>Storno verbindlich ausführen lassen</button></form></section>';
+        echo '<p>Es gelten die bei Buchung gespeicherten Bedingungen. Bereits veranlasste Erstattungen werden berücksichtigt. Bei unbezahlten Anfragen wird kein Geld erstattet. Eine externe Anbindung muss den Storno bestätigen; ein Hintergrundauftrag ist noch kein abgeschlossener Vorgang.</p><form method="post">';wp_nonce_field('vpm_partner_portal');echo '<input type="hidden" name="portal_action" value="cancel"><input type="hidden" name="partner" value="'.(int)$b['partner_id'].'"><input type="hidden" name="reference" value="'.esc_attr($b['public_id']).'"><input type="hidden" name="cause" value="'.esc_attr($cause).'"><input type="hidden" name="expected_fee" value="'.$decision['fee_cents'].'"><input type="hidden" name="expected_refund" value="'.$decision['refund_total_cents'].'"><label><input type="checkbox" name="acknowledged" value="1" required> Stornierung und berechneten Erstattungsbetrag geprüft.</label><button>Storno verbindlich ausführen lassen</button></form></section>';
     }
     public static function partner_admin(int $id): void {
         Config::require(current_user_can('manage_options'),'permission_denied');$p=DB::row('partners','id',$id);if(!$p){echo '<p>Partner nicht gefunden.</p>';return;}

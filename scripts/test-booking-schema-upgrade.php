@@ -1,0 +1,9 @@
+<?php
+// Disposable local schema-upgrade rehearsal. Never run against customer data.
+define('WP_ADMIN',true);require '/var/www/html/wp-load.php';if(wp_parse_url(home_url(),PHP_URL_HOST)!=='127.0.0.1')exit(2);
+use VPM\Booking\{DB,Core};global $wpdb;$tables=$wpdb->get_col($wpdb->prepare('SHOW TABLES LIKE %s',$wpdb->prefix.'vpm_booking_%'));foreach($tables as $t)if($wpdb->get_var("SELECT COUNT(*) FROM $t"))throw new Exception('Nonempty booking tables refused');
+try{$p=Core::partner(['airport'=>'MUC','name'=>'TEST upgrade','commission_bps'=>2000]);$b=Core::create(['partner_id'=>(int)$p['id'],'base_cents'=>10000,'email'=>'upgrade@example.invalid'],'schema-upgrade-fixture');$before=Core::booking($b['public_id']);
+foreach(['payment_access','extra_locks','extra_allocations']as $t)DB::query('DROP TABLE '.DB::table($t));foreach(['rates'=>['accessible_capacity','accessible_charging_capacity'],'allocations'=>['accessible_space'],'inquiries'=>['audience'],'messages'=>['inquiry_id']]as $table=>$columns)foreach($columns as $column)DB::query('ALTER TABLE '.DB::table($table).' DROP COLUMN '.$column);update_option('vpm_booking_db_version',11);DB::install();
+if((int)get_option('vpm_booking_db_version')!==12||Core::booking($b['public_id'])!==$before)throw new Exception('Upgrade did not preserve the existing booking snapshot');foreach(['payment_access','extra_locks','extra_allocations']as $t)if($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',DB::table($t)))!==DB::table($t))throw new Exception('Upgrade table missing');
+echo "Schema 11 to 12 rehearsal passed: existing booking and financial snapshot preserved.\n";file_put_contents('/tmp/vpm-booking-schema-upgrade-report.json',json_encode(['from'=>11,'to'=>12,'booking_and_snapshot_preserved'=>true,'new_tables_created'=>true,'scope'=>'synthetic local fixture only']));
+}finally{foreach(array_reverse($tables)as $t)$wpdb->query("DELETE FROM $t");DB::install();}

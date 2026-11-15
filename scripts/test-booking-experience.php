@@ -29,7 +29,7 @@ try {
  xreject(fn()=>PublicApi::offers($d+['parking_type'=>'fake']),'invalid_parking_type');
  // Rendering with WP_ADMIN true deliberately disables interaction; inspect semantic markup only.
  $markup=Frontend::form(['airport'=>'MUC','partner'=>(string)$p['id'],'layout'=>'compact']);xok(str_contains($markup,'name="airport" required')&&!str_contains($markup,'name="airport_scope"'),'Airport shortcode defaults to editable selection');xok(str_contains($markup,'name="preferred_partner"')&&str_contains($markup,'name="parking_type"'),'Provider and parking type search controls render');xok(str_contains($markup,'data-layout="compact"'),'Compact embedding available');
- xok(str_contains(Frontend::form(['airport'=>'MUC','airport_mode'=>'fixed']),'name="airport_scope"'),'Explicit fixed scope retained for intentional integrations');
+ xok(str_contains(Frontend::legacy_form(['airport'=>'MUC','airport_mode'=>'fixed']),'name="airport_scope"'),'Explicit fixed scope retained for intentional integrations');
  $general=Frontend::form(['locale'=>'de']);xok(str_contains($general,'value="">Flughafen auswählen'),'General form provides an empty airport choice');
  $customer=['kind'=>'private','first_name'=>'Max','last_name'=>'Mustermann','phone'=>'+49 000 000000','plate'=>'TEST 123','make'=>'Testfahrzeug'];
  xreject(fn()=>PublicApi::request_v2(['quote_id'=>$all['offers'][0]['quote_id'],'email'=>'customer@example.invalid']),'missing_customer_details');

@@ -7,6 +7,8 @@ for item in vpm-ci-wp vpm-ci-db; do
   if docker container inspect "$item" >/dev/null 2>&1; then echo "Refusing existing CI container: $item"; exit 2; fi
 done
 if docker network inspect vpm-ci-network >/dev/null 2>&1; then echo 'Refusing existing CI network'; exit 2; fi
+node --check wordpress/plugins/vpm-booking-core/assets/journey.js
+node --check wordpress/plugins/vpm-booking-core/assets/portal.js
 node --check wordpress/plugins/vpm-booking-core/assets/front.js
 node --check wordpress/plugins/vpm-booking-core/assets/block-editor.js
 mkdir -p .runtime/ci .runtime/ci-reports
@@ -46,7 +48,7 @@ docker exec vpm-ci-wp php -r '$_SERVER["HTTP_HOST"]="127.0.0.1:8090";define("WP_
 docker cp wordpress/plugins/vpm-booking-core/. vpm-ci-wp:/var/www/html/wp-content/plugins/vpm-booking-core/
 docker exec vpm-ci-wp sh -c 'find /var/www/html/wp-content/plugins/vpm-booking-core -type d -exec chmod 755 {} +; find /var/www/html/wp-content/plugins/vpm-booking-core -type f -exec chmod 644 {} +; for f in /var/www/html/wp-content/plugins/vpm-booking-core/includes/*.php; do php -l "$f" >/dev/null || exit 1; done'
 docker exec vpm-ci-wp php -r 'define("WP_ADMIN",true);require "/var/www/html/wp-load.php";require_once ABSPATH."wp-admin/includes/plugin.php";$r=activate_plugin("vpm-booking-core/vpm-booking-core.php");if(is_wp_error($r))throw new Exception($r->get_error_message());VPM\Booking\DB::install();'
-for suite in core products vouchers platform adapters logistics commerce policies broker branding experience; do
+for suite in core products vouchers platform adapters logistics commerce policies broker branding experience journey schema-upgrade; do
   docker cp "scripts/test-booking-$suite.php" "vpm-ci-wp:/tmp/test-$suite.php"
   docker exec vpm-ci-wp php "/tmp/test-$suite.php"
   if [ "$suite" = core ]; then report=vpm-booking-core-report.json; else report="vpm-booking-$suite-report.json"; fi

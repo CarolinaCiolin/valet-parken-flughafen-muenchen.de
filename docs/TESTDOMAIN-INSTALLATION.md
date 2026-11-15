@@ -1,6 +1,6 @@
 # Testinstallation vorbereiten
 
-Aktueller Buchungskern: [0.12.0 – Verwaltung und Buchungssuche](BOOKING-EXPERIENCE-0.12.0.md). Testziel valet-parkservice.com; freigegebener Testmailempfänger/-absender kontakt@valet-parken-flughafen-muenchen.de (Hostinger). Noch keine Installation/SMTP-Konfiguration durch den Agenten. SSH wurde bisher mit Connection refused abgewiesen; WordPress-Upload bleibt möglich.
+Aktueller Buchungskern: [0.13.0 – Buchungsstrecke und Partnerportal](BOOKING-JOURNEY-0.13.0.md). Testziel valet-parkservice.com; freigegebener Testmailempfänger/-absender kontakt@valet-parken-flughafen-muenchen.de (Hostinger). Noch keine Installation/SMTP-Konfiguration durch den Agenten. SSH wurde bisher mit Connection refused abgewiesen; WordPress-Upload bleibt möglich.
 
 Eigenständige Testinstallation für den Buchungskern, nicht die bestehende Münchner Affiliate-Seite. Diese Anleitung und das Paket erstellen noch keine Domain, Installation, Postfächer oder Zahlungsdienstverbindung.
 
@@ -26,17 +26,17 @@ Auf der Testinstallation:
 
 1. Beide WordPress-Adressen auf dieselbe HTTPS-Testdomain setzen, bevor Sprach-/Buchungsrouten geprüft werden.
 2. Domainzugriff schützen; zusätzlich Suchmaschinenindexierung ausschließen. `noindex` ersetzt keinen Zugriffsschutz. Frontend und API müssen passend geschützt bleiben. Spätere externe Webhooks benötigen eine gezielt erreichbare, signaturgeprüfte Route.
-3. Demomodus ausschließlich auf dieser Installation gemäß `wp-config-test.example.php` aktivieren. Datei nicht als Ersatz für wp-config.php hochladen. Der Demomodus schaltet weder SMTP noch einen öffentlichen Zahlungscheckout ein und ist kein Schutz für reale Daten.
+3. Demomodus ausschließlich auf dieser Installation gemäß `wp-config-test.example.php` aktivieren. Datei nicht als Ersatz für wp-config.php hochladen. Der Demomodus schaltet weder SMTP noch den gesondert aktivierbaren Stripe-Gasttestcheckout ein und ist kein Schutz für reale Daten.
 4. Partnerrollen mit reinen Partnerrechten anlegen; keine WordPress-Administratoren für Partner. Eigener Plattformadministrator. Das Portal zunächst unter der Testdomain mit `?vpm_partner_portal=1` testen. Eine Partner-Subdomain anschließend mit TLS/Anmeldung/Weiterleitung separat prüfen; DNS allein genügt nicht.
 5. Synthetische Partner A/B/C anlegen: überdacht mit Lade-Teilbestand/Valet; Außenstellplätze/Shuttle; ausgebuchte Tiefgarage. Richtige Flughafenzeitzone, erfundene Preise, klar markierte Testadressen, keine fremden Telefonnummern. Kontakte zunächst `example.invalid`.
-6. Private Testseite mit `[vpm_booking_form airport="MUC" flow="steps"]` anlegen. Für einen Valet-Einstieg zusätzlich `service="valet"`. Eine private Seite regulär als Administrator öffnen; die WordPress-Editorvorschau deaktiviert Buchungsaktionen bewusst. Öffentliche Anfragen in der Buchungsverwaltung ausdrücklich freigeben, erst nachdem Testbestand und Zugriffsschutz geprüft wurden.
-7. Buchung, Extras, Gutschein, Preisänderung, ausgebucht, Servicezeiten, Stornowunsch, Partnerfreigabe und Nachrichtenfreigabe durchspielen. Simulation nur in der privaten Administratordemo. Partneransicht getrennt mit eigenem Partnerlogin prüfen.
+6. Private Testseite mit `[vpm_booking_form airport="MUC" layout="standard"]` anlegen. Für einen Valet-Einstieg zusätzlich `service="valet"`. Eine private Seite regulär als Administrator öffnen; die WordPress-Editorvorschau deaktiviert Buchungsaktionen bewusst. Öffentliche Anfragen in der Buchungsverwaltung ausdrücklich freigeben, erst nachdem Testbestand und Zugriffsschutz geprüft wurden.
+7. Buchung, Extras, Gutschein, Preisänderung, ausgebucht, Servicezeiten, Stornowunsch, Partnerfreigabe und direkte Portalantwort durchspielen. Simulation nur in der privaten Administratordemo. Partneransicht getrennt mit eigenem Partnerlogin prüfen.
 
 ## Mailtest ohne Klaviyo
 
 Für einen ersten SMTP-Test reichen ein vorhandenes Absenderpostfach und ein eigenes Empfängerpostfach. Vor jeder tatsächlichen Zustellung muss ein serverseitiger Empfängerfilter alle Ausgänge auf freigegebene Testpostfächer begrenzen. Nicht an die erfundenen Partner-/Kundenadressen versenden und keine produktiven Newsletterlisten verbinden.
 
-Die bestehende Outbox benötigt noch einen konkreten Versandadapter. Ein SMTP-Plugin allein verarbeitet diese Outbox nicht automatisch. Vorbereitet sind Nachrichtendaten, Freigaben und signierte Ereignisse; noch nicht vorhanden ist eine fertige allgemeine SMTP-/Klaviyo-Zustellstrecke. Der Adapter kann nach Auswahl des Postfachanbieters gezielt eingerichtet werden. Der erste Test umfasst WordPress-Testmail, danach Buchungsbestätigung mit Anfahrt, Partnerbenachrichtigung ohne Kundenadresse, freigegebene Antwort und Stornobenachrichtigung.
+Ab 0.13.0 enthält die Buchungsverwaltung unter Kommunikation einen bewusst aktivierbaren nativen Outbox-Testadapter. Er verarbeitet Buchungs-/Partner-/Supportereignisse über `wp_mail` und leitet alles ausschließlich an das eingestellte eigene Testpostfach um. Aktuell nur **kontakt@valet-parken-flughafen-muenchen.de** verwenden. Der Absender muss zuvor unter Branding eingerichtet sein; ein SMTP-Plugin transportiert anschließend die vom Adapter erzeugten Mails. Ohne Aktivierung kein Versand, kein eingerichtetes Klaviyo. Ein konfigurierter Automations-Webhook und der Testadapter laufen nicht gleichzeitig. Details und Einschränkungen in der aktuellen 0.13.0-Anleitung.
 
 Vor dem ersten Test prüfen: erlaubte Empfänger; Absender/Reply-To unter Plattformkontrolle; SPF/DKIM und gegebenenfalls DMARC; keine Kundendaten in Partnerkopfzeilen; keine ungeprüfte Weiterleitung zitierter Originalmails. Eingehende Antworten/Relay-MX sind ein eigener anschließender Schritt. Wer nur den Ausgang testet, hat noch kein funktionierendes Zweiweg-Postfach.
 
@@ -52,4 +52,4 @@ Nur über SSH/CLI ausführen, kein öffentliches Diagnose-URL-Skript. Ausgabe en
 
 ## Abschlusskriterien
 
-Frontend erreichbar und geschützt; richtige Domain/HTTPS; private Demo; eigene Partnerdaten getrennt; keine echten Kundenadressen beim Partner; Nachrichten erst nach Freigabe; keine Live-Zahlung; Testmails ausschließlich an erlaubte eigene Postfächer; Fehler/Backups/Servercron geprüft. Erst danach Klaviyo und weitere echte Anbindungen vorbereiten. Testdaten nicht als Produktionsbuchungen übernehmen.
+Frontend erreichbar und geschützt; richtige Domain/HTTPS; private Demo; eigene Partnerdaten getrennt; keine echten Kundenadressen beim Partner; Nachrichten ohne Einzelfreigabe in die private Versandwarteschlange; keine Live-Zahlung; Testmails ausschließlich an erlaubte eigene Postfächer; Fehler/Backups/Servercron geprüft. Erst danach Klaviyo und weitere echte Anbindungen vorbereiten. Testdaten nicht als Produktionsbuchungen übernehmen.

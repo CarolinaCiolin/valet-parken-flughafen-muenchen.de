@@ -32,11 +32,12 @@
     } catch (_) {}
   };
   const money = (root, cents, currency) => new Intl.NumberFormat(root.dataset.locale === 'en' ? 'en-GB' : 'de-DE', {style: 'currency', currency: currency.toUpperCase()}).format(cents / 100);
-  const post = async (root, route, data) => {
+  const post = async (root, route, data, signal) => {
+    if(root.dataset.journey==='1'&&route.startsWith('public/'))route='journey/'+({offers:'offers',price:'price','requests-v2':'requests'}[route.slice(7)]||route.slice(7));
     const endpoint = new URL(root.dataset.api, location.origin);
     if (endpoint.searchParams.has('rest_route')) endpoint.searchParams.set('rest_route', endpoint.searchParams.get('rest_route').replace(/\/$/, '') + '/' + route);
     else endpoint.pathname = endpoint.pathname.replace(/\/$/, '') + '/' + route;
-    const response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', ...(root.dataset.restNonce ? {'X-WP-Nonce':root.dataset.restNonce} : {})}, body: JSON.stringify(data)});
+    const response = await fetch(endpoint.href, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', ...(root.dataset.restNonce ? {'X-WP-Nonce':root.dataset.restNonce} : {})}, body: JSON.stringify(data),signal});
     const value = await response.json(); if (!response.ok) throw value; return value;
   };
   const parkingLabel = (root, type) => ({outdoor: ['Außenstellplatz', 'Outdoor parking'], covered: ['Überdachter Stellplatz', 'Covered parking'], garage: ['Parkhaus', 'Parking garage'], underground: ['Tiefgarage', 'Underground parking'], unspecified: ['Stellplatzart nicht angegeben', 'Parking type not specified']}[type] || ['', ''])[root.dataset.locale === 'en' ? 1 : 0];
@@ -47,14 +48,17 @@
   });
   const total = (offer, chosen) => offer.amount_cents + chosen.reduce((sum, item) => sum + (offer.addons.find(a => a.id === item.id)?.unit_amount_cents || 0) * item.quantity, 0);
   const summary = root => {
-    const selection = selected.get(root); if (!selection) return;
-    const {offer, card} = selection, chosen = collect(card), box = root.querySelector('.vpm-booking-summary'); box.replaceChildren();
-    const title = document.createElement('strong'); title.textContent = offer.partner + (offer.product_name ? ' · ' + offer.product_name : '') + (offer.service ? ' · ' + ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service] : ''); box.append(title);
-    const list = document.createElement('ul'); const base = document.createElement('li'); base.textContent = parkingLabel(root, offer.parking_type) + ': ' + money(root, offer.amount_cents, offer.currency); list.append(base);
-    chosen.forEach(item => {const addon = offer.addons.find(a => a.id === item.id); const row = document.createElement('li'); row.textContent = item.quantity + ' × ' + addon.label + ': ' + money(root, addon.unit_amount_cents * item.quantity, offer.currency); list.append(row);}); box.append(list);
-    const sum = document.createElement('p'); sum.className = 'vpm-booking-total'; sum.textContent = (root.dataset.locale === 'en' ? 'Total before voucher: ' : 'Gesamt vor Gutschein: ') + money(root, total(offer, chosen), offer.currency); box.append(sum);
+    const selection=selected.get(root);if(!selection)return;const {offer,card}=selection,chosen=collect(card),box=root.querySelector('.vpm-booking-summary'),search=root.querySelector('.vpm-booking-search'),form=root.querySelector('.vpm-booking-request'),en=root.dataset.locale==='en';box.replaceChildren();
+    const block=(title,step)=>{const section=document.createElement('section'),h=document.createElement('h3'),edit=document.createElement('button');h.textContent=title;edit.type='button';edit.className='vpm-edit';edit.textContent=en?'✎ Edit':'✎ Ändern';edit.addEventListener('click',()=>wizardStep(root,step));section.append(h,edit);box.append(section);return section;};
+    const row=(section,label,value)=>{if(!value)return;const line=document.createElement('p'),strong=document.createElement('strong');strong.textContent=label+': ';line.append(strong,document.createTextNode(value));section.append(line);};
+    const dates=block(en?'Travel and parking':'Reise und Parkplatz',1),airport=search.elements.airport;row(dates,en?'Airport':'Flughafen',airport.selectedOptions?.[0]?.textContent||airport.value);row(dates,en?'Service provider':'Anbieter',offer.partner);row(dates,en?'Parking type':'Stellplatzart',parkingLabel(root,offer.parking_type));row(dates,'Service',({valet:'Valet',shuttle:'Shuttle',parking:en?'Parking only':'Eigenanreise'})[offer.service]);
+    const format=value=>value?value.slice(8,10)+'.'+value.slice(5,7)+'.'+value.slice(0,4)+' '+value.slice(11):'';row(dates,en?'Scheduled departure':'Geplanter Abflug',format(search.elements.departure.value));row(dates,en?'Scheduled return landing':'Geplante Rücklandung',format(search.elements.return.value));
+    const customer=block(en?'Contact and vehicle':'Kontakt und Fahrzeug',4);row(customer,en?'Name':'Name',[form.elements.customer_first_name?.value,form.elements.customer_last_name?.value].filter(Boolean).join(' '));row(customer,'E-Mail',form.elements.email.value);row(customer,en?'Telephone':'Telefon',form.elements.customer_phone?.value);row(customer,en?'Vehicle':'Fahrzeug',[form.elements.customer_make?.value,form.elements.customer_plate?.value].filter(Boolean).join(' '));if(form.elements.customer_height_m&&!form.elements.customer_height_m.disabled)row(customer,en?'Vehicle height':'Fahrzeughöhe',form.elements.customer_height_m.value+' m');if(offer.service==='shuttle')row(customer,en?'Passengers':'Personen',form.elements.customer_passengers.value);
+    if(form.elements.customer_kind?.value==='business')for(const [key,label]of Object.entries({company:en?'Company':'Firma',legal_form:en?'Legal form':'Rechtsform',vat_id:en?'VAT ID':'USt-ID',street:en?'Street':'Straße',postcode:en?'Postal code':'PLZ',city:en?'City':'Ort',country:en?'Country':'Land',traveller:en?'Different traveller':'Abweichender Reisender'}))row(customer,label,form.elements['customer_'+key]?.value);
+    const services=block(en?'Services and extras':'Leistungen und Extras',3);row(services,en?'Parking including selected service':'Parken inklusive gewähltem Service',money(root,offer.amount_cents,offer.currency));chosen.forEach(item=>{const extra=offer.addons.find(a=>a.id===item.id);row(services,item.quantity+' × '+extra.label,money(root,extra.unit_amount_cents*item.quantity,offer.currency));});
+    const policy=card.querySelector('.vpm-cancellation-policy');if(policy)services.append(policy.cloneNode(true));const sum=document.createElement('p');sum.className='vpm-booking-total';sum.textContent=(en?'Total before voucher: ':'Gesamt vor Gutschein: ')+money(root,total(offer,chosen),offer.currency);box.append(sum);root.dispatchEvent(new CustomEvent('vpm:summary'));
   };
-  const clearOffers = root => {root.__vpmCouponInput = ''; root.__expectedAmount=null; selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
+  const clearOffers = root => {root.__vpmCouponInput = ''; root.__expectedAmount=null;root.__price=null;root.__activeSelection=null; selected.delete(root); root.querySelector('.vpm-booking-offers')?.replaceChildren(); const request = root.querySelector('.vpm-booking-request'); if (request) request.hidden = true; const filters = root.querySelector('.vpm-booking-filters'); if (filters) filters.hidden = true;};
   const couponMessage = (root, code) => {
     const en = root.dataset.locale === 'en';
     const messages = {
@@ -69,7 +73,7 @@
       coupon_not_started: ['Dieser Gutschein ist noch nicht gültig.', 'This voucher is not valid yet.']
     }; return messages[code]?.[en ? 1 : 0] || (en ? 'This voucher is not available for this offer.' : 'Der Gutschein ist für dieses Angebot nicht verfügbar.');
   };
-  const resetCoupon = root => {root.__expectedAmount=null;const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = ''; summary(root);};
+  const resetCoupon = root => {root.__expectedAmount=null;root.__price=null;const box = root.querySelector('.vpm-coupon-status'); if (box) box.textContent = ''; summary(root);};
   const handleError = (root, error) => {
     const msg = text(root), code = typeof error?.code === 'string' ? error.code : '';
     if(code==='price_changed_review_required'){root.__expectedAmount=null;status(root,root.dataset.locale==='en'?'The price or promotion changed. Please go back and review the price again.':'Preis oder Aktion haben sich geändert. Bitte zurückgehen und die Preisübersicht erneut prüfen.',true);return;}
@@ -84,6 +88,7 @@
       status(root, msg.offset, true); return;
     }
     if (code.startsWith('coupon_') || code.startsWith('subsidy_')) {root.__vpmCouponInput = ''; resetCoupon(root); const box = root.querySelector('.vpm-coupon-status'); if (box){box.classList.remove('is-valid');box.classList.add('is-error');box.textContent = couponMessage(root, code);}}
+    if(['missing_vehicle_height','vehicle_too_high','capacity_unavailable','charging_not_available','invalid_customer_phone'].includes(code)){status(root,({missing_vehicle_height:['Bitte die Fahrzeughöhe in Metern angeben.','Please enter vehicle height in metres.'],vehicle_too_high:['Das Fahrzeug überschreitet die erlaubte Höhe. Bitte einen anderen Stellplatz auswählen.','The vehicle exceeds the height limit. Please select another parking space.'],capacity_unavailable:['Dieses Angebot ist nicht mehr verfügbar. Bitte erneut suchen.','This offer is no longer available. Please search again.'],charging_not_available:['Das Ladepaket ist für diesen Zeitraum nicht verfügbar. Bitte abwählen oder einen anderen Anbieter wählen.','Charging is unavailable for these dates. Please remove it or select another provider.'],invalid_customer_phone:['Bitte eine gültige Telefonnummer mit Vorwahl angeben.','Please enter a valid telephone number including country code.']})[code][root.dataset.locale==='en'?1:0],true);return;}
     const message = code.includes('rate_limited') ? msg.limit : code.startsWith('coupon_') || code.startsWith('subsidy_') ? msg.coupon : code.includes('not_enabled') || code.includes('not_configured') ? msg.unavailable : code.includes('departure') || code.includes('return') || code.includes('travel') || code.includes('offset') ? msg.date : msg.failed;
     status(root, code.startsWith('coupon_') ? couponMessage(root, code) : message, true); analytics(root, 'vpm_booking_error', root.querySelector('[name="airport"]')?.value || '', code);
   };
@@ -102,24 +107,25 @@
       else status(root, text(root).planned);
       return;
     }
+    if(root.dataset.launcher==='1'&&form.classList.contains('vpm-booking-search')){const next=new URL(root.dataset.journeyUrl,location.origin);if(next.origin!==location.origin)return;for(const [key,value]of new FormData(form))if(key!=='airport_scope')next.searchParams.set(key,value);next.searchParams.set('locale',root.dataset.locale||'de');location.assign(next.href);return;}
     if (root.classList.contains('vpm-booking-widget') && root.dataset.enabled !== '1') {status(root, text(root).unavailable); return;}
     button.disabled = true; status(root, text(root).busy);
     try {
       const data = Object.fromEntries(new FormData(form));
       if (form.classList.contains('vpm-booking-search')) {
-        clearOffers(root); analytics(root, 'vpm_booking_search', data.airport);
-        const result = await post(root, 'public/offers', {...data, locale: root.dataset.locale}); try{sessionStorage.setItem('vpm-search:'+location.pathname+':'+root.dataset.instance,JSON.stringify({at:Date.now(),data}));}catch(_){} const container = root.querySelector('.vpm-booking-offers');
+        clearOffers(root);const revision=(root.__searchRevision||0)+1;root.__searchRevision=revision;root.__searchController?.abort();const controller=new AbortController();root.__searchController=controller;analytics(root, 'vpm_booking_search', data.airport);
+        const result = await post(root, 'public/offers', {...data, locale: root.dataset.locale},controller.signal);if(root.__searchRevision!==revision)return; try{sessionStorage.setItem('vpm-search:'+location.pathname+':'+root.dataset.instance,JSON.stringify({at:Date.now(),data}));}catch(_){} const container = root.querySelector('.vpm-booking-offers');
         result.offers.forEach(offer => {
           const card = document.createElement('article'); card.className = 'vpm-booking-offer';
           const title = document.createElement('h3'); title.textContent = offer.partner;
           const price = document.createElement('p'); price.className = 'vpm-booking-price'; price.textContent = money(root, offer.amount_cents, offer.currency);
-          const terms = document.createElement('p'); terms.textContent = offer.terms;
+          const terms = document.createElement('p');terms.className='vpm-offer-terms'; terms.textContent = offer.terms;
           const choose = document.createElement('button'); choose.type = 'button'; choose.className = 'vpm-booking-choose'; choose.textContent = text(root).choose; choose.dataset.quoteId = offer.quote_id; choose.setAttribute('aria-pressed', 'false');
-          const product = document.createElement('p'); product.textContent = [offer.product_name, parkingLabel(root, offer.parking_type), offer.charging_space?(root.dataset.locale==='en'?'With charging point':'Mit Ladesäule'):'', ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service]].filter(Boolean).join(' · ');
+          const product = document.createElement('p');product.className='vpm-product-description'; product.textContent = [offer.product_name, (offer.product_name||'').toLocaleLowerCase().includes(parkingLabel(root,offer.parking_type).toLocaleLowerCase())?'':parkingLabel(root, offer.parking_type), offer.charging_space?(root.dataset.locale==='en'?'With charging point':'Mit Ladesäule'):'', ({valet:'Valet',shuttle:'Shuttle',parking:root.dataset.locale==='en'?'Parking only':'Nur Parken'})[offer.service]].filter(Boolean).join(' · ');
           if(offer.documents_required){const note=document.createElement('p');note.textContent=root.dataset.locale==='en'?'At handover, please bring the vehicle registration document and a valid identity card.':'Bei Übergabe bitte Fahrzeugschein und gültigen Personalausweis bereithalten.';card.append(note);}
           const attributes = document.createElement('ul'); (offer.attributes || []).forEach(value => {const item = document.createElement('li'); item.textContent = value; attributes.append(item);});
-          card.dataset.parkingType = offer.parking_type || 'unspecified'; offers.set(card, offer); card.append(title, product, price, attributes, terms);
-          if(offer.booking_rules?.cancellation_enabled){const detail=document.createElement('details'),heading=document.createElement('summary'),list=document.createElement('ul'),en=root.dataset.locale==='en';heading.textContent=en?'Cancellation conditions':'Stornobedingungen';detail.append(heading);(offer.booking_rules.tiers||[]).forEach(t=>{const row=document.createElement('li');const fee=t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %';row.textContent=(en?'At least ':'Mindestens ')+t.hours+(en?' hours before handover: ':' Stunden vor Übergabe: ')+(t.value?fee:(en?'free cancellation':'kostenlos'));list.append(row);});if(offer.booking_rules.no_show_enabled){const t=offer.booking_rules.no_show,row=document.createElement('li');row.textContent=(en?'No-show: ':'Nichterscheinen: ')+(t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %');list.append(row);}const basis=document.createElement('p');basis.textContent=en?'Fees apply to the amount paid after vouchers. The final cancellation tier also applies to later requests.':'Gebühren beziehen sich auf den bezahlten Betrag nach Gutschein. Die letzte Stornostufe gilt auch bei späteren Anfragen.';detail.append(list,basis);card.append(detail);}
+          card.dataset.parkingType = offer.parking_type || 'unspecified';card.dataset.price=String(offer.amount_cents); offers.set(card, offer); card.append(title, product, price, attributes, terms);
+          if(offer.booking_rules?.cancellation_enabled){const detail=document.createElement('details'),heading=document.createElement('summary'),list=document.createElement('ul'),en=root.dataset.locale==='en';detail.className='vpm-cancellation-policy';heading.textContent=en?'View cancellation policy':'Stornorichtlinien ansehen';detail.append(heading);(offer.booking_rules.tiers||[]).forEach(t=>{const row=document.createElement('li');const fee=t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %';row.textContent=(en?'At least ':'Mindestens ')+t.hours+(en?' hours before handover: ':' Stunden vor Übergabe: ')+(t.value?fee:(en?'free cancellation':'kostenlos'));list.append(row);});if(offer.booking_rules.no_show_enabled){const t=offer.booking_rules.no_show,row=document.createElement('li');row.textContent=(en?'No-show: ':'Nichterscheinen: ')+(t.kind==='fixed'?money(root,t.value,offer.currency):(t.value/100)+' %');list.append(row);}const basis=document.createElement('p');basis.textContent=en?'Fees apply to the amount paid after vouchers. The final cancellation tier also applies to later requests.':'Gebühren beziehen sich auf den bezahlten Betrag nach Gutschein. Die letzte Stornostufe gilt auch bei späteren Anfragen.';detail.append(list,basis);card.append(detail);}
           if(offer.price_breakdown&&Object.keys(offer.price_breakdown).length){const details=document.createElement('details'),heading=document.createElement('summary');heading.textContent=root.dataset.locale==='en'?'Price details':'Preisdetails';details.append(heading);const list=document.createElement('ul');const labels={parking_cents:['Parkpreis','Parking'],duration_discount_cents:['Aufenthaltsrabatt','Stay discount'],service_fee_cents:['Servicegebühr','Service fee'],arrival_surcharge_cents:['Nachtzuschlag Abgabe','Night surcharge: drop-off'],return_surcharge_cents:['Nachtzuschlag Abholung','Night surcharge: collection']};Object.entries(labels).forEach(([key,label])=>{const cents=offer.price_breakdown[key];if(!cents)return;const row=document.createElement('li');row.textContent=label[root.dataset.locale==='en'?1:0]+': '+money(root,key==='duration_discount_cents'?-cents:cents,offer.currency);list.append(row);});details.append(list);card.append(details);}
 
           if (offer.addons?.length) {
@@ -138,12 +144,12 @@
         const filters = root.querySelector('.vpm-booking-filters'), filter = filters?.querySelector('select');
         if (filter) {while (filter.options.length > 1) filter.remove(1); filter.value = ''; [...new Set(result.offers.map(o => o.parking_type || 'unspecified'))].forEach(type => {const option = document.createElement('option'); option.value = type; option.textContent = parkingLabel(root, type); filter.append(option);}); filters.hidden = result.offers.length < 2;}
         if(root.dataset.flow==='steps') wizardStep(root,2);
-        status(root, result.offers.length ? text(root).timezone + ': ' + result.timezone : text(root).empty);
+        status(root, result.offers.length ? (root.dataset.locale==='en'?'All times are local to the selected airport.':'Alle Zeiten gelten am gewählten Flughafen.') : text(root).empty);
       } else if (form.classList.contains('vpm-booking-request')) {
         const selection = selected.get(root); if (!selection) throw {code: 'quote_expired'};
         const customer=Object.fromEntries(Object.entries(data).filter(([key])=>key.startsWith('customer_')).map(([key,value])=>[key.slice(9),value]));
         const result = await post(root, 'public/requests-v2', {customer, quote_id: selection.offer.quote_id, addons: collect(selection.card, true), airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: data.email, coupon: data.coupon || '', marketing_agreed: form.elements.marketing_agreed?.checked===true, ...(Number.isInteger(root.__expectedAmount)?{expected_amount_cents:root.__expectedAmount}:{}), locale: root.dataset.locale});
-        const reference = /^VPM-[0-9]{7,}$/.test(result.booking_number||'')?' '+(root.dataset.locale==='en'?'Booking number: ':'Buchungsnummer: ')+result.booking_number:/^[a-f0-9-]{36}$/.test(result.reference || '') ? ' ' + (root.dataset.locale === 'en' ? 'Reference: ' : 'Referenz: ') + result.reference : '';
+        root.dispatchEvent(new CustomEvent('vpm:submitted',{detail:result}));const reference = /^VPM-[0-9]{7,}$/.test(result.booking_number||'')?' '+(root.dataset.locale==='en'?'Booking number: ':'Buchungsnummer: ')+result.booking_number:/^[a-f0-9-]{36}$/.test(result.reference || '') ? ' ' + (root.dataset.locale === 'en' ? 'Reference: ' : 'Referenz: ') + result.reference : '';
         status(root, text(root).requested + ' ' + money(root, result.amount_cents, result.currency) + reference + (['requested','pending'].includes(result.newsletter_status)?' '+text(root).newsletter:result.newsletter_status==='retry_signup'?(root.dataset.locale==='en'?' Please retry newsletter signup separately.':' Bitte die Newsletter-Anmeldung separat erneut versuchen.'):''));
         analytics(root, 'vpm_booking_request', root.querySelector('[name="airport"]').value);
         clearOffers(root); form.reset();form.querySelector('[name="customer_kind"]')?.dispatchEvent(new Event('change')); if(root.dataset.flow==='steps'){root.__demoReference=result.reference;wizardStep(root,6);}
@@ -151,7 +157,7 @@
         const checkbox = form.querySelector('[name="marketing_agreed"]');
         await post(root, 'marketing/request', {email: data.email, agreed: checkbox?.checked === true}); status(root, text(root).newsletter); form.reset();
       }
-    } catch (error) {handleError(root, error); if(root.dataset.flow==='steps'&&form.classList.contains('vpm-booking-request'))wizardStep(root,error?.code==='quote_expired'?1:4);}
+    } catch (error) {if(error?.name==='AbortError')return;handleError(root, error); if(root.dataset.flow==='steps'&&form.classList.contains('vpm-booking-request'))wizardStep(root,error?.code==='quote_expired'?1:4);}
     finally {button.disabled = false;}
   });
   document.addEventListener('click', async event => {
@@ -161,7 +167,7 @@
       const email = root.querySelector('[name="email"]'); if (!email.reportValidity()) return;
       const form = root.querySelector('.vpm-booking-request'), box = root.querySelector('.vpm-coupon-status');
       let addons; try {addons = collect(selection.card, true);} catch (_) {box.textContent = text(root).failed; return;}
-      const data = {quote_id: selection.offer.quote_id, addons, airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: email.value, coupon: form.elements.coupon.value, locale: root.dataset.locale};
+      const data = {quote_id: selection.offer.quote_id, addons, airport_scope: root.querySelector('[name="airport_scope"]')?.value || '', email: email.value, coupon: form.elements.coupon.value, locale: root.dataset.locale,customer:Object.fromEntries([...new FormData(form)].filter(([key])=>key.startsWith('customer_')).map(([key,value])=>[key.slice(9),value]))};
       const fingerprint = JSON.stringify(data); root.__vpmCouponInput = fingerprint; apply.disabled = true; summary(root);
       try {
         const result = await post(root, 'public/price', data); if (root.__vpmCouponInput !== fingerprint) return;
@@ -174,7 +180,7 @@
     const button = event.target.closest('.vpm-booking-choose'); if (!button) return;
     const root = button.closest('.vpm-booking-widget'); if (!root || root.dataset.preview === '1') return;
     root.__vpmCouponInput = ''; const couponStatus = root.querySelector('.vpm-coupon-status'); if (couponStatus) couponStatus.textContent = '';
-    const card = button.closest('.vpm-booking-offer'); selected.set(root, {offer: offers.get(card), card}); summary(root);
+    const card = button.closest('.vpm-booking-offer'); selected.set(root, {offer: offers.get(card), card});root.__activeSelection={offer:offers.get(card),card};summary(root);
     root.querySelectorAll('.vpm-booking-choose').forEach(b => {const active = b === button; b.setAttribute('aria-pressed', active ? 'true' : 'false'); b.textContent = active ? text(root).selected : text(root).choose;});
     const form = root.querySelector('.vpm-booking-request'); form.hidden = false; form.querySelector('button[type="submit"]').disabled = false; form.querySelector('[name="email"]').focus();
     if(root.dataset.flow==='steps')wizardStep(root,3);
@@ -194,16 +200,16 @@
       const chosen = collect(card); card.querySelector('.vpm-offer-total').textContent = (root.dataset.locale === 'en' ? 'Total: ' : 'Gesamt: ') + money(root, total(offer, chosen), offer.currency); summary(root); return;
     }
     if (!event.target.closest('.vpm-booking-search')) return;
-    clearOffers(root); const group = event.target.closest('div')?.querySelector('.vpm-time-offset');
+    root.__searchRevision=(root.__searchRevision||0)+1;root.__searchController?.abort();clearOffers(root); const group = event.target.closest('div')?.querySelector('.vpm-time-offset');
     if (event.target.name === 'airport') {refreshProviders(root);}
     if (event.target.name === 'airport') root.querySelectorAll('.vpm-time-offset').forEach(node => {node.hidden = true; node.querySelector('select').required = false; node.querySelector('select').value = '';});
-    if (event.target.type === 'datetime-local' && group) {group.hidden = true; group.querySelector('select').required = false; group.querySelector('select').value = '';}
+    if ((event.target.type === 'datetime-local'||event.target.dataset.segmented==='1') && group) {group.hidden = true; group.querySelector('select').required = false; group.querySelector('select').value = '';}
   });
   const showPrice = (root, result) => {
-    root.__expectedAmount=result.amount_cents;summary(root); const box = root.querySelector('.vpm-booking-summary');
-    if(!result.discount_cents){box.querySelector('.vpm-booking-total').textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);return;}
+    root.__expectedAmount=result.amount_cents;root.__price=result;summary(root); const box = root.querySelector('.vpm-booking-summary');
+    if(!result.discount_cents){root.dispatchEvent(new CustomEvent('vpm:price'));box.querySelector('.vpm-booking-total').textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);return;}
     if(result.discount_cents){const p=document.createElement('p');p.className='vpm-coupon-discount';p.textContent=(root.dataset.locale==='en'?'Discount: −':'Rabatt: −')+money(root,result.discount_cents,result.currency);box.append(p);}
-    const p=document.createElement('p');p.className='vpm-booking-total';p.textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);box.append(p);
+    const p=document.createElement('p');p.className='vpm-booking-total';p.textContent=(root.dataset.locale==='en'?'Total: ':'Gesamt: ')+money(root,result.amount_cents,result.currency);box.append(p);root.dispatchEvent(new CustomEvent('vpm:price'));
   };
   const wizardStep = (root, step) => {
     root.__wizardRevision=(root.__wizardRevision||0)+1;root.dataset.step=String(step); const labels=root.dataset.locale==='en'?['Travel dates','Parking offer','Optional extras','Your details','Review','Enquiry / test payment']:['Reisedaten','Parkplatzangebot','Optionale Extras','Ihre Angaben','Preisübersicht','Anfrage / Testzahlung'];
@@ -213,7 +219,8 @@
     const chosen=selected.get(root);root.querySelectorAll('.vpm-booking-offer').forEach(card=>{card.hidden=step===3&&card!==chosen?.card;card.querySelectorAll('.vpm-booking-addons').forEach(a=>a.hidden=step!==3);card.querySelector('.vpm-booking-choose').hidden=step!==2;});
     const form=root.querySelector('.vpm-booking-request');form.hidden=![4,5].includes(step);form.querySelector('.vpm-booking-customer-fields').hidden=step!==4;form.querySelector('.vpm-booking-summary').hidden=step!==5;form.querySelector('button[type="submit"]').hidden=step!==5;
     root.querySelector('.vpm-wizard-back').hidden=step===1||step===6;root.querySelector('.vpm-wizard-next').hidden=![3,4].includes(step);root.querySelector('.vpm-wizard-demo').hidden=step!==6||root.dataset.demoReady!=='1';
-    if(step===4){const shuttle=chosen?.offer.service==='shuttle';const passengers=form.querySelector('.vpm-passengers');if(passengers){passengers.hidden=!shuttle;passengers.querySelector('input').disabled=!shuttle;passengers.querySelector('input').required=shuttle;passengers.querySelector('input').max=String(chosen?.offer.passenger_limit||99);}form.querySelector('[name="customer_first_name"]')?.focus();}
+    if(step===4){const height=form.querySelector('.vpm-vehicle-height');if(height){const required=['covered','garage','underground'].includes(chosen?.offer.parking_type);height.hidden=!required;height.querySelector('input').disabled=!required;height.querySelector('input').required=required;}const shuttle=chosen?.offer.service==='shuttle';const passengers=form.querySelector('.vpm-passengers');if(passengers){passengers.hidden=!shuttle;passengers.querySelector('input').disabled=!shuttle;passengers.querySelector('input').required=shuttle;passengers.querySelector('input').max=String(chosen?.offer.passenger_limit||99);}form.querySelector('[name="customer_first_name"]')?.focus();}
+    root.__goStep=target=>wizardStep(root,target);root.dispatchEvent(new CustomEvent('vpm:step',{detail:{step}}));
   };
   const wizard = root => {
     if(root.dataset.flow!=='steps')return;
@@ -226,7 +233,7 @@
     next.addEventListener('click',async()=>{
       if(root.dataset.step==='3'){wizardStep(root,4);return;}
       const form=root.querySelector('.vpm-booking-request'),selection=selected.get(root);if(![...form.querySelectorAll('.vpm-booking-customer-fields input,.vpm-booking-customer-fields select')].every(input=>input.reportValidity())||!selection)return;next.disabled=true;
-      try{const data={quote_id:selection.offer.quote_id,addons:collect(selection.card,true),airport_scope:root.querySelector('[name="airport_scope"]')?.value||'',email:form.elements.email.value,coupon:form.elements.coupon.value,locale:root.dataset.locale};const revision=root.__wizardRevision,fingerprint=JSON.stringify(data);root.__vpmCouponInput=fingerprint;const result=await post(root,'public/price',data);if(root.__wizardRevision!==revision||root.__vpmCouponInput!==fingerprint)return;showPrice(root,result);status(root,'');wizardStep(root,5);}catch(error){handleError(root,error);}finally{next.disabled=false;}
+      try{const data={quote_id:selection.offer.quote_id,addons:collect(selection.card,true),airport_scope:root.querySelector('[name="airport_scope"]')?.value||'',email:form.elements.email.value,coupon:form.elements.coupon.value,locale:root.dataset.locale,customer:Object.fromEntries([...new FormData(form)].filter(([key])=>key.startsWith('customer_')).map(([key,value])=>[key.slice(9),value]))};const revision=root.__wizardRevision,fingerprint=JSON.stringify(data);root.__vpmCouponInput=fingerprint;const result=await post(root,'public/price',data);if(root.__wizardRevision!==revision||root.__vpmCouponInput!==fingerprint)return;showPrice(root,result);status(root,'');wizardStep(root,5);}catch(error){handleError(root,error);}finally{next.disabled=false;}
     });
     demo.addEventListener('click',async()=>{demo.disabled=true;try{const result=await post(root,'demo/complete',{reference:root.__demoReference});status(root,result.simulation?(root.dataset.locale==='en'?'Demo completed. No real booking or payment.':'Demo abgeschlossen. Keine echte Buchung oder Zahlung.'):'');}catch(error){handleError(root,error);}finally{demo.disabled=false;}});
     wizardStep(root,1);
@@ -242,8 +249,8 @@
     if(root.classList.contains('vpm-booking-widget')){
       const kind=root.querySelector('[name="customer_kind"]');kind?.addEventListener('change',()=>{const company=root.querySelector('.vpm-company-fields');company.hidden=kind.value!=='business';company.querySelectorAll('input').forEach(input=>{input.disabled=company.hidden;input.required=!company.hidden&&input.dataset.required==='1';});});
       refreshProviders(root);const provider=root.querySelector('[name="preferred_partner"]');if(provider&&provider.dataset.preferred)provider.value=provider.dataset.preferred;
-      root.querySelectorAll('input[type="datetime-local"]').forEach(input=>{input.addEventListener('click',()=>{try{input.showPicker();}catch(_){}});const button=document.createElement('button');button.type='button';button.className='vpm-date-picker';button.textContent=root.dataset.locale==='en'?'Open date/time picker':'Datum / Uhrzeit wählen';button.addEventListener('click',()=>{try{input.showPicker();}catch(_){input.focus();}});input.after(button);});
-      if(root.dataset.preview!=='1'&&root.dataset.enabled==='1')try{const saved=JSON.parse(sessionStorage.getItem('vpm-search:'+location.pathname+':'+index)||'null');if(saved&&Date.now()-saved.at<600000&&!new URLSearchParams(location.search).has('vpm_partner')&&!new URLSearchParams(location.search).has('vpm_airport')){const form=root.querySelector('.vpm-booking-search');Object.entries(saved.data).forEach(([name,value])=>{const input=form.elements.namedItem(name);if(input&&name!=='preferred_partner'&&name!=='airport_scope'){if(input.type==='checkbox')input.checked=value==='1';else if(root.dataset.airportMode!=='fixed'||name!=='airport')input.value=value;}});refreshProviders(root);if(provider)provider.value=saved.data.preferred_partner||'';setTimeout(()=>{if(form.checkValidity())form.requestSubmit();},0);}}catch(_){}
+      if(root.dataset.journey!=='1'&&root.dataset.launcher!=='1')root.querySelectorAll('input[type="datetime-local"]:not([data-segmented])').forEach(input=>{input.addEventListener('click',()=>{try{input.showPicker();}catch(_){}});const button=document.createElement('button');button.type='button';button.className='vpm-date-picker';button.textContent=root.dataset.locale==='en'?'Open date/time picker':'Datum / Uhrzeit wählen';button.addEventListener('click',()=>{try{input.showPicker();}catch(_){input.focus();}});input.after(button);});
+      if(root.dataset.preview!=='1'&&root.dataset.enabled==='1'&&root.dataset.journey!=='1'&&root.dataset.launcher!=='1')try{const saved=JSON.parse(sessionStorage.getItem('vpm-search:'+location.pathname+':'+index)||'null');if(saved&&Date.now()-saved.at<600000&&!new URLSearchParams(location.search).has('vpm_partner')&&!new URLSearchParams(location.search).has('vpm_airport')){const form=root.querySelector('.vpm-booking-search');Object.entries(saved.data).forEach(([name,value])=>{const input=form.elements.namedItem(name);if(input&&name!=='preferred_partner'&&name!=='airport_scope'){if(input.type==='checkbox')input.checked=value==='1';else if(root.dataset.airportMode!=='fixed'||name!=='airport')input.value=value;}});refreshProviders(root);if(provider)provider.value=saved.data.preferred_partner||'';setTimeout(()=>{if(form.checkValidity())form.requestSubmit();},0);}}catch(_){}
     }
     if (root.dataset.preview !== '1') {root.querySelector('.vpm-airport-form button')?.removeAttribute('disabled'); if (root.dataset.enabled === '1') root.querySelector('.vpm-booking-search button[type="submit"]')?.removeAttribute('disabled'); view(root);}
   });

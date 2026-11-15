@@ -1,10 +1,10 @@
 {
   "apiVersion": 3,
   "name": "vpm-booking/form",
-  "title": "VPM Buchungsanfrage",
+  "title": "VPM Parkplatzsuche",
   "category": "widgets",
   "icon": "airplane",
-  "description": "Dynamischer Baustein des VPM Buchungskerns.",
+  "description": "Kleiner oder großer Sucheinstieg. Angebote und Buchung öffnen auf einer eigenen Seite.",
   "attributes": {
     "airport": {
       "type": "string",

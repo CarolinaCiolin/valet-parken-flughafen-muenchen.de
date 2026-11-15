@@ -1,0 +1,70 @@
+<?php
+namespace VPM\Booking;
+if(!defined('ABSPATH'))exit;
+/** Dedicated guest booking and a public message form; no customer account or management portal. */
+final class Journey {
+    public static function url():string{return add_query_arg('vpm_booking',1,home_url('/'));}
+    public static function support_url(string $number=''):string{return add_query_arg(array_filter(array('vpm_support'=>1,'booking'=>$number)),home_url('/'));}
+    public static function launcher(array $a):string {
+        $a['flow']='inline';$a['airport_mode']='select';$a['layout']=($a['layout']??'')==='compact'?'compact':'large';
+        $html=Frontend::legacy_form($a);$cut=strpos($html,'<div class="vpm-booking-filters"');if($cut!==false)$html=substr($html,0,$cut).'</section>';
+        if($a['layout']==='large')$html=str_replace('data-layout="standard"','data-layout="large"',$html);return str_replace('data-flow="inline"','data-flow="inline" data-launcher="1" data-journey-url="'.esc_url(self::url()).'"',$html);
+    }
+    public static function booking_by_number(string $number):array {
+        Config::require((bool)preg_match('/^VPM-([0-9]{7,12})$/D',strtoupper(trim($number)),$m),'booking_not_found');return DB::row('bookings','id',(int)$m[1]);
+    }
+    public static function offers(array $d):array {
+        // Charging space is reserved only when a charging package is selected later.
+        $d['charging_required']=false; $d['accessible_required']=!empty($d['accessible_required']);
+        $result=PublicApi::offers($d);$result['offers']=array_values(array_filter($result['offers'],function($o)use($d){if(get_option('vpm_booking_guest_payment_enabled',false)){$quote=DB::row('quotes','public_id',$o['quote_id']);$partner=DB::row('partners','id',(int)$quote['partner_id']);if(!preg_match('/^acct_[a-zA-Z0-9]{5,70}$/D',$partner['stripe_account']??''))return false;}return (empty($d['accessible_required'])||!empty($o['accessible_available']))&&(!in_array($o['parking_type'],array('covered','garage','underground'),true)||$o['max_height_cm']>=50);}));
+        foreach($result['offers']as &$offer){$quote=DB::row('quotes','public_id',$offer['quote_id']);$details=json_decode($quote['details'],true);if(($details['source']['mode']??'')==='manual'){$context=json_decode($quote['context'],true);$rate=DB::row('rates','id',(int)$details['source']['rate_id']);$offer['addons']=array_values(array_filter($offer['addons'],function($addon)use($rate,$context,$quote){return ($addon['id']!=='charging'||Adapters::available($rate,array_merge($context,array('charging_required'=>true))))&&PartnerExperience::extra_available((int)$quote['partner_id'],$addon['id'],$context);}));}}unset($offer);
+        usort($result['offers'],fn($a,$b)=>$a['amount_cents']<=>$b['amount_cents']);return $result;
+    }
+    public static function prepare(array $d):array {
+        $d['_journey']=true;
+        if(isset($d['customer'])&&is_array($d['customer'])&&isset($d['customer']['height_m'])){$height=trim((string)$d['customer']['height_m']);$d['customer']['height_cm']=$height===''?0:Experience::euros($height);unset($d['customer']['height_m']);}
+        return $d;
+    }
+    public static function price(array $d):array {return PublicApi::preview(self::prepare($d));}
+    public static function request(array $d):array {
+        $d=self::prepare($d);Config::require(isset($d['customer'])&&is_array($d['customer']),'missing_customer_details');$created=PublicApi::request_v2($d);$created['support_url']=self::support_url($created['booking_number']);if(get_option('vpm_booking_guest_payment_enabled',false)&&Stripe::ready()){$token=bin2hex(random_bytes(32));global $wpdb;DB::query($wpdb->prepare('INSERT INTO '.DB::table('payment_access').' (booking_id,token_hash,expires_at) VALUES (%d,%s,%d) ON DUPLICATE KEY UPDATE token_hash=VALUES(token_hash),expires_at=VALUES(expires_at)',Core::booking($created['reference'])['id'],hash('sha256',$token),time()+1800));$created['payment_token']=$token;$created['payment_mode']='test';$created['payment_url']=rest_url('vpm-booking/v1/journey/pay');}return $created;
+    }
+    public static function pay(array $d):array {
+        PublicApi::limit();Config::require(get_option('vpm_booking_guest_payment_enabled',false),'guest_payment_disabled');Config::require(count(array_diff(array_keys($d),array('booking','token')))===0,'payment_fields_forbidden');$token=$d['token']??'';Config::require(is_string($token)&&(bool)preg_match('/^[a-f0-9]{64}$/D',$token),'invalid_payment_access');$row=DB::row('payment_access','token_hash',hash('sha256',$token));$b=self::booking_by_number((string)($d['booking']??''));Config::require($row&&$b&&(int)$row['booking_id']===(int)$b['id']&&(int)$row['expires_at']>time(),'invalid_payment_access');return Stripe::checkout($b['public_id'],$token);
+    }
+    public static function support(array $d):array {
+        PublicApi::limit();$email=is_string($d['email']??null)?strtolower(trim($d['email'])):'';$number=is_string($d['booking']??null)?strtoupper(trim($d['booking'])):'';$reason=$d['reason']??'';$body=is_string($d['message']??null)?trim(sanitize_textarea_field($d['message'])):'';
+        Config::require(in_array($reason,array('provider','cancel','platform'),true)&&strlen($body)>=3&&strlen($body)<=2000&&is_email($email),'invalid_support_request');
+        $key=is_string($d['request_key']??null)?$d['request_key']:'';Config::key($key);try{$b=self::booking_by_number($number);}catch(\Throwable $e){$b=array();}
+        // Identical public acknowledgement; never disclose a booking, address or cancellation decision.
+        if(!$b||!hash_equals($b['customer_email'],$email))return array('accepted'=>true);
+        $key=is_string($d['request_key']??null)?$d['request_key']:'';Config::key($key);
+        DB::tx(function()use($b,$body,$reason,$key){global $wpdb;$b=Core::booking($b['public_id'],true);$old=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.DB::table('inquiries').' WHERE booking_id=%d AND request_key=%s',$b['id'],$key),ARRAY_A);if($old)return;
+            if((int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM '.DB::table('inquiries').' WHERE booking_id=%d AND created_at>%d',$b['id'],time()-DAY_IN_SECONDS))>=10)return;
+            $id=DB::insert('inquiries',array('booking_id'=>$b['id'],'request_key'=>$key,'payload'=>Config::seal(array('message'=>$body,'reason'=>$reason,'audience'=>$reason==='platform'?'platform':'provider')),'audience'=>$reason==='platform'?'platform':'provider','state'=>'pending','created_at'=>time()));
+            if($reason==='cancel'&&!in_array($b['state'],array('cancelled','expired'),true)){
+                $existing=$wpdb->get_var($wpdb->prepare('SELECT id FROM '.DB::table('changes')." WHERE booking_id=%d AND kind='cancellation'",$b['id']));
+                if(!$existing){$b=Conditions::freeze($b);DB::insert('changes',array('booking_id'=>$b['id'],'kind'=>'cancellation','state'=>'pending','created_at'=>time()));Logistics::partner_event($b,'partner.cancellation_requested',array('booking_number'=>Experience::number($b),'message'=>Broker::redact($body,$b['customer_email']),'assessment'=>Conditions::decision($b)),'support:'.$id);}
+            }
+            if($reason!=='platform')Logistics::partner_event($b,'partner.customer_inquiry',array('inquiry_id'=>$id,'booking_number'=>Experience::number($b),'message'=>Broker::redact($body,$b['customer_email']),'reason'=>$reason,'portal_url'=>add_query_arg(array('vpm_partner_portal'=>1,'partner'=>(int)$b['partner_id']),home_url('/')).'#messages'),'support:'.$id);
+            else Automation::event('platform-support:'.$id,'platform.customer_inquiry','transactional',array('inquiry_id'=>$id,'booking_id'=>$b['public_id'],'booking_number'=>Experience::number($b),'message'=>$body));
+            Automation::booking_event($b,'booking.inquiry_received',array('reason'=>$reason),'support:'.$id);Operations::audit('support.received','booking',(int)$b['id']);
+        });return array('accepted'=>true);
+    }
+    public static function register():void {
+        add_action('rest_api_init',function(){foreach(array('offers'=>'offers','price'=>'price','requests'=>'request','support'=>'support','pay'=>'pay')as $route=>$method)register_rest_route('vpm-booking/v1','/journey/'.$route,array('methods'=>'POST','permission_callback'=>'__return_true','callback'=>function($r)use($method){try{Config::require(strlen($r->get_body())<16384,'payload_too_large');$d=$r->get_json_params();Config::require(is_array($d),'json_object_required');return self::$method($d);}catch(LocalTime $e){return new \WP_Error('ambiguous_local_time','ambiguous_local_time',array('status'=>422,'field'=>$e->field,'offsets'=>$e->offsets));}catch(\Throwable $e){$code=preg_match('/^[a-z_]{1,64}$/D',$e->getMessage())?$e->getMessage():'request_failed';return new \WP_Error($code,$code,array('status'=>str_contains($code,'rate_limited')?429:422));}}));});
+        add_action('template_redirect',array(self::class,'landing'),0);
+    }
+    public static function landing():void {
+        if(isset($_GET['vpm_booking_manage'])){wp_safe_redirect(self::support_url());exit;}
+        $support=isset($_GET['vpm_support']);$payment=isset($_GET['vpm_booking_payment']);if(!$support&&!$payment&&!isset($_GET['vpm_booking']))return;
+        nocache_headers();if(!defined('DONOTCACHEPAGE'))define('DONOTCACHEPAGE',true);do_action('litespeed_control_set_nocache','Dedicated booking/support');header('X-Robots-Tag: noindex, nofollow');header('Referrer-Policy: no-referrer');header('X-Frame-Options: DENY');if($payment)header("Content-Security-Policy: default-src 'self'; script-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+        $locale=isset($_GET['locale'])&&$_GET['locale']==='en'?'en':'de';$t=fn($de,$en)=>esc_html($locale==='en'?$en:$de);$assets=plugins_url('assets/',dirname(__DIR__).'/vpm-booking-core.php');
+        $booking_html='';if(!$support&&!$payment){$a=array('flow'=>'steps','locale'=>$locale,'airport_mode'=>'select','layout'=>'standard');foreach(array('airport','service','preferred_partner')as $key)if(is_string($_GET[$key]??null))$a[$key==='preferred_partner'?'partner':$key]=sanitize_text_field(wp_unslash($_GET[$key]));$booking_html=str_replace('data-flow="steps"','data-flow="steps" data-journey="1" data-payment-mode="'.(get_option('vpm_booking_guest_payment_enabled',false)&&Stripe::ready()?'test':'off').'"',Frontend::legacy_form($a));}else Frontend::assets();remove_action('wp_head','_wp_render_title_tag',1);add_filter('wp_robots',function($robots){$robots['noindex']=true;$robots['nofollow']=true;return $robots;});
+        echo '<!doctype html><html lang="'.$locale.'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.$t($support?'Hilfe zu Ihrer Buchung':'Parkplatz buchen',$support?'Booking support':'Book parking').'</title><link rel="stylesheet" href="'.esc_url($assets.'front.css?ver=0.13.0').'"><link rel="stylesheet" href="'.esc_url(Branding::css_url()).'"><link rel="stylesheet" href="'.esc_url($assets.'journey.css?ver=0.13.0').'">';if(!$payment)wp_head();echo '</head><body class="vpm-journey-page"><header class="vpm-journey-header">'.Branding::header().'<a href="'.esc_url(home_url('/')).'">'.$t('Zur Website','Back to website').'</a></header><main class="vpm-journey-main">';
+        if($payment){$number=is_string($_GET['booking']??null)?sanitize_text_field(wp_unslash($_GET['booking'])):'';$cancelled=($_GET['vpm_booking_payment']??'')==='cancelled';echo '<section class="vpm-payment-return vpm-booking-surface" data-api="'.esc_url(rest_url('vpm-booking/v1/journey/pay')).'" data-booking="'.esc_attr($number).'" data-cancelled="'.($cancelled?'1':'0').'"><h1>'.$t($cancelled?'Zahlung abgebrochen':'Zahlung wird geprüft',$cancelled?'Payment cancelled':'Payment is being verified').'</h1><p>'.$t('Die Rückkehr von Stripe ist noch keine Buchungsbestätigung. Den verifizierten Status erhalten Sie per E-Mail.','Returning from Stripe is not a booking confirmation. The verified status will be sent by email.').'</p><p>'.esc_html($number).'</p><button type="button" hidden>Testzahlung fortsetzen</button><p role="status"></p><a href="'.esc_url(self::support_url($number)).'">'.$t('Anliegen zu meiner Buchung','Booking support').'</a></section>';}
+        elseif($support){$number=is_string($_GET['booking']??null)?sanitize_text_field(wp_unslash($_GET['booking'])):'';echo '<section class="vpm-support vpm-booking-surface" data-api="'.esc_url(rest_url('vpm-booking/v1/journey/support')).'" data-locale="'.$locale.'"><h1>'.$t('Hilfe zu Ihrer Buchung','Booking support').'</h1><p>'.$t('Nutzen Sie Ihre Buchungsnummer und die bei der Buchung angegebene E-Mail-Adresse. Ein Kundenkonto ist nicht erforderlich.','Use your booking number and the email address provided when booking. No customer account is required.').'</p><form><label>'.$t('Buchungsnummer','Booking number').'<input name="booking" value="'.esc_attr($number).'" required maxlength="20" autocomplete="off"></label><label>'.$t('E-Mail-Adresse der Buchung','Booking email address').'<input name="email" type="email" required autocomplete="email"></label><label>'.$t('Ihr Anliegen','Your request').'<select name="reason"><option value="provider">'.$t('Anbieter kontaktieren','Contact provider').'</option><option value="cancel">'.$t('Buchung stornieren','Request cancellation').'</option><option value="platform">'.$t('Plattformbetreiber kontaktieren','Contact platform operator').'</option></select></label><label>'.$t('Ihre Nachricht','Your message').'<textarea name="message" required minlength="3" maxlength="2000" rows="5"></textarea></label><button type="submit">'.$t('Nachricht senden','Send message').'</button></form><p role="status" aria-live="polite"></p></section>';}
+        else echo $booking_html;
+        echo '</main>';if($payment)echo '<script src="'.esc_url($assets.'journey.js?ver=0.13.0').'" defer></script>';else wp_footer();echo '</body></html>';exit;
+    }
+}

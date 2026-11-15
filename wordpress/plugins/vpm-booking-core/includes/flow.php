@@ -18,8 +18,8 @@ final class Flow {
             Config::require(!Conditions::blocked($input['partner_id']),'partner_delay_needs_review');Config::require(Conditions::eligible($input['travel'],$input['booking_rules']??Conditions::get($input['partner_id'])),'booking_conditions_unavailable');$occupancy=Conditions::occupancy($input['travel'],$input['booking_rules']??Conditions::get($input['partner_id']));
             if ( $rate ) { Config::require( Adapters::available( $rate, $occupancy, true ), 'capacity_unavailable' ); }
             $b = Core::create( $input, $key );
-            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'charging'=>empty($input['travel']['charging_required'])?0:1, 'starts_at' => $occupancy['departure_utc'], 'ends_at' => $occupancy['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
-            else { self::enqueue( $b, 'hold' ); } return $b;
+            if ( $rate ) { DB::insert( 'allocations', array( 'booking_id' => $b['id'], 'rate_id' => $rate['id'], 'charging'=>empty($input['travel']['charging_required'])?0:1,'accessible_space'=>empty($input['travel']['accessible_required'])?0:1, 'starts_at' => $occupancy['departure_utc'], 'ends_at' => $occupancy['return_utc'], 'expires_at' => time() + 600, 'state' => 'held' ) ); }
+            else { self::enqueue( $b, 'hold' ); } PartnerExperience::reserve_extras($b,$input);return $b;
         } );
     }
     private static function proof(int $booking,string $action):array { global $wpdb; $row=$wpdb->get_row($wpdb->prepare('SELECT result FROM '.DB::table('fulfilment').' WHERE booking_id=%d AND action=%s',$booking,$action),ARRAY_A);return !empty($row['result'])?Config::open($row['result']):array(); }
@@ -30,8 +30,14 @@ final class Flow {
         $proof=self::proof((int)$b['id'],'hold');return !empty($proof['reference'])&&(int)($proof['expires_at']??0)>time();
     }
     public static function cancel_request( string $reference ): array { $b = DB::tx(function()use($reference){$b=Core::booking($reference,true);if($b['state']==='cancelled')return $b;return isset(Core::snapshot($b)['cancellation_decision'])?$b:Conditions::freeze($b);}); if ( ! self::managed( $b ) ) { return Core::cancel( $reference ); } self::enqueue( $b, 'cancel' ); return array( 'reference' => $reference, 'cancellation' => 'pending_partner_acknowledgement' ); }
+    public static function expire_unpaid(): void {
+        global $wpdb;$rows=$wpdb->get_results($wpdb->prepare('SELECT a.booking_id,a.rate_id FROM '.DB::table('allocations').' a JOIN '.DB::table('bookings')." b ON b.id=a.booking_id WHERE a.state='held' AND a.expires_at<=%d AND b.state='requested' AND b.payment_state IN ('unpaid','expired') ORDER BY a.booking_id LIMIT 100",time()),ARRAY_A);
+        foreach($rows as $row)DB::tx(function()use($row,$wpdb){DB::row('rates','id',(int)$row['rate_id'],true);$b=DB::row('bookings','id',(int)$row['booking_id'],true);$a=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.DB::table('allocations').' WHERE booking_id=%d FOR UPDATE',$b['id']),ARRAY_A);if(!$a||$a['state']!=='held'||(int)$a['expires_at']>time()||$b['state']!=='requested'||!in_array($b['payment_state'],array('unpaid','expired'),true))return;
+            Core::coupon_state($b,'released');DB::update('allocations',array('state'=>'released'),array('booking_id'=>$b['id']));DB::update('bookings',array('state'=>'expired','payment_state'=>'expired'),array('id'=>$b['id']));Operations::audit('booking.unpaid_expired','booking',(int)$b['id']);
+        });
+    }
     public static function run(): void {
-        global $wpdb;
+        self::expire_unpaid();global $wpdb;
         $ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM ' . DB::table( 'fulfilment' ) . " WHERE (status='pending' OR (status='processing' AND locked_until<%d)) AND next_attempt<=%d ORDER BY id LIMIT 20", time(), time() ) );
         foreach ( $ids as $id ) {
             $candidate=DB::row('fulfilment','id',(int)$id);if(!$candidate)continue; $lease=bin2hex(random_bytes(16));
@@ -46,7 +52,7 @@ final class Flow {
                     $rate = DB::row( 'rates', 'id', (int) $source['rate_id'] ); Config::require( (bool) $rate, 'manual_rate_missing' );
                     DB::tx( function() use ( $b, $source, $job, $wpdb ) {
                         DB::row( 'rates', 'id', (int) $source['rate_id'], true ); $current = Core::booking( $b['public_id'], true ); $a = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . DB::table( 'allocations' ) . ' WHERE booking_id=%d', $b['id'] ), ARRAY_A );
-                        if ( $job['action'] === 'confirm' ) { Config::require( $current['payment_state'] === 'paid' && $current['state'] !== 'cancelled' && $a && ( $a['state'] === 'confirmed' || ( $a['state'] === 'held' && (int)$a['expires_at']>time() ) ), 'paid_capacity_needs_review' ); DB::update( 'allocations', array( 'state' => 'confirmed' ), array( 'booking_id' => $b['id'] ) ); Core::confirm( $b['public_id'] ); }
+                        if ( $job['action'] === 'confirm' ) { Config::require( $current['payment_state'] === 'paid' && !in_array($current['state'],array('cancelled','expired'),true) && $a && in_array($a['state'],array('confirmed','held'),true), 'paid_capacity_needs_review' ); if($a['state']==='held'&&(int)$a['expires_at']<=time()){$rate=DB::row('rates','id',(int)$source['rate_id'],true);$rate['enabled']=1;$travel=Core::snapshot($current)['travel'];$travel['_exclude_booking']=(int)$current['id'];Config::require(Adapters::available($rate,$travel,true),'paid_capacity_needs_review');}DB::update( 'allocations', array( 'state' => 'confirmed' ), array( 'booking_id' => $b['id'] ) ); Core::confirm( $b['public_id'] ); }
                         elseif ( $job['action'] === 'cancel' ) { DB::update( 'allocations', array( 'state' => 'released' ), array( 'booking_id' => $b['id'] ) ); Core::cancel( $b['public_id'] ); }
                         else { throw new \RuntimeException( 'manual_hold_already_created' ); }
                     } );
@@ -61,7 +67,7 @@ final class Flow {
                         Config::require($b['payment_state']==='paid'&&$b['state']!=='cancelled'&&self::payment_ready($b),'paid_capacity_needs_review');
                         $result=$driver->confirm($request,$credentials,'vpm-confirm-'.$b['public_id']);Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
                     } else {
-                        Config::require(!empty($request['partner_hold']['reference']),'partner_hold_not_ready');$result=$driver->cancel($request,$credentials,'vpm-cancel-'.$b['public_id']);$rules=Core::snapshot($b)['booking_rules']??array();if(!empty($rules['cancellation_enabled'])||!empty($rules['no_show_enabled']))Config::require(($result['fee_cents']??null)===Conditions::decision($b)['fee_cents'],'partner_cancellation_fee_mismatch');Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
+                        Config::require(!empty($request['partner_hold']['reference']),'partner_hold_not_ready');$result=$driver->cancel($request,$credentials,'vpm-cancel-'.$b['public_id']);$rules=Core::snapshot($b)['booking_rules']??array();if(!empty($rules['cancellation_enabled'])||!empty($rules['no_show_enabled'])||(Core::snapshot($b)['cancellation_decision']['kind']??'')==='provider')Config::require(($result['fee_cents']??null)===Conditions::decision($b)['fee_cents'],'partner_cancellation_fee_mismatch');Config::require(($result['acknowledged']??false)===true,'partner_acknowledgement_missing');$result=array('acknowledged'=>true);
                     }
                     DB::tx(function()use($wpdb,$b,$result,$id,$lease,$job){
                         $current=Core::booking($b['public_id'],true);$active=DB::row('fulfilment','id',(int)$id,true);Config::require($active['locked_by']===$lease,'worker_lease_lost');
