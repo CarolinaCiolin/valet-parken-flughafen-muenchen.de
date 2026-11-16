@@ -1,0 +1,21 @@
+{
+    "count": 16,
+    "checks": [
+        "Reported MUC outdoor\/valet dates return the configured twenty-space offer",
+        "Available outdoor alternative is returned for missing underground parking",
+        "Following an available alternative returns a bookable offer",
+        "Guest test checkout without partner payment mapping keeps its offer closed",
+        "An offer excluded by the payment gate must not be advertised as an available alternative",
+        "Private diagnostic identifies the missing Stripe mapping without exposing its value",
+        "Diagnostic omits credentials and customer data",
+        "Filtering an invalid requested offer preserves genuinely bookable alternatives",
+        "Missing-height garage is never advertised as an available alternative",
+        "Twenty spaces do not bypass valet hours at 07:00 flight-adjusted drop-off",
+        "Diagnostic distinguishes closed drop-off from available collection time",
+        "Diagnostic distinguishes physical stock from service-hour exclusions",
+        "Diagnostic explains the nine billable periods for the reported eight-day flight interval",
+        "Paused sale is diagnosed independently from twenty free physical spaces",
+        "Search check can also diagnose services that are not activated",
+        "Search report is restricted to assigned partner"
+    ]
+}

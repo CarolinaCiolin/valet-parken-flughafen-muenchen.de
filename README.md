@@ -70,3 +70,5 @@ Buchungskern 0.12.0: [Testausbau, Update und Shortcodes](docs/BOOKING-EXPERIENCE
 Buchungskern **0.13.0**: [Update, neue Suche/Buchungsstrecke, Partnerportal und Testzahlung/-mail](docs/BOOKING-JOURNEY-0.13.0.md). Eigene Buchungsseite, kein Kundenkonto; aktuelle Screenshots unter [zwischenstand/buchungskern](zwischenstand/buchungskern).
 
 Buchungskern **0.14.0**: [geführter Support, Partner-Preisvorschau und automatische Klärungsfälle](docs/BOOKING-WORKFLOWS-0.14.0.md). Reminder zunächst aus; Fallabgleich läuft über den bestehenden Worker.
+
+Buchungskern **0.14.1**: [Alternativenkorrektur und private Suchprüfung](docs/BOOKING-SEARCH-0.14.1.md).

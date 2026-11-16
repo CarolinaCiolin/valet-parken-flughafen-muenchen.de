@@ -1,5 +1,5 @@
 {
-  "count": 52,
+  "count": 57,
   "checks": [
     "Embedded widget contains only the small search launcher",
     "Airport preselection remains editable",
@@ -11,6 +11,9 @@
     "Desktop uses a visible six-step flow",
     "Parking type and provider preference carry into the dedicated search",
     "Cancellation policies are available in a clear expandable control",
+    "Unavailable requested type lists only genuinely available alternative types",
+    "Choosing the outdoor alternative returns an actual offer",
+    "Alternative updates the URL and visible criteria consistently",
     "Delayed search fixture holds an actual offer request",
     "Changing airport cancels or rejects the old-airport response",
     "Offer selection advances to a separate extras step",
@@ -44,6 +47,8 @@
     "Saved price is immediately editable again",
     "Partner price section contains a separate nonbooking preview",
     "Price preview explains billing days and separate charges",
+    "Partner receives a private travel-specific search report",
+    "Search report excludes customer email",
     "Large embed uses full hero search layout without inline checkout",
     "General large launcher has no airport preselected",
     "Payment return removes its capability fragment immediately",

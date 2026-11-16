@@ -36,7 +36,7 @@ final class PublicApi {
         DB::query( $wpdb->prepare( 'INSERT INTO ' . DB::table( 'rate_limits' ) . ' (bucket,hits,expires_at) VALUES (%s,1,%d) ON DUPLICATE KEY UPDATE hits=hits+1', $bucket, time() + 120 ) );
         Config::require( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT hits FROM ' . DB::table( 'rate_limits' ) . ' WHERE bucket=%s', $bucket ) ) <= 30, 'frontend_rate_limited' );
     }
-    public static function offers( array $data ): array {
+    public static function offers( array $data, ?callable $visible = null ): array {
         $type=$data['parking_type']??'';Config::require(is_string($type)&&($type===''||in_array($type,array('outdoor','covered','garage','underground'),true)),'invalid_parking_type');
         $preferred=isset($data['preferred_partner'])&&$data['preferred_partner']!==''?Commerce::number($data['preferred_partner'],1):0;$alternatives=array();
         Config::require( self::enabled(), 'frontend_not_enabled' ); self::limit(); $context = self::context( $data ); $scope = (string) ( $data['airport_scope'] ?? '' ); Products::check_scope( $scope, $context['airport'] ); $locale = ( $data['locale'] ?? '' ) === 'en' ? 'en' : 'de';
@@ -51,6 +51,7 @@ final class PublicApi {
             $base = Config::integer( $offer['base_cents'] ?? null, 50 ); $terms = sanitize_text_field( $offer['terms'] ?? '' ); Config::require( strlen( $terms ) <= 1200, 'offer_terms_too_long' );
             if($locale==='en'&&($offer['_source']['mode']??'')==='manual'&&isset($offer['price_breakdown']))$terms='Parking price including the selected service and itemized surcharges.';
             $product = Products::normalize( Products::enrich( $offer, (int) $partner['id'] ) ); $details = array( 'product' => $product, 'airport_scope' => $scope, 'source' => $offer['_source'] ?? array(), 'service'=>$offer['service']??'parking','accessible_available'=>!empty($offer['accessible_available']),'documents_required'=>!empty($offer['documents_required']),'passenger_limit'=>(int)($offer['passenger_limit']??0),'price_breakdown'=>$offer['price_breakdown']??array(), 'booking_rules'=>Conditions::get((int)$partner['id']) );
+            if($visible&&!$visible($partner,$product,$details,$context))continue;
             if(($type!==''&&$product['parking_type']!==$type)||($preferred&&$preferred!==(int)$partner['id'])){$alternatives[$product['parking_type'].':'.$partner['id']]=array('parking_type'=>$product['parking_type'],'preferred_partner'=>(int)$partner['id'],'partner'=>$partner['name']);continue;}
             $id = wp_generate_uuid4(); DB::insert( 'quotes', array( 'public_id' => $id, 'partner_id' => (int) $partner['id'], 'base_cents' => $base, 'context' => wp_json_encode( $context ), 'details' => wp_json_encode( $details ), 'terms' => $terms, 'expires_at' => time() + 600 ) );
             $out[] = array( 'quote_id' => $id, 'partner' => $partner['name'], 'amount_cents' => $base, 'currency' => 'eur', 'terms' => $terms, 'service'=>$details['service'],'accessible_available'=>$details['accessible_available'],'documents_required'=>$details['documents_required'],'passenger_limit'=>$details['passenger_limit'], 'price_breakdown'=>$details['price_breakdown'], 'charging_space'=>!empty($context['charging_required']), 'booking_rules'=>$details['booking_rules'] ) + Products::public_data( $product, $locale );

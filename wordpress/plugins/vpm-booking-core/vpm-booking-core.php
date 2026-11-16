@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Buchungskern
  * Description: Partnerportal, manuelle Kapazitäten, Adaptervertrag und mehrstufige Demo mit Sandbox-Zahlungsgrundlage. Keine Live-Zahlungen.
- * Version: 0.14.0
+ * Version: 0.14.1
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * License: GPL-2.0-or-later

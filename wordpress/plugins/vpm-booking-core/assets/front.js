@@ -144,7 +144,7 @@
         const filters = root.querySelector('.vpm-booking-filters'), filter = filters?.querySelector('select');
         if (filter) {while (filter.options.length > 1) filter.remove(1); filter.value = ''; [...new Set(result.offers.map(o => o.parking_type || 'unspecified'))].forEach(type => {const option = document.createElement('option'); option.value = type; option.textContent = parkingLabel(root, type); filter.append(option);}); filters.hidden = result.offers.length < 2;}
         if(root.dataset.flow==='steps') wizardStep(root,2);
-        status(root, result.offers.length ? (root.dataset.locale==='en'?'All times are local to the selected airport.':'Alle Zeiten gelten am gewählten Flughafen.') : text(root).empty);
+        root.dispatchEvent(new CustomEvent('vpm:search'));status(root, result.offers.length ? (root.dataset.locale==='en'?'All times are local to the selected airport.':'Alle Zeiten gelten am gewählten Flughafen.') : text(root).empty);
       } else if (form.classList.contains('vpm-booking-request')) {
         const selection = selected.get(root); if (!selection) throw {code: 'quote_expired'};
         const customer=Object.fromEntries(Object.entries(data).filter(([key])=>key.startsWith('customer_')).map(([key,value])=>[key.slice(9),value]));

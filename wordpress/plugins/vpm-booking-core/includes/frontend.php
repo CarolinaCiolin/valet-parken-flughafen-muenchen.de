@@ -7,12 +7,12 @@ final class Frontend {
     public static function preview(): bool { return is_admin() || is_preview() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && current_user_can( 'edit_posts' ) ) || isset( $_GET['elementor-preview'] ); }
     public static function register(): void {
         $url = plugins_url( '', dirname( __DIR__ ) . '/vpm-booking-core.php' );
-        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.14.0' );
-        wp_register_style('vpm-booking-journey',$url.'/assets/journey.css',array('vpm-booking-front'),'0.14.0');
-        wp_register_style('vpm-booking-brand',Branding::css_url(),array('vpm-booking-front'),'0.14.0');
-        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.14.0', array( 'strategy' => 'defer', 'in_footer' => true ) );
-        wp_register_script('vpm-booking-journey',$url.'/assets/journey.js',array('vpm-booking-front'),'0.14.0',array('strategy'=>'defer','in_footer'=>true));
-        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.14.0', true );
+        wp_register_style( 'vpm-booking-front', $url . '/assets/front.css', array(), '0.14.1' );
+        wp_register_style('vpm-booking-journey',$url.'/assets/journey.css',array('vpm-booking-front'),'0.14.1');
+        wp_register_style('vpm-booking-brand',Branding::css_url(),array('vpm-booking-front'),'0.14.1');
+        wp_register_script( 'vpm-booking-front', $url . '/assets/front.js', array(), '0.14.1', array( 'strategy' => 'defer', 'in_footer' => true ) );
+        wp_register_script('vpm-booking-journey',$url.'/assets/journey.js',array('vpm-booking-front'),'0.14.1',array('strategy'=>'defer','in_footer'=>true));
+        wp_register_script( 'vpm-booking-block-editor', $url . '/assets/block-editor.js', array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-server-side-render' ), '0.14.1', true );
         foreach ( array( 'booking-form' => 'form', 'airport-selector' => 'selector', 'newsletter' => 'newsletter' ) as $folder => $method ) { register_block_type( dirname( __DIR__ ) . '/blocks/' . $folder, array( 'render_callback' => function( $a ) use ( $method ) { return self::$method( $a ); } ) ); }
         add_shortcode( 'vpm_booking_form', array( self::class, 'form' ) );
         add_shortcode( 'vpm_airport_selector', array( self::class, 'selector' ) );
