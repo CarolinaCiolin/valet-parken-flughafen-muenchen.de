@@ -1,0 +1,26 @@
+{
+  "intro": {
+    "context_text": "Ganz entspannt geht es los. Wallet-Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Park-Sörwiss.",
+    "recognized_context": "Ganz entspannt geht es los. Wallet -Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Park -Service.",
+    "selected_words": "Wallet -Parken am Flughafen München.",
+    "tempo_factor": 0.8972602739726028,
+    "duration": 2.35
+  },
+  "closing": {
+    "context_text": "So beginnt Ihr Urlaub schon am Flughafen, mit kurzen Wegen und ohne Parkplatzstress. Buchen Sie Ihren Wallet-Sörwiss am Flughafen München auf: Wallet, parken, Flughafen, München, Punkt deh. Den Link finden Sie in der Videobeschreibung.",
+    "recognized_context": "So beginnt Ihr Urlaub schon am Flughafen, mit kurzen Wegen und ohne Parkplatz Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
+    "selected_words": "Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
+    "tempo_factor": 1.0,
+    "duration": 8.431583333333334
+  },
+  "sample_rate": 24000,
+  "duration": 49.831583333333334,
+  "middle_start": 2.35,
+  "middle_end": 41.4,
+  "middle_pcm_sha256_before": "3952a9a27183c452b65f3bc6a3f54f11f26e746c66d860e3bef3ac671ff035ae",
+  "middle_pcm_sha256_after": "3952a9a27183c452b65f3bc6a3f54f11f26e746c66d860e3bef3ac671ff035ae",
+  "middle_preserved_byte_for_byte": true,
+  "generation_seconds": 297.6,
+  "baseline_file_sha256": "0908f06ccd748cb1a16d67d1f560edad0b3ea85b0c53452f42d8b6e38d3262f5",
+  "timing_note": "Context is removed; retained middle samples and their absolute times are unchanged."
+}
