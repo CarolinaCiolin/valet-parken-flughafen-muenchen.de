@@ -1,0 +1,57 @@
+[
+  {
+    "start": 0.0,
+    "end": 0.64,
+    "text": "Die"
+  },
+  {
+    "start": 0.64,
+    "end": 1.14,
+    "text": "Buchstaben"
+  },
+  {
+    "start": 1.14,
+    "end": 1.6,
+    "text": "einzeln"
+  },
+  {
+    "start": 1.6,
+    "end": 1.9,
+    "text": "gesprochen."
+  },
+  {
+    "start": 2.52,
+    "end": 2.76,
+    "text": "D"
+  },
+  {
+    "start": 2.76,
+    "end": 2.98,
+    "text": "wie"
+  },
+  {
+    "start": 2.98,
+    "end": 3.42,
+    "text": "Dora."
+  },
+  {
+    "start": 3.82,
+    "end": 4.2,
+    "text": "E"
+  },
+  {
+    "start": 4.2,
+    "end": 4.32,
+    "text": "wie"
+  },
+  {
+    "start": 4.32,
+    "end": 4.58,
+    "text": "Emil."
+  },
+  {
+    "start": 5.06,
+    "end": 5.36,
+    "text": "Danke."
+  }
+]
