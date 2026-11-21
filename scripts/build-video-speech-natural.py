@@ -6,23 +6,22 @@ import soundfile as sf
 import torch
 from qwen_tts import Qwen3TTSModel
 ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'media/valet-erklaervideo';P=OUT/'projekt'
-MODEL='Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign'
+MODEL='Qwen/Qwen3-TTS-12Hz-1.7B-Base'
 # Speech-only spelling hints. Public script and subtitles remain unchanged.
 approved=(OUT/'sprechertext.txt').read_text().strip()
-aliases={'Shuttletransfer':'Schattel-Transfer','Parkservice':'Park-Sörwiss','Valet-Service':'Valet-Sörwiss','Check-in':'Tschek-in'}
+aliases={'Shuttletransfer':'Schattel-Transfer','Parkservice':'Park-Sörwiss','Valet-Service':'Wallet-Sörwiss','Valet-Parken':'Wallet-Parken','valet-parken':'wallet-parken','Check-in':'Tschek-in'}
 spoken=approved
 for original,pronounced in aliases.items():spoken=spoken.replace(original,pronounced)
-instruction=('A native German male narrator in his mid-thirties with a warm, pleasant, clear medium-low voice. '
- 'Speak fluent standard German in a natural, conversational explanatory style, like a friendly professional travel presenter. '
- 'Smooth connected phrases, varied gentle intonation, no robotic cadence, no dramatic announcement, no sentence-by-sentence stop-start delivery. '
- 'Moderately brisk but relaxed, about 145 words per minute. Short natural pauses only. '
- 'Pronounce the English loanwords naturally: shuttle is shuttl, service is sur-viss, check-in is check-in. '
- 'Clean dry studio voice, without background music or sound effects.')
+# Reuse only our own previously generated, user-approved synthetic narrator.
+# Reference excludes the old French pronunciation of Valet.
+reference=P/'narrator-reference.wav'
+reference_text='Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice.'
+instruction='Match the approved synthetic narrator reference; Valet is deliberately pronounced like English Wallet at the user’s request.'
 torch.set_num_threads(min(4,os.cpu_count() or 2));torch.manual_seed(4187)
 print('Loading',MODEL,flush=True)
 model=Qwen3TTSModel.from_pretrained(MODEL,device_map='cpu',dtype=torch.float32,attn_implementation='eager')
 print('Generating full continuous narration',flush=True);start=time.monotonic()
-wavs,sr=model.generate_voice_design(text=spoken,language='German',instruct=instruction,non_streaming_mode=True,max_new_tokens=1250,temperature=.65,top_p=.85,repetition_penalty=1.08)
+wavs,sr=model.generate_voice_clone(text=spoken,language='German',ref_audio=str(reference),ref_text=reference_text,non_streaming_mode=True,max_new_tokens=1250,temperature=.65,top_p=.85,repetition_penalty=1.08)
 a=np.asarray(wavs[0],dtype=np.float32);assert np.isfinite(a).all() and len(a)>sr*25
 with tempfile.TemporaryDirectory() as tmp:
  raw=Path(tmp)/'voice.wav';trimmed=Path(tmp)/'trimmed.wav';sf.write(raw,a,sr)
@@ -37,12 +36,12 @@ a,sr=sf.read(OUT/'sprecher-maennlich.wav');duration=len(a)/sr
 print('Transcribing for timing/quality inspection',flush=True)
 from faster_whisper import WhisperModel
 asr=WhisperModel('small',device='cpu',compute_type='int8',cpu_threads=min(4,os.cpu_count() or 2))
-segments,info=asr.transcribe(str(OUT/'sprecher-maennlich.wav'),language='de',beam_size=5,word_timestamps=True,initial_prompt=approved)
+segments,info=asr.transcribe(str(OUT/'sprecher-maennlich.wav'),language='de',beam_size=5,word_timestamps=True,initial_prompt='Wallet-Parken, Shuttletransfer, Parkservice, Check-in, Flughafen München.')
 words=[]
 for segment in segments:
  for w in segment.words:words.append({'start':round(w.start,4),'end':round(w.end,4),'text':w.word.strip()})
 assert words
-(P/'sprechpruefung.json').write_text(json.dumps({'model':MODEL,'sample_rate':sr,'duration':duration,'generation_seconds':round(time.monotonic()-start,1),'speech_only_aliases':aliases,'instruction':instruction,'tempo_factor':factor,'recognized_words':words,'recognized_text':' '.join(w['text'] for w in words)},ensure_ascii=False,indent=2)+'\n')
+(P/'sprechpruefung.json').write_text(json.dumps({'model':MODEL,'sample_rate':sr,'duration':duration,'generation_seconds':round(time.monotonic()-start,1),'speech_only_aliases':aliases,'instruction':instruction,'reference_text':reference_text,'reference_origin':'Own synthetic narrator approved by the user; no real-person recording','tempo_factor':factor,'recognized_words':words,'recognized_text':' '.join(w['text'] for w in words)},ensure_ascii=False,indent=2)+'\n')
 license_url='https://huggingface.co/'+MODEL+'/raw/main/LICENSE'
 try:
  with urllib.request.urlopen(license_url,timeout=30) as r:license_text=r.read().decode()
