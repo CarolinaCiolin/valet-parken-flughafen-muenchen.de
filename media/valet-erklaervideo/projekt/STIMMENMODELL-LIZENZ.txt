@@ -200,6 +200,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-Modell: Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign
-Quelle: https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign/raw/main/LICENSE
+Modell: Qwen/Qwen3-TTS-12Hz-1.7B-Base
+Quelle: https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base/raw/main/LICENSE
 Originale generierte Männerstimme; keine geklonte reale Person.
