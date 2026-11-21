@@ -1,0 +1,63 @@
+{
+  "sample_rate": 22050,
+  "duration": 51.1037,
+  "segments": [
+    {
+      "index": 0,
+      "start": 0.35,
+      "end": 8.9066,
+      "text": "Valet-Parken am Flughafen München: Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice."
+    },
+    {
+      "index": 1,
+      "start": 9.2066,
+      "end": 14.2105,
+      "text": "Kein Parkplatzsuchen, kein Shuttletransfer – Sie gehen mit Ihrem Gepäck direkt zum Check-in."
+    },
+    {
+      "index": 2,
+      "start": 14.5105,
+      "end": 18.1095,
+      "text": "Bei der Übergabe wird der Fahrzeugzustand dokumentiert."
+    },
+    {
+      "index": 3,
+      "start": 18.4095,
+      "end": 21.73,
+      "text": "Anschließend bringt ein Fahrer Ihr Auto zum gebuchten Stellplatz."
+    },
+    {
+      "index": 4,
+      "start": 22.03,
+      "end": 29.2398,
+      "text": "Je nach Angebot steht es auf einem Außenstellplatz oder überdacht in einer Garage, einer Halle oder einem Parkhaus."
+    },
+    {
+      "index": 5,
+      "start": 29.5398,
+      "end": 36.32,
+      "text": "Nach Ihrer Rückkehr erhalten Sie Ihr Fahrzeug am vereinbarten Rückgabeort zurück und können direkt nach Hause fahren."
+    },
+    {
+      "index": 6,
+      "start": 36.62,
+      "end": 41.949,
+      "text": "So beginnt Ihr Urlaub schon am Flughafen – mit kurzen Wegen und ohne Parkplatzstress."
+    },
+    {
+      "index": 7,
+      "start": 42.249,
+      "end": 48.0424,
+      "text": "Buchen Sie Ihren Valet-Service am Flughafen München auf valet-parken-flughafen-muenchen.de."
+    },
+    {
+      "index": 8,
+      "start": 48.3424,
+      "end": 50.8037,
+      "text": "Den Link finden Sie in der Videobeschreibung."
+    }
+  ],
+  "voice": "de_DE-thorsten-high",
+  "source": "https://huggingface.co/rhasspy/piper-voices/resolve/main/de/de_DE/thorsten/high/",
+  "model_sha256": "9df1c43c61149ef9b39e618e2b861fbe41e1fcea9390b2dac62e8761573ea4f1"
+}
