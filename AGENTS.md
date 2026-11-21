@@ -85,3 +85,7 @@ Bei verfügbarem GitHub-Zugriff dieses Repository öffnen, diese Datei und docs/
 ## Testdomain-Installation
 
 Vorbereitetes Paket pakete/vpm-testdomain-installation.zip und docs/TESTDOMAIN-INSTALLATION.md. Enthält genau Theme/Anbieter/Buchungskern, keinen Münchner Inhaltsimport. scripts/package.py baut es mit aktuellen dist-ZIPs; separate Anleitung/CLI preflight unter deployment/testdomain. Konkrete Testdomain, sicherer Zugang, Absenderpostfach/SMTP und eigene erlaubte Empfänger sind noch vom Betreiber zu nennen. SMTP-Plugin allein verarbeitet die signierte Buchungs-Outbox nicht; tatsächlicher Test-Versandadapter, Empfängerfilter und Mailrouting sind weiterhin einzurichten. Kein direktes Zweiweg-Relay/Klaviyo behaupten.
+
+## Münchner Affiliate-/Video-Vorschau November 2026
+
+Reviewbranch `preview/affiliate-video-2026-11-21`, nicht automatisch veröffentlichen/mergen. Nutzer wünscht 2D und angenehme natürliche männliche Stimme. Fertiges Video/Quellen in media/valet-erklaervideo; reale YouTube-URL fehlt. Neue drei Angebote und exakter gemeinsamer Trackinglink in vpm-content-drafts/updates/affiliate-2026-11.json. VPM Partner-Vorschau erstellt nur separate Entwürfe, keine bestehenden Seiten überschreiben. Siehe docs/AFFILIATE-VIDEO-VORSCHAU.md.

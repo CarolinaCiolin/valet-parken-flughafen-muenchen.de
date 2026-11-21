@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Inhaltsentwürfe
  * Description: Einmaliger, manuell ausgelöster Import der vorbereiteten Seiten und Anbieter. Überschreibt keine Inhalte.
- * Version: 0.4.2
+ * Version: 0.4.3
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
@@ -12,6 +12,7 @@ require_once __DIR__ . '/english.php';
 require_once __DIR__ . '/legal-import.php';
 require_once __DIR__ . '/publish.php';
 require_once __DIR__ . '/site-icon.php';
+require_once __DIR__ . '/affiliate-preview.php';
 function vpm_import_content_drafts() {
     if ( ! current_user_can( 'manage_options' ) ) { return new WP_Error( 'forbidden', 'Keine Berechtigung.' ); }
     if ( function_exists( 'vpm_legacy_munich' ) && ! vpm_legacy_munich() ) { return new WP_Error( 'site_profile', 'Dieses Inhaltspaket gehört zu München. Für dieses Projekt ein eigenes Inhaltspaket verwenden.' ); }

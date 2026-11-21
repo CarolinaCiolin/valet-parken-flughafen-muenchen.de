@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.3.3
+ * Version: 0.3.4
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -25,6 +25,8 @@ function vpm_provider_fields() {
         'parkos_label' => array( 'label' => 'Parkos: freigegebener CTA-Text', 'type' => 'string' ),
         'parkvia_url' => array( 'label' => 'ParkVia: vollständiger Affiliate-Link', 'type' => 'string' ),
         'parkvia_label' => array( 'label' => 'ParkVia: freigegebener CTA-Text', 'type' => 'string' ),
+        'parkenamflughafen_url' => array( 'label' => 'parkenamflughafen.de: vollständiger Affiliate-Link', 'type' => 'string' ),
+        'parkenamflughafen_label' => array( 'label' => 'parkenamflughafen.de: freigegebener CTA-Text', 'type' => 'string' ),
         'image_caption' => array( 'label' => 'Bildkennzeichnung / Quellenangabe (bei KI: KI-generierte Illustration)', 'type' => 'string' ),
         'source_date' => array( 'label' => 'Interner Prüfstand / Quelle (nicht öffentlich)', 'type' => 'string' ),
     );
@@ -108,7 +110,7 @@ add_action( 'save_post_vpm_provider', function ( $post_id ) {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.0' );
+    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.4' );
 } );
 
 function vpm_provider_anchor( $id ) { return 'anbieter-' . sanitize_title( get_the_title( $id ) ); }
@@ -164,7 +166,7 @@ function vpm_render_provider_cards( $atts = array() ) {
         $price = get_post_meta( $id, '_vpm_price', true );
         if ( $price ) { echo '<p class="vpm-provider-price">' . esc_html( $price ) . '</p>'; }
         echo '<div class="vpm-provider-links">';
-        $platforms = apply_filters( 'vpm_provider_booking_platforms', array( 'parkos' => 'Parkos', 'parkvia' => 'ParkVia' ), $id );
+        $platforms = apply_filters( 'vpm_provider_booking_platforms', array( 'parkos' => 'Parkos', 'parkvia' => 'ParkVia', 'parkenamflughafen' => 'parkenamflughafen.de' ), $id );
         foreach ( $platforms as $key => $platform ) {
             $url = get_post_meta( $id, '_vpm_' . $key . '_url', true );
             $label = get_post_meta( $id, '_vpm_' . $key . '_label', true );

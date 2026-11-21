@@ -1,0 +1,13 @@
+{
+  "result": "passed",
+  "checks": [
+    "MP4 plays at 1920x1080",
+    "startseite 1440px: images and layout passed",
+    "preise 1440px: images and layout passed",
+    "valet-parken-sicherheit 1440px: images and layout passed",
+    "startseite 390px: images and layout passed",
+    "preise 390px: images and layout passed",
+    "valet-parken-sicherheit 390px: images and layout passed"
+  ],
+  "failed_requests": []
+}

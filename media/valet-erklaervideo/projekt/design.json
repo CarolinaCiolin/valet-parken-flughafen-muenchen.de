@@ -1,0 +1,26 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "fps": 25,
+  "duration": 58.5,
+  "navy": "#101c2c",
+  "gold": "#b99a5b",
+  "cream": "#f6f3ec",
+  "white": "#fcfaf7",
+  "chapters": [
+    0,
+    4.2,
+    14.51,
+    18.41,
+    29.54,
+    42.249
+  ],
+  "captions": [
+    "Valet-Parken am\nFlughafen München",
+    "Direkt am Terminal abgeben",
+    "Fahrzeugzustand dokumentieren",
+    "Außen oder überdacht",
+    "Zurückkommen und losfahren",
+    "Valet-Service in München buchen"
+  ]
+}

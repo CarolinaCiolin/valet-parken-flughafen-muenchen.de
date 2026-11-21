@@ -5,3 +5,5 @@
 .vpm-provider-art img{position:absolute;width:300%;height:200%;max-width:none!important;object-fit:fill;left:0;top:0}
 .vpm-provider-art-1 img,.vpm-provider-art-4 img{left:-100%}.vpm-provider-art-2 img,.vpm-provider-art-5 img{left:-200%}.vpm-provider-art-3 img,.vpm-provider-art-4 img,.vpm-provider-art-5 img{top:-100%}
 @media(max-width:600px){.vpm-provider-art{aspect-ratio:2.15}}
+
+.vpm-provider-art-single img{position:static;width:100%;height:100%;max-width:100%!important;object-fit:contain}.vpm-provider-price{font-size:20px;line-height:1.45;font-variant-numeric:tabular-nums}

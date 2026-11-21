@@ -1,0 +1,31 @@
+{
+    "count": 26,
+    "checks": [
+        "Preview leaves current published source unchanged",
+        "Nine provider copies and three page copies are prepared",
+        "Prepared object 614 remains a draft",
+        "Prepared object 615 remains a draft",
+        "Prepared object 616 remains a draft",
+        "Prepared object 605 remains a draft",
+        "Prepared object 606 remains a draft",
+        "Prepared object 607 remains a draft",
+        "Prepared object 608 remains a draft",
+        "Prepared object 609 remains a draft",
+        "Prepared object 610 remains a draft",
+        "Prepared object 611 remains a draft",
+        "Prepared object 612 remains a draft",
+        "Prepared object 613 remains a draft",
+        "Current source price wins over older fallback without rounding cents",
+        "New partner has exact approved URL and no invented rating",
+        "New partner has exact approved URL and no invented rating",
+        "New partner has exact approved URL and no invented rating",
+        "Exactly three new affiliate cards",
+        "Price table preserves airport row and sorts all ten offers by price",
+        "Each new table CTA keeps the approved tracking link",
+        "Three approved security CTAs",
+        "Approved safety details retained",
+        "Euro formatting preserves cents and whole-euro approved prices",
+        "Anonymous caller cannot prepare drafts",
+        "Munich offers cannot be imported on umbrella profile"
+    ]
+}

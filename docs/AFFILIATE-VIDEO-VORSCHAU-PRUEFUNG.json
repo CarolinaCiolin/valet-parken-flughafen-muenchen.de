@@ -1,0 +1,13 @@
+{
+  "scope": "local authenticated draft copies, no live change",
+  "checks": [
+    "Nine start cards, nine visible eight-day prices, three new exact partner links",
+    "Ten sorted price rows including Flughafen München",
+    "Three additional safety cards and CTAs"
+  ],
+  "responsive_widths": [
+    1440,
+    390
+  ],
+  "links_sponsored_nofollow": true
+}
