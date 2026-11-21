@@ -1,0 +1,67 @@
+{
+  "version": "2026-11-21",
+  "affiliate_url": "https://tc.tradetracker.net/?c=27010&m=12&a=518003&r=vpm-parkenamflughafen-valet-allgemein&u=https%3A%2F%2Fparkenamflughafen.de%2Fparken-flughafen-muenchen%2Fvalet-parken",
+  "price_period": "01.02.–09.02.2027",
+  "providers": [
+    {
+      "id": "airparks-muenchen-valet",
+      "name": "Airparks Parkplatz München Valet",
+      "cents": 15900,
+      "parking": "Außenstellplatz",
+      "features": [
+        "Fahrzeugübergabe direkt am Terminal",
+        "Eingezäunter und beleuchteter Außenstellplatz",
+        "Regelmäßige Kontrollen des Parkgeländes"
+      ],
+      "safety": [
+        "Eingezäuntes und beleuchtetes Parkgelände",
+        "Regelmäßige Kontrollen",
+        "Erfassung von Kilometerstand, Tankfüllung und vorhandenen Vorschäden bei der Fahrzeugannahme",
+        "Schlüsselabgabe erforderlich"
+      ]
+    },
+    {
+      "id": "parkprofi-parkhaus-valet-muenchen",
+      "name": "Parkprofi Parkhaus Valet München",
+      "cents": 17400,
+      "parking": "Parkhaus",
+      "features": [
+        "Fahrzeugübergabe am Terminal 2",
+        "Überdachter Stellplatz im Parkhaus",
+        "Zugang nur mit Mitarbeiter"
+      ],
+      "safety": [
+        "Eingezäuntes, beleuchtetes und beschranktes Parkhaus",
+        "Zugang nur mit Mitarbeiter",
+        "Regelmäßige Kontrollgänge",
+        "Schlüsselabgabe erforderlich"
+      ]
+    },
+    {
+      "id": "valet24muc-parkplatz-valet",
+      "name": "valet24muc Parkplatz Valet",
+      "cents": 17400,
+      "parking": "Außenstellplatz",
+      "features": [
+        "Fahrzeugübergabe direkt am Terminal",
+        "Eingezäunter und videoüberwachter Außenstellplatz",
+        "Zugang nur mit Mitarbeiter"
+      ],
+      "safety": [
+        "Eingezäuntes, beleuchtetes und abgeschlossenes Parkgelände",
+        "Schrankenanlage und Videoüberwachung",
+        "Regelmäßige Kontrollgänge",
+        "Zugang nur mit Mitarbeiter",
+        "Schlüsselabgabe erforderlich"
+      ]
+    }
+  ],
+  "price_aliases": {
+    "Park Drive Fly": "Park Drive Fly",
+    "Parkservice Flieger": "Parkservice Flieger",
+    "Valet Service Clean": "Valet Service Clean",
+    "Parkking Munich": "Parkking Munich Meet and Greet",
+    "ParkandGo MUC": "ParkandGo MUC Valetservice",
+    "Parkservice-Unertl": "Parkservice-Unertl"
+  }
+}
