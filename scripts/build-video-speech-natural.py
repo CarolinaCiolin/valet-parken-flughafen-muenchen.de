@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'media/valet-erklaervideo';P=O
 MODEL='Qwen/Qwen3-TTS-12Hz-1.7B-Base'
 # Speech-only spelling hints. Public script and subtitles remain unchanged.
 approved=(OUT/'sprechertext.txt').read_text().strip()
-aliases={'Shuttletransfer':'Schattel-Transfer','Parkservice':'Park-Sörwiss','Valet-Service':'Wallet-Sörwiss','Valet-Parken':'Wallet-Parken','valet-parken':'wallet-parken','Check-in':'Tschek-in'}
+aliases={'valet-parken-flughafen-muenchen.de':'Wallet parken flughafen München punkt de','Shuttletransfer':'Schattel-Transfer','Parkservice':'Park-Sörwiss','Valet-Service':'Wallet-Sörwiss','Valet-Parken':'Wallet-Parken','valet-parken':'wallet-parken','Check-in':'Tschek-in'}
 spoken=approved
 for original,pronounced in aliases.items():spoken=spoken.replace(original,pronounced)
 # Reuse only our own previously generated, user-approved synthetic narrator.
@@ -28,7 +28,7 @@ with tempfile.TemporaryDirectory() as tmp:
  subprocess.run(['ffmpeg','-y','-v','error','-i',str(raw),'-af','silenceremove=start_periods=1:start_duration=0.05:start_threshold=-48dB,areverse,silenceremove=start_periods=1:start_duration=0.1:start_threshold=-48dB,areverse',str(trimmed)],check=True)
  a,sr=sf.read(trimmed);duration=len(a)/sr
  # Preserve complete words; speed adjustment is limited and never truncates the script.
- factor=max(1.0,duration/49.5);assert factor<1.32,('Unexpectedly slow narration',duration)
+ factor=duration/49.3;assert .78<factor<1.32,('Narration needs manual pace review',duration)
  filters=f'atempo={factor:.7f},adelay=200:all=1,loudnorm=I=-16:TP=-1.5:LRA=8'
  subprocess.run(['ffmpeg','-y','-v','error','-i',str(trimmed),'-af',filters,'-ar','24000','-ac','1','-c:a','pcm_s16le',str(OUT/'sprecher-maennlich.wav')],check=True)
 a,sr=sf.read(OUT/'sprecher-maennlich.wav');duration=len(a)/sr
