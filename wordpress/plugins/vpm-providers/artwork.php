@@ -9,7 +9,7 @@ function vpm_provider_artwork( $id ) {
     $names = array( 'Park Drive Fly', 'ParkandGo MUC Valetservice', 'Parkking Munich Meet and Greet', 'Valet Service Clean', 'Parkservice Flieger', 'Parkservice-Unertl' );
     $index = array_search( get_the_title( $id ), $names, true );
     if ( false === $index ) {
-        $new = array( 'Airparks Parkplatz München Valet' => 'airparks', 'Parkprofi Parkhaus Valet München' => 'parkprofi', 'valet24muc Parkplatz Valet' => 'valet24muc' );
+        $new = array( 'Airparks Parkplatz München Valet' => 'airparks', 'Parkprofi Parkhaus Valet München' => 'parkprofi', 'valet24muc Parkplatz Valet' => 'valet24muc', 'Ben-Parkt Valet Park Service' => 'ben-parkt', 'INFINITI PARKING München' => 'infiniti', 'ParkXpress e.K.' => 'parkxpress', '0049 – Richtig Parken' => '0049' );
         $slug = $new[get_the_title($id)] ?? '';
         return $slug ? '<div class="vpm-provider-art vpm-provider-art-single" aria-hidden="true"><img src="'.esc_url(plugins_url('assets/provider-'.$slug.'.svg',__FILE__)).'" width="720" height="350" alt="" loading="lazy" decoding="async"></div>' : '';
     }

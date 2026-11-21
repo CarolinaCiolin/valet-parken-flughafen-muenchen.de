@@ -1,7 +1,7 @@
 {
   "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "sample_rate": 24000,
-  "duration": 49.831583333333334,
+  "duration": 50.84095833333333,
   "generation_seconds": 505.2,
   "speech_only_aliases": {
     "valet-parken-flughafen-muenchen.de": "Wallet, parken, Flughafen, München, Punkt deh",
@@ -569,55 +569,56 @@
     },
     {
       "start": 44.455,
-      "end": 44.995,
+      "end": 45.2085,
       "text": "www"
     },
     {
-      "start": 44.995,
-      "end": 46.855,
+      "start": 45.2085,
+      "end": 47.5485,
       "text": ".walletparkenflughafenmünchen"
     },
     {
-      "start": 46.855,
-      "end": 47.555,
+      "start": 47.5485,
+      "end": 48.4292,
       "text": ".de"
     },
     {
-      "start": 47.555,
-      "end": 48.095,
+      "start": 48.4292,
+      "end": 49.1044,
       "text": "Den"
     },
     {
-      "start": 48.095,
-      "end": 48.335,
+      "start": 49.1044,
+      "end": 49.3444,
       "text": "Link"
     },
     {
-      "start": 48.335,
-      "end": 48.575,
+      "start": 49.3444,
+      "end": 49.5844,
       "text": "finden"
     },
     {
-      "start": 48.575,
-      "end": 48.775,
+      "start": 49.5844,
+      "end": 49.7844,
       "text": "Sie"
     },
     {
-      "start": 48.775,
-      "end": 48.915,
+      "start": 49.7844,
+      "end": 49.9244,
       "text": "in"
     },
     {
-      "start": 48.915,
-      "end": 49.015,
+      "start": 49.9244,
+      "end": 50.0244,
       "text": "der"
     },
     {
-      "start": 49.015,
-      "end": 49.815,
+      "start": 50.0244,
+      "end": 50.8244,
       "text": "Videobeschreibung."
     }
   ],
   "recognized_text": "Wallet -Parken am Flughafen München. sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Park -Service. Kein Parkplatz suchen, kein Shuttletransfer, sie gehen mit ihrem Gepäck direkt zum Check -in. Bei der Übergabe wird der Fahrzeugzustand dokumentiert. Anschließend bringt ein Fahrer ihr Auto zum gebuchten Stellplatz. Je nach Angebot steht es auf einem Außenstellplatz oder überdacht in einer Garage, einer Halle oder einem Parkhaus. Nach ihrer Rückkehr erhalten sie ihr Fahrzeug am vereinbarten Rückgabeort zurück und können direkt nach Hause fahren. So beginnt ihr Urlaub schon am Flughafen mit kurzen Wegen und ohne Parkplatz -Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
-  "endpoint_revision": true
+  "endpoint_revision": true,
+  "address_pacing_adjusted": true
 }

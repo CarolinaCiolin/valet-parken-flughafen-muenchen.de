@@ -1,5 +1,7 @@
 # Vorschau: neue Anbieter und 2D-Erklärvideo
 
+Vier weitere Parkos-Anbieter sind ergänzt: insgesamt **13 Karten und 14 Preiszeilen**. Bewertungen und Variantenhinweise sind enthalten; bestehende Links bleiben erhalten.
+
 **Neue Bild- und Tonfassung:** detailreichere 2D-Illustrationen, neue Fahrzeug-/Kamera-/Prüfanimationen, vorhandene Wortmarke als Wasserzeichen, Aussprache wie gewünscht „Wallet“, ruhige Männerstimme und hörbare Musik. [Stimme einzeln anhören](../media/valet-erklaervideo/sprecher-anhoeren.mp3?raw=true).
 
 [Webvorschau als ZIP herunterladen](../pakete/vpm-affiliate-webvorschau.zip?raw=true) – vollständig entpacken und **index.html** öffnen. Keine WordPress-Installation nötig.
@@ -21,3 +23,5 @@ Sechs Szenen im Überblick:
 - [Sicherheit Desktop](affiliate-video-2026-11/valet-parken-sicherheit-1440.png) / [Mobil](affiliate-video-2026-11/valet-parken-sicherheit-390.png)
 
 Live-Seite unverändert. Video noch nicht auf YouTube hochgeladen.
+
+[Die vier neuen Parkos-Karten direkt ansehen](affiliate-video-2026-11/neue-parkos-karten.png).

@@ -54,6 +54,98 @@
         "Zugang nur mit Mitarbeiter",
         "Schlüsselabgabe erforderlich"
       ]
+    },
+    {
+      "id": "ben-parkt-valet-park-service",
+      "name": "Ben-Parkt Valet Park Service",
+      "cents": 12000,
+      "parking": "Außenstellplatz",
+      "features": [
+        "E-Laden inklusive Stromkosten zubuchbar",
+        "Innen- und Außenreinigung zubuchbar",
+        "Tankservice zubuchbar"
+      ],
+      "rating": "10/10 aus 6 Bewertungen bei Parkos",
+      "safety": [
+        "Umzäuntes Parkgelände",
+        "Videoüberwachung",
+        "Schlüsselabgabe beim Valet-Service"
+      ],
+      "affiliate_url": "https://parkos.de/parking/?tt=32300_12_518003_vpm-ben-parkt&r=%2Fv2%2Freservieren%2F%3Fparking%3D3233%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+      "platform": "parkos",
+      "source": "https://parkos.de/parken-flughafen-muenchen/ben-parkt-valet.html",
+      "card_layout": "compact",
+      "card_booking_note": ""
+    },
+    {
+      "id": "infiniti-parking-muenchen",
+      "name": "INFINITI PARKING München",
+      "cents": 9000,
+      "parking": "Parkhaus",
+      "features": [
+        "Fahrzeugcheck bei der Übergabe",
+        "Videoüberwachtes Parkgelände",
+        "Umzäuntes Gelände"
+      ],
+      "rating": "9,4/10 aus 69 Bewertungen bei Parkos",
+      "safety": [
+        "Überdachte Unterbringung im Parkhaus",
+        "Videoüberwachung",
+        "Umzäunung",
+        "Fahrzeugcheck laut Parkos-Ausstattungsangaben",
+        "Schlüsselabgabe beim Valet-Service"
+      ],
+      "affiliate_url": "https://parkos.de/parking/?tt=32300_12_518003_vpm-infiniti&r=%2Fv2%2Freservieren%2F%3Fparking%3D3116%26parkingType%3Dvaletindoor%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+      "platform": "parkos",
+      "source": "https://parkos.de/parken-flughafen-muenchen/infiniti-parking-muc.html",
+      "card_layout": "compact",
+      "card_booking_note": ""
+    },
+    {
+      "id": "parkxpress-ek",
+      "name": "ParkXpress e.K.",
+      "cents": 8500,
+      "parking": "Außenstellplatz",
+      "features": [
+        "E-Ladeservice zubuchbar",
+        "Innen- und Außenreinigung zubuchbar",
+        "Tankservice auf Anfrage beim Anbieter"
+      ],
+      "rating": "8,1/10 aus 92 Valet-Bewertungen bei Parkos",
+      "safety": [
+        "Umzäuntes Parkgelände",
+        "Asphaltierte Stellfläche",
+        "Schlüsselabgabe beim Valet-Service"
+      ],
+      "affiliate_url": "https://parkos.de/parking/?tt=32300_12_518003_vpm-ParkXpress&r=%2Fv2%2Freservieren%2F%3Fparking%3D2736%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+      "platform": "parkos",
+      "source": "https://parkos.de/parken-flughafen-muenchen/parkxpress-ek.html",
+      "card_layout": "compact",
+      "card_booking_note": ""
+    },
+    {
+      "id": "0049-richtig-parken",
+      "name": "0049 – Richtig Parken",
+      "cents": 9000,
+      "parking": "Außenstellplatz oder überdacht",
+      "table_price": "90 € außen / 105 € überdacht",
+      "features": [
+        "Über 20 Jahre Erfahrung",
+        "Flugverfolgung zur Abstimmung der Rückkehr",
+        "Fahrzeugaufbereitung auf Anfrage beim Anbieter"
+      ],
+      "rating": "10/10 aus 2 Valet-Bewertungen bei Parkos",
+      "safety": [
+        "Umzäuntes Parkgelände",
+        "Außenstellplatz oder überdachte Unterbringung",
+        "Schlüsselabgabe beim Valet-Service"
+      ],
+      "affiliate_url": "https://parkos.de/parking/?tt=32300_12_518003_vpm-0049&r=%2Fv2%2Freservieren%2F%3Fparking%3D1344%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+      "platform": "parkos",
+      "booking_note": "Link zur Außenvariante; überdachte Variante bei Parkos auswählen.",
+      "source": "https://parkos.de/parken-flughafen-muenchen/0049-Richtig-Parken.html",
+      "card_layout": "compact",
+      "card_booking_note": ""
     }
   ],
   "price_aliases": {
@@ -63,5 +155,15 @@
     "Parkking Munich": "Parkking Munich Meet and Greet",
     "ParkandGo MUC": "ParkandGo MUC Valetservice",
     "Parkservice-Unertl": "Parkservice-Unertl"
+  },
+  "general_parkos_url": "https://parkos.de/parking/?tt=32300_12_518003_vpm-komplettvergleich&r=%2Fparken-flughafen-muenchen%2Fvalet-parken-muenchen.html",
+  "parkos_price_provenance": {
+    "source": "Freigegebener Nutzerprompt vom 21.11.2026; verlinkte Tabelle",
+    "tested_period": "November 2026 bis Februar 2027",
+    "tested_windows": 10,
+    "stay_days": 8,
+    "dropoff_and_return_time": "12:00",
+    "public_research_notes": false,
+    "source_label": "Verlinkte Datengrundlage im bereitgestellten Nutzerauftrag"
   }
 }

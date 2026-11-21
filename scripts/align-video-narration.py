@@ -1,6 +1,6 @@
 """Align approved captions with recognized speech; keep public wording unchanged."""
 from pathlib import Path
-import difflib,json
+import difflib,json,sys,math
 R=Path(__file__).resolve().parents[1];P=R/'media/valet-erklaervideo/projekt'
 report=json.loads((P/'sprechpruefung.json').read_text());segments=json.loads((P/'sprechsegmente.json').read_text());words=report['recognized_words']
 def norm(text):
@@ -24,8 +24,8 @@ assert all(a['start']<a['end'] for a in alignment)
 assert alignment[-1]['end']<=report['duration']+.1
 result={'sample_rate':report['sample_rate'],'duration':report['duration'],'voice':report['model'],'source':'https://huggingface.co/'+report['model'],'alignment_method':'Whisper word timing plus approved-text character alignment','recognized_character_coverage':round(coverage,5),'segments':alignment}
 (P/'sprachzeiten.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
-design=json.loads((P/'design.json').read_text());design.update(duration=53.5,voice_lufs=-16,music_lufs=-26,ending_fade_seconds=1.3)
-design['chapters']=[0,4.2,alignment[2]['start'],alignment[3]['start'],alignment[5]['start'],alignment[7]['start']]
+design=json.loads((P/'design.json').read_text());keep='--keep-scene-timing'in sys.argv;duration=max(53.5,math.ceil((report['duration']+1.25)*25)/25)if keep else 53.5;design.update(duration=duration,voice_lufs=-16,music_lufs=-26,ending_fade_seconds=1.3)
+if not keep:design['chapters']=[0,4.2,alignment[2]['start'],alignment[3]['start'],alignment[5]['start'],alignment[7]['start']]
 assert sorted(design['chapters'])==design['chapters'];assert design['duration']-design['chapters'][-1]>=6
 (P/'design.json').write_text(json.dumps(design,ensure_ascii=False,indent=2)+'\n')
 print('Aligned approved captions:',round(coverage*100,2),'% recognized character coverage; closing',round(design['duration']-design['chapters'][-1],2),'seconds')

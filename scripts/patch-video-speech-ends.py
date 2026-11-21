@@ -1,12 +1,18 @@
 """Replace only the narration's endpoints; retain approved middle PCM byte-for-byte."""
 from pathlib import Path
-import hashlib,json,os,subprocess,tempfile,wave,time
+import hashlib,json,os,subprocess,tempfile,wave,time,sys,traceback
 import numpy as np
 import soundfile as sf
 import torch
 from qwen_tts import Qwen3TTSModel
 from faster_whisper import WhisperModel
 R=Path(__file__).resolve().parents[1];M=R/'media/valet-erklaervideo';P=M/'projekt'
+def endpoint_error(kind,error,tb):
+ summary=os.environ.get('GITHUB_STEP_SUMMARY')
+ if summary:
+  with open(summary,'a')as out:out.write('## Endpoint synthesis diagnostic\n\n'+kind.__name__+': '+str(error)+'\n')
+ sys.__excepthook__(kind,error,tb)
+sys.excepthook=endpoint_error
 BASE=P/'sprecher-basis-freigegeben.wav';REF=P/'narrator-middle-reference.wav'
 with wave.open(str(BASE),'rb')as w:sr=w.getframerate();baseline=np.frombuffer(w.readframes(w.getnframes()),dtype='<i2').copy()
 assert sr==24000
@@ -18,7 +24,7 @@ texts={
 }
 torch.set_num_threads(min(4,os.cpu_count()or 2));torch.manual_seed(32041)
 model=Qwen3TTSModel.from_pretrained('Qwen/Qwen3-TTS-12Hz-1.7B-Base',device_map='cpu',dtype=torch.float32,attn_implementation='eager')
-asr=WhisperModel('small',device='cpu',compute_type='int8',cpu_threads=min(4,os.cpu_count()or 2))
+asr=None
 def recognize(path):
  segments,_=asr.transcribe(str(path),language='de',beam_size=5,word_timestamps=True,initial_prompt='Wallet-Parken, Parkservice, Flughafen München.')
  return [{'start':float(w.start),'end':float(w.end),'text':w.word.strip()}for s in segments for w in s.words]
@@ -43,12 +49,20 @@ with tempfile.TemporaryDirectory()as tmp:
  for key,text in texts.items():
   print('Generate contextual endpoint:',key,flush=True)
   wavs,rate=model.generate_voice_clone(text=text,language='German',ref_audio=str(REF),ref_text=reference_text,non_streaming_mode=True,max_new_tokens=650,temperature=.68,top_p=.88,repetition_penalty=1.08)
-  raw=np.asarray(wavs[0]);path=Path(tmp)/(key+'.wav');sf.write(path,raw,rate);words=recognize(path);assert words
+  raw=np.asarray(wavs[0]);path=Path(tmp)/(key+'.wav');sf.write(path,raw,rate)
+  print('Contextual endpoint synthesized:',key,flush=True)
+ # Avoid retaining both large inference engines during synthesis on the CPU runner.
+ del model,wavs
+ import gc
+ gc.collect()
+ asr=WhisperModel('small',device='cpu',compute_type='int8',cpu_threads=min(4,os.cpu_count()or 2))
+ for key,text in texts.items():
+  path=Path(tmp)/(key+'.wav');raw,rate=sf.read(path);words=recognize(path);assert words
   if key=='intro':
    first=next(i for i,w in enumerate(words)if normalized(w['text']).startswith(('wallet','valet')))
    last=next(i for i in range(first+1,len(words))if 'münchen'in words[i]['text'].casefold())
   else:
-   first=next(i for i,w in enumerate(words)if normalized(w['text'])in ['buchen','bucht']);last=len(words)-1
+   first=next(i for i,w in enumerate(words)if normalized(w['text'])in ['buchen','bucht']);last=next(i for i in range(first,len(words))if 'videobeschreibung'in normalized(words[i]['text']))
   begin=max(0,words[first]['start']-.055);end=min(len(raw)/rate,words[last]['end']+.09)
   segment=raw[round(begin*rate):round(end*rate)];selected=words[first:last+1]
   data,factor=fit(segment,rate,2.19 if key=='intro'else None)

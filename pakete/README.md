@@ -4,7 +4,7 @@ Nur auf dem Preview-Branch; keine Live-Installation erfolgt. Zum Ansehen **[Webv
 
 - [YouTube-Uploadpaket](vpm-youtube-upload.zip): fertiges Full-HD-Video, Untertitel, Thumbnail, Titel und Beschreibung.
 - [Bearbeitbare Videoprojektdateien](vpm-erklaervideo-projekt.zip): Python/JSON, Audio, Fonts und Hinweise.
-- [WordPress-Entwurfspaket](vpm-affiliate-entwurfspaket.zip): VPM Anbieter 0.3.4 und Inhaltsentwürfe 0.4.3; nicht zum Ansehen erforderlich. Kein automatisches Veröffentlichen.
+- [WordPress-Entwurfspaket](vpm-affiliate-entwurfspaket.zip): VPM Anbieter 0.3.6 und Inhaltsentwürfe 0.4.5; nicht zum Ansehen erforderlich. Kein automatisches Veröffentlichen.
 
 [Umfang und Prüfungen](../docs/AFFILIATE-VIDEO-VORSCHAU.md)
 
@@ -14,15 +14,15 @@ Nur auf dem Preview-Branch; keine Live-Installation erfolgt. Zum Ansehen **[Webv
 
 ## Neue Projekte
 
-**[flughafenparken-starter.zip](flughafenparken-starter.zip)** – Theme 0.6.0 und Anbieterplugin 0.3.4 mit Anleitung. Erst entpacken, dann die zwei darin enthaltenen ZIPs einzeln in WordPress installieren. Enthält keinen Münchner Contentimport, keine aktive Affiliate-/Tracking-Konfiguration für neue Projekte und keine Zugangsdaten. Technische Profile für Frankfurt und valet-parkservice.com, noch keine fertigen Websites.
+**[flughafenparken-starter.zip](flughafenparken-starter.zip)** – Theme 0.6.0 und Anbieterplugin 0.3.6 mit Anleitung. Erst entpacken, dann die zwei darin enthaltenen ZIPs einzeln in WordPress installieren. Enthält keinen Münchner Contentimport, keine aktive Affiliate-/Tracking-Konfiguration für neue Projekte und keine Zugangsdaten. Technische Profile für Frankfurt und valet-parkservice.com, noch keine fertigen Websites.
 
 [Standardablauf](../docs/STANDARDTHEME.md) · [Standorte](../docs/STANDORTE.md) · [Projektregeln](../AGENTS.md)
 
 ## Einzelpakete / bestehende Münchner Website
 
 - [VPM Hybrid 0.6.0](vpm-hybrid.zip) – standortkonfigurierbares Theme mit allen bisherigen Funktionen.
-- [VPM Anbieter 0.3.4](vpm-providers.zip) – vorhandene Anbieterkomponente, Münchner Motive auf anderen Profilen nicht automatisch zugeordnet.
-- [VPM Inhaltsentwürfe 0.4.3 – nur München](vpm-content-drafts.zip) – vorhandene Inhalte/Import-/Veröffentlichungsfunktionen, auf anderen Standortprofilen gesperrt.
+- [VPM Anbieter 0.3.6](vpm-providers.zip) – vorhandene Anbieterkomponente, Münchner Motive auf anderen Profilen nicht automatisch zugeordnet.
+- [VPM Inhaltsentwürfe 0.4.5 – nur München](vpm-content-drafts.zip) – vorhandene Inhalte/Import-/Veröffentlichungsfunktionen, auf anderen Standortprofilen gesperrt.
 
 [Änderungen und Installation](../docs/UPDATE-0.6.0.md) · [Prüfsummen](SHA256SUMS.txt)
 

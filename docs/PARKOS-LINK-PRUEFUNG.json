@@ -1,0 +1,17 @@
+{
+  "result": "passed",
+  "source": "Vom Nutzer bereitgestellter vollständiger Anbieterauftrag",
+  "source_sha256": "d5d8ffa16cc6cc71641fb85270edc0904be6f6cda2fe8c2128dad73deaec5c72",
+  "new_provider_count": 4,
+  "exact_url_matches": 5,
+  "case_and_encoding_preserved": true,
+  "preselected_dates_preserved": true,
+  "urls": [
+    "https://parkos.de/parking/?tt=32300_12_518003_vpm-ben-parkt&r=%2Fv2%2Freservieren%2F%3Fparking%3D3233%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+    "https://parkos.de/parking/?tt=32300_12_518003_vpm-infiniti&r=%2Fv2%2Freservieren%2F%3Fparking%3D3116%26parkingType%3Dvaletindoor%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+    "https://parkos.de/parking/?tt=32300_12_518003_vpm-ParkXpress&r=%2Fv2%2Freservieren%2F%3Fparking%3D2736%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+    "https://parkos.de/parking/?tt=32300_12_518003_vpm-0049&r=%2Fv2%2Freservieren%2F%3Fparking%3D1344%26parkingType%3Dvalet%26arrival%3D2026-11-28%26arrivalTime%3D12%253A00%26departure%3D2026-12-05%26departureTime%3D12%253A00%26airport%3Dparken-flughafen-muenchen%26navFrom%3Dmer",
+    "https://parkos.de/parking/?tt=32300_12_518003_vpm-komplettvergleich&r=%2Fparken-flughafen-muenchen%2Fvalet-parken-muenchen.html"
+  ],
+  "validation": "Exact supplied target comparison; not an assertion of worldwide live availability or current booking prices."
+}

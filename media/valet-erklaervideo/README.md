@@ -28,3 +28,7 @@ Animation und Musik wurden für dieses Projekt erzeugt, ohne fremdes Film- oder 
 Neue detailreiche 2D-Bildsprache in Navy/Champagnergold/Creme mit räumlicher Kulisse, Fahrzeuganimation einschließlich Rädern, Kamerafahrten, Prüfscan/Checkliste, Flugroute und weich überblendeten Markenübergängen. Die Figuren sind als gezeichnete Ebenen eingebunden, nicht als vollständig skelettanimierte Charaktere. Die bestehende Website-Wortmarke erscheint in allen Szenen als transparentes Wasserzeichen und größer im Schlussbild. Quellen/Einzelillustrationen: `projekt/illustrationen/QUELLEN.json`. Neue Schrift Manrope lokal gebündelt (OFL), keine externen Fonts beim Abspielen.
 
 Das separate Projekt-ZIP enthält Quellen, Einzelillustrationen, Fonts und Audio. Fertiger MP4-Film, Thumbnail und gerenderte Vorschauen liegen im gesonderten Upload-/Vorschaupaket und werden im Quellprojekt nicht nochmals mitgeliefert.
+
+## Gezielte letzte Sprachkorrektur
+
+Nur Einstieg und Abschluss wurden überarbeitet, die URL zusätzlich langsamer und mit kurzen Pausen gesprochen. Kurze Hörprobe: sprecher-korrektur-hoerprobe.mp3. Der freigegebene Mittelteil von 2,35 bis 41,40 Sekunden blieb samplegenau erhalten; die Animation wurde ohne Neucodierung übernommen. Nachweise: projekt/endpunkt-korrektur.json und docs/ERKLAERVIDEO-ENDPUNKTE-MUX.json im Repository. Keine YouTube-Veröffentlichung erfolgt.

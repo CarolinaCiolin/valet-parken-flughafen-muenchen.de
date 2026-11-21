@@ -14,29 +14,31 @@
   "voice_model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "recognized_character_coverage": 0.99569,
   "approved_subtitles_unchanged": true,
+  "approved_middle_pcm_unchanged": true,
   "requested_spoken_form": "Wallet",
   "requested_form_in_recognition": true,
   "closing_cta_seconds": 11.76,
   "detected_voice_silences_over_850ms": [
     1.029,
-    1.319083
+    1.319083,
+    0.85175
   ],
   "music_present_in_actual_mp4": {
-    "stereo_side_correlation": 0.9984885176212249,
-    "gain_coefficient": 0.9937986731529236
+    "stereo_side_correlation": 0.9984870224864956,
+    "gain_coefficient": 0.994170069694519
   },
   "loudness": {
     "voice": {
-      "input_i": "-16.46",
-      "input_tp": "-1.49",
-      "input_lra": "2.30",
-      "input_thresh": "-26.87",
-      "output_i": "-16.09",
+      "input_i": "-16.91",
+      "input_tp": "-0.52",
+      "input_lra": "2.50",
+      "input_thresh": "-27.35",
+      "output_i": "-16.29",
       "output_tp": "-1.50",
-      "output_lra": "2.50",
-      "output_thresh": "-26.49",
+      "output_lra": "2.40",
+      "output_thresh": "-26.73",
       "normalization_type": "dynamic",
-      "target_offset": "0.09"
+      "target_offset": "0.29"
     },
     "music": {
       "input_i": "-25.96",
@@ -51,16 +53,16 @@
       "target_offset": "0.13"
     },
     "mix": {
-      "input_i": "-16.11",
-      "input_tp": "-2.84",
-      "input_lra": "2.70",
-      "input_thresh": "-26.80",
-      "output_i": "-16.08",
-      "output_tp": "-2.81",
+      "input_i": "-16.36",
+      "input_tp": "-2.87",
+      "input_lra": "2.50",
+      "input_thresh": "-26.90",
+      "output_i": "-16.29",
+      "output_tp": "-2.40",
       "output_lra": "2.30",
-      "output_thresh": "-26.65",
+      "output_thresh": "-26.77",
       "normalization_type": "dynamic",
-      "target_offset": "0.08"
+      "target_offset": "0.29"
     }
   },
   "limits": [

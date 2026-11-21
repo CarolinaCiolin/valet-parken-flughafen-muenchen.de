@@ -11,10 +11,10 @@
     "recognized_context": "So beginnt Ihr Urlaub schon am Flughafen, mit kurzen Wegen und ohne Parkplatz Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
     "selected_words": "Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
     "tempo_factor": 1.0,
-    "duration": 8.431583333333334
+    "duration": 9.440958333333333
   },
   "sample_rate": 24000,
-  "duration": 49.831583333333334,
+  "duration": 50.84095833333333,
   "middle_start": 2.35,
   "middle_end": 41.4,
   "middle_pcm_sha256_before": "3952a9a27183c452b65f3bc6a3f54f11f26e746c66d860e3bef3ac671ff035ae",
@@ -22,5 +22,15 @@
   "middle_preserved_byte_for_byte": true,
   "generation_seconds": 297.6,
   "baseline_file_sha256": "0908f06ccd748cb1a16d67d1f560edad0b3ea85b0c53452f42d8b6e38d3262f5",
-  "timing_note": "Context is removed; retained middle samples and their absolute times are unchanged."
+  "timing_note": "Context is removed; retained middle samples and their absolute times are unchanged.",
+  "address_clarity": {
+    "start_before": 44.555,
+    "end_before": 47.655,
+    "duration_before": 3.1,
+    "duration_after": 3.8794,
+    "tempo_factor": 0.7948717948717953,
+    "pause_before": 0.1,
+    "pause_after": 0.13,
+    "changes_confined_to_closing": true
+  }
 }

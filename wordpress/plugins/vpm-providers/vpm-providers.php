@@ -2,7 +2,7 @@
 /**
  * Plugin Name: VPM Anbieter
  * Description: Theme-unabhängige Anbieter mit getrennten Plattformlinks; nutzbar in Gutenberg und Elementor per Shortcode.
- * Version: 0.3.4
+ * Version: 0.3.6
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Text Domain: vpm-providers
@@ -28,6 +28,8 @@ function vpm_provider_fields() {
         'parkenamflughafen_url' => array( 'label' => 'parkenamflughafen.de: vollständiger Affiliate-Link', 'type' => 'string' ),
         'parkenamflughafen_label' => array( 'label' => 'parkenamflughafen.de: freigegebener CTA-Text', 'type' => 'string' ),
         'image_caption' => array( 'label' => 'Bildkennzeichnung / Quellenangabe (bei KI: KI-generierte Illustration)', 'type' => 'string' ),
+        'card_layout' => array( 'label' => 'Kartendarstellung (compact oder leer für Standard)', 'type' => 'string' ),
+        'booking_note' => array( 'label' => 'Hinweis zur Buchungsvariante (öffentlich)', 'type' => 'string' ),
         'source_date' => array( 'label' => 'Interner Prüfstand / Quelle (nicht öffentlich)', 'type' => 'string' ),
     );
 }
@@ -110,7 +112,7 @@ add_action( 'save_post_vpm_provider', function ( $post_id ) {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.4' );
+    wp_enqueue_style( 'vpm-provider-cards', plugins_url( 'assets/cards.css', __FILE__ ), array(), '0.3.6' );
 } );
 
 function vpm_provider_anchor( $id ) { return 'anbieter-' . sanitize_title( get_the_title( $id ) ); }
@@ -140,7 +142,8 @@ function vpm_render_provider_cards( $atts = array() ) {
     echo '<div class="vpm-provider-grid">';
     foreach ( $query->posts as $provider ) {
         $id = $provider->ID;
-        echo '<article class="vpm-provider-card" id="' . esc_attr( vpm_provider_anchor( $id ) ) . '">';
+        $compact = 'compact' === get_post_meta( $id, '_vpm_card_layout', true );
+        echo '<article class="vpm-provider-card' . ( $compact ? ' vpm-provider-card-compact' : '' ) . '" id="' . esc_attr( vpm_provider_anchor( $id ) ) . '">';
         $artwork = vpm_provider_artwork( $id );
         if ( $artwork ) { echo $artwork; }
         elseif ( has_post_thumbnail( $id ) ) {
@@ -153,7 +156,7 @@ function vpm_render_provider_cards( $atts = array() ) {
         echo '<div class="vpm-provider-body"><h3>' . esc_html( get_the_title( $id ) ) . '</h3>';
         $rating = get_post_meta( $id, '_vpm_rating', true );
         if ( $rating ) { echo '<p class="vpm-provider-rating">' . esc_html( $rating ) . '</p>'; }
-        if ( $provider->post_content ) {
+        if ( ! $compact && $provider->post_content ) {
             // Render Gutenberg content without changing the surrounding page's global post.
             echo '<div class="vpm-provider-description">' . wp_kses_post( do_blocks( $provider->post_content ) ) . '</div>';
         }
@@ -164,7 +167,9 @@ function vpm_render_provider_cards( $atts = array() ) {
             echo '</ul>';
         }
         $price = get_post_meta( $id, '_vpm_price', true );
-        if ( $price ) { echo '<p class="vpm-provider-price">' . esc_html( $price ) . '</p>'; }
+        if ( $price ) { echo '<p class="vpm-provider-price">' . ( $compact ? '<strong>' . esc_html( $price ) . '</strong>' : esc_html( $price ) ) . '</p>'; }
+        $booking_note = get_post_meta( $id, '_vpm_booking_note', true );
+        if ( ! $compact && $booking_note ) { echo '<p class="vpm-provider-booking-note">' . esc_html( $booking_note ) . '</p>'; }
         echo '<div class="vpm-provider-links">';
         $platforms = apply_filters( 'vpm_provider_booking_platforms', array( 'parkos' => 'Parkos', 'parkvia' => 'ParkVia', 'parkenamflughafen' => 'parkenamflughafen.de' ), $id );
         foreach ( $platforms as $key => $platform ) {
@@ -174,7 +179,8 @@ function vpm_render_provider_cards( $atts = array() ) {
                 echo '<div><span class="vpm-provider-platform">' . esc_html( vpm_text( 'Buchbar über ', 'Book with ' ) . $platform . ':' ) . '</span><a class="vpm-provider-button" href="' . esc_url( $url, array( 'https' ) ) . '" rel="sponsored nofollow">' . esc_html( $label ) . '<span class="screen-reader-text"> – ' . esc_html( get_the_title( $id ) . ' / ' . $platform ) . '</span></a></div>';
             }
         }
-        echo '</div></div></article>';
+        echo '</div>';
+        echo '</div></article>';
     }
     echo '</div>';
     return ob_get_clean();

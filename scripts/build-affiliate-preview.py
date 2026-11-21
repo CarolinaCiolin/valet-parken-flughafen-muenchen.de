@@ -3,9 +3,10 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse,urljoin
-import urllib.request,json,hashlib,re,shutil
+import urllib.request,json,hashlib,re,shutil,argparse
+parser=argparse.ArgumentParser();parser.add_argument("--pages",nargs="*");selected=parser.parse_args().pages
 ROOT=Path(__file__).resolve().parents[1];BASE='http://127.0.0.1:8088';OUT=ROOT/'vorschau/affiliate-video-2026-11';OUT.mkdir(parents=True,exist_ok=True);(OUT/'assets').mkdir(exist_ok=True)
-ids=json.loads((ROOT/'.runtime/affiliate-preview-ids.json').read_text());checks=[];copied={}
+ids=json.loads((ROOT/'.runtime/affiliate-preview-ids.json').read_text());checks=[];copied={};update=json.loads((ROOT/'wordpress/plugins/vpm-content-drafts/updates/affiliate-2026-11.json').read_text());parkos=[p for p in update['providers']if p.get('platform')=='parkos']
 def asset(url):
  url=urljoin(BASE,url)
  if not url.startswith(BASE):return url
@@ -19,15 +20,24 @@ with sync_playwright()as p:
  b=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);page=b.new_page(viewport={'width':1440,'height':1000});page.goto(BASE+'/wp-login.php');page.locator('#user_login').fill('vpm_local_admin');page.locator('#user_pass').fill((ROOT/'.runtime/admin-password').read_text().strip())
  with page.expect_navigation(wait_until='networkidle'):page.locator('#wp-submit').click()
  for slug,pid in ids['pages'].items():
+  if selected and slug not in selected:continue
   page.goto(BASE+'/?page_id='+str(pid)+'&preview=true',wait_until='networkidle');assert page.locator('main').count()
   if slug=='startseite':
-   assert page.locator('.vpm-provider-card').count()==9
+   assert page.locator('.vpm-provider-card').count()==13
    for card in page.locator('.vpm-provider-card').all():assert'für 8 Tage'in card.locator('.vpm-provider-price').inner_text()
    assert page.locator('a[href*="tc.tradetracker.net"]').count()==3
-   checks.append('Nine start cards, nine visible eight-day prices, three new exact partner links')
-  if slug=='preise':assert page.locator('tbody tr').count()==10;checks.append('Ten sorted price rows including Flughafen München')
-  if slug=='valet-parken-sicherheit':assert page.locator('a[href*="tc.tradetracker.net"]').count()==3;checks.append('Three additional safety cards and CTAs')
+   checks.append('Thirteen start cards with visible eight-day prices, retained links and four additional exact Parkos links')
+  if slug=='preise':assert page.locator('tbody tr').count()==14;checks.append('Fourteen sorted price rows including Flughafen München')
+  if slug=='valet-parken-sicherheit':assert page.locator('a[href*="tc.tradetracker.net"]').count()==3;checks.append('Seven additional safety cards and exact CTAs')
+  for provider in parkos:
+   matches=[a for a in page.locator('a[href]').all()if a.get_attribute('href')==provider['affiliate_url']]
+   assert matches,(slug,provider['name'])
+   for a in matches:assert set(a.get_attribute('rel').split())>={'sponsored','nofollow'}
+   if slug=='startseite':
+    card=next(c for c in page.locator('.vpm-provider-card').all()if c.locator('h3').text_content()==provider['name']);assert provider['rating']in card.inner_text();assert provider['features'][0]in card.inner_text()
+  if slug=='startseite':assert any(a.get_attribute('href')==update['general_parkos_url']for a in page.locator('a[href]').all())
   for link in page.locator('a[href*="tc.tradetracker.net"]').all():assert set(link.get_attribute('rel').split())>={'sponsored','nofollow'}
+  page.locator('img').evaluate_all('(xs)=>xs.forEach(x=>x.loading="eager")');page.wait_for_function('Array.from(document.images).filter(x=>!x.closest("#wpadminbar")).every(x=>x.complete&&x.naturalWidth>0)')
   for width in [1440,390]:
    page.set_viewport_size({'width':width,'height':1000});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth'),(slug,width);page.screenshot(path=str(OUT/f'{slug}-{width}.png'),full_page=True)
   page.set_viewport_size({'width':1440,'height':1000});soup=BeautifulSoup(page.content(),'html.parser')

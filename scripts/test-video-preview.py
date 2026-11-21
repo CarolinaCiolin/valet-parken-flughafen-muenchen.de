@@ -21,7 +21,7 @@ try:
    v.evaluate('(v)=>new Promise(resolve=>{let n=0;function next(){if(++n===2)resolve(true);else v.requestVideoFrameCallback(next)}v.requestVideoFrameCallback(next)})')
    g.wait_for_function('document.querySelector("video").textTracks[0].cues && document.querySelector("video").textTracks[0].cues.length>0');assert g.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
    if name=='startseite.html':
-    assert g.locator('.vpm-provider-card').count()==9
+    assert g.locator('.vpm-provider-card').count()==13
     # Capture the decoded illustration in its page placement, without transient native controls.
     g.wait_for_function('document.querySelector("video").currentTime>3.7');v.evaluate('(v)=>{v.pause();v.controls=false;v.textTracks[0].mode="disabled"}');v.scroll_into_view_if_needed();g.wait_for_timeout(250);g.screenshot(path=str(OUT/f'video-im-ablauf-{width}.png'));v.evaluate('(v)=>v.controls=true')
    checks.append({'page':name,'viewport':width,'decoded_video':state,'subtitles_loaded':True})

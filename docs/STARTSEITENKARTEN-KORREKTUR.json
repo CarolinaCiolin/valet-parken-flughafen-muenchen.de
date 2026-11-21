@@ -1,0 +1,16 @@
+{
+  "result": "passed",
+  "widths": [
+    1440,
+    390
+  ],
+  "cards": 4,
+  "exact_bullets_per_card": 3,
+  "price_bold_below_bullets_without_box": true,
+  "affiliate_links_exact_and_sponsored": true,
+  "other_nine_provider_data_unchanged": true,
+  "all_page_source_contents_unchanged": true,
+  "price_and_safety_preview_contents_unchanged": true,
+  "only_export_line_end_whitespace_normalized": true,
+  "deployed": false
+}

@@ -1,0 +1,21 @@
+{
+  "result": "passed",
+  "provider_cards": 13,
+  "price_rows": 14,
+  "checks": [
+    "startseite: Ben-Parkt Valet Park Service exact link and rel",
+    "startseite: INFINITI PARKING München exact link and rel",
+    "startseite: ParkXpress e.K. exact link and rel",
+    "startseite: 0049 – Richtig Parken exact link and rel",
+    "preise: Ben-Parkt Valet Park Service exact link and rel",
+    "preise: INFINITI PARKING München exact link and rel",
+    "preise: ParkXpress e.K. exact link and rel",
+    "preise: 0049 – Richtig Parken exact link and rel",
+    "valet-parken-sicherheit: Ben-Parkt Valet Park Service exact link and rel",
+    "valet-parken-sicherheit: INFINITI PARKING München exact link and rel",
+    "valet-parken-sicherheit: ParkXpress e.K. exact link and rel",
+    "valet-parken-sicherheit: 0049 – Richtig Parken exact link and rel"
+  ],
+  "general_cta_exact_and_sponsored_nofollow": true,
+  "new_safety_sections_use_existing_card_component": true
+}

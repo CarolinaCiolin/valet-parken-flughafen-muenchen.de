@@ -1,20 +1,20 @@
-# Affiliate-Erweiterung und 2D-Video – Reviewstand 21.11.2026
+# Anbieter- und Videovorschau – 21.11.2026
 
 Nur Branch `preview/affiliate-video-2026-11-21`, keine Bereitstellung und kein Merge nach main.
 
-Drei freigegebene neue Angebote: Airparks Parkplatz München Valet (159 €), Parkprofi Parkhaus Valet München (174 €), valet24muc Parkplatz Valet (174 €), jeweils ab für acht Tage. Bestehende sechs Preise wurden mit der öffentlich sichtbaren Preisseite abgeglichen. Der gemeinsame freigegebene TradeTracker-Link leitet zur Münchner Valet-Auswahl; HTTP-Prüfung siehe AFFILIATE-QUELLEN-PRUEFUNG.json. Erreichbarkeit und Begriffstreffer sind kein unabhängiger Nachweis jeder einzelnen Leistung. Die Angebotsangaben stammen aus dem Nutzerbriefing. Preisbeispiel und Herkunft bleiben intern im Update-Manifest dokumentiert.
+Die ursprünglichen sechs Anbieter bleiben erhalten. Ergänzt sind die drei zuvor freigegebenen Angebote von parkenamflughafen.de sowie vier weitere Parkos-Valet-Anbieter. Ergebnis: 13 Karten auf der deutschen Startseite, 14 sortierte Preiszeilen einschließlich Flughafen München und die ergänzten Sicherheitsabschnitte. Keine Adressen, Standortkarten, Fahrzeugmaße oder zusätzlichen Sicherheitsgarantien.
 
-VPM Anbieter 0.3.4 und VPM Inhaltsentwürfe 0.4.3 unterstützen die Erweiterung. Neues Werkzeug „VPM Partner-Vorschau“ erzeugt ausdrücklich getrennte deutsche Entwürfe aus vorhandenen Seiten und Anbietern. Aktuelle vorhandene Tabellenpreise haben Vorrang. Aktivierung/Update verändert und veröffentlicht keine bestehenden Seiten. Kein Booking-Kern-Update für diese Aufgabe erforderlich. Kein Import auf Frankfurt/Dachmarke.
+Die drei früheren Angebote verwenden ihren freigegebenen gemeinsamen TradeTracker-Link (siehe AFFILIATE-QUELLEN-PRUEFUNG.json). Die vier neuen Parkos-Angebote nutzen jeweils ihren separat gelieferten Link; Reisezeiten und Tracking-Schreibweisen bleiben exakt erhalten. Parkos-Details/Ratings/Varianten: PARKOS-ERGAENZUNG-2026-11.md und PARKOS-LINK-PRUEFUNG.json. Alle neuen Links sponsored/nofollow. Alle bestehenden Links und sonstige Texte bleiben erhalten. Preise sind redaktionelle Ab-Angaben, kein Live-Feed. Recherche-/Zeitraumangaben bleiben interne Metadaten.
 
-`pakete/vpm-affiliate-webvorschau.zip`: entpacken, index.html öffnen.
-`pakete/vpm-youtube-upload.zip`: fertige MP4, Thumbnail, SRT, Titel/Beschreibung.
-`pakete/vpm-erklaervideo-projekt.zip`: bearbeitbare Quellen, Audio und Nutzungsnotizen.
-`pakete/vpm-affiliate-entwurfspaket.zip`: die beiden WordPress-Plugins und diese Anleitung; nur zur späteren gesonderten Installation. Kein Upload erforderlich, um die Offline-Vorschau anzusehen.
+VPM Anbieter 0.3.6 und VPM Inhaltsentwürfe 0.4.5. Das Werkzeug „VPM Partner-Vorschau“ erzeugt ausschließlich getrennte deutsche Entwürfe aus vorhandenen Seiten und Anbietern; aktuelle vorhandene Tabellenpreise haben Vorrang. Aktivierung/Update verändert und veröffentlicht keine bestehenden Seiten. Kein Import auf Frankfurt/Dachmarke und keine automatische englische Übersetzung.
 
-Video überarbeitet: 53,52 s / Full HD, zusammenhängende deutsche männliche Qwen3-TTS-Base-Stimme anhand der freigegebenen synthetischen Referenz, Aussprache von Valet wie Wallet auf Nutzerwunsch, hörbare Musik (ca. −26 LUFS), detaillierte 2D-Illustrationen und Logo-Wasserzeichen. Sechs animierte 2D-Szenen; freigegebener Sprechertext und Untertitel unverändert. Kein YouTube-Zugriff verfügbar: vollständiges Uploadpaket statt vorgetäuschter Veröffentlichung. Auf WordPress kein leerer Video-Player; die tatsächliche URL wird nach Upload benötigt.
+- `pakete/vpm-affiliate-webvorschau.zip`: entpackte Offline-Seiten und Video.
+- `pakete/vpm-youtube-upload.zip`: MP4, Thumbnail, SRT, Titel/Beschreibung.
+- `pakete/vpm-erklaervideo-projekt.zip`: bearbeitbare Quellen, Illustrationen, Audio und Lizenzen.
+- `pakete/vpm-affiliate-entwurfspaket.zip`: die beiden WordPress-Plugins und Anleitung; nicht zum Ansehen erforderlich.
 
-Prüfungen: 26 Backend-Checks der Entwurfsfunktion, bestehende Standort-/Profiltests einschließlich Inhaltserhalt, Desktop/Mobil-Vorschau und Offline-Video. Grenzen: lokale WordPress-Prüfung und öffentliche Quellprüfung; keine Hostinger-Installation.
+Video: bestehende detaillierte 2D-Animation und Logo-Wasserzeichen bleiben erhalten. Aktuelle Korrektur betrifft nur Einstieg und gesprochene Webadresse; Mittelstück der freigegebenen Sprachaufnahme bleibt samplegenau unverändert. Beleg: projekt/endpunkt-korrektur.json nach Fertigstellung. Aussprache von Valet wie vom Nutzer gewünscht Wallet; Schreibweise und öffentlicher Sprechertext unverändert. Kein YouTube-Zugriff: vollständiges Uploadpaket, keine vorgetäuschte Veröffentlichung und kein leerer WordPress-Player.
 
-Audiorevision: scripts/build-video-speech-natural.py, align-video-narration.py und test-video-media.py. Neue Szenen-/Untertitelzeiten anhand der Sprachtranskription; keine nachträglichen Schnitte mitten im Sprechertext. Keine Änderungen an WordPress-Code oder bestehenden Affiliate-Angaben durch diese Audiorevision.
+Prüfungen: 133 Backend-Checks der Entwurfsfunktion, alle fünf neuen Parkos-Linkziele exakt gegen den bereitgestellten Auftrag, echte Desktop-/Mobilansichten, bestehende Standort-/Tracking-/Importtests und Schema-/Sprach-/Icon-Prüfung. Medien und finale Wiedergabe werden zusätzlich geprüft. Grenzen: lokale WordPress-Integration, keine Hostinger-Installation; browserseitiges file:// im Cloud-Browser administrativ blockiert, HTTP-Vorschau geprüft.
 
-Weitere Illustrations-/Aussprache-Revision: docs/ERKLAERVIDEO-MOTIONREVISION.md. Neue detaillierte 2D-Assets, Motion-Modul und Logo-Wasserzeichen in allen Szenen. Beibehaltung der synthetischen Sprecheridentität durch eigene Referenz; Valet auf Nutzerwunsch wie Wallet. Keine zusätzliche Website-Veröffentlichung.
+Letzte Revision: Nur die vier neuen Parkos-Startseitenkarten wurden nach dem abschließenden Nutzerbriefing kompakt korrigiert. Preis direkt fett nach genau drei Vorteilen, keine Preisbox oder Variantenhinweise. Die vorbereiteten Preis-/Sicherheitsseiten und neun anderen Karten bleiben bei dieser Korrektur unverändert. Nachweis: STARTSEITENKARTEN-KORREKTUR.json. Beim Video wurden nur Einstieg und Abschluss angepasst; Sprachmittelteil und Animationsdaten sind unverändert (ERKLAERVIDEO-ENDPUNKTE-MUX.json).
