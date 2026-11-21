@@ -1,0 +1,113 @@
+{
+  "checked_utc": "2026-11-21T14:42:09.536359+00:00",
+  "scope": "public read-only URL verification; no bookings or site changes",
+  "results": [
+    {
+      "url": "https://valet-parken-flughafen-muenchen.de/preise/",
+      "status": 200,
+      "final_url": "https://valet-parken-flughafen-muenchen.de/preise/",
+      "visible_price_rows": [
+        [
+          "Park Drive Fly",
+          "89,99 €",
+          "Außenstellplatz"
+        ],
+        [
+          "Parkservice Flieger",
+          "105 €",
+          "Außenstellplatz oder Garage"
+        ],
+        [
+          "Valet Service Clean",
+          "145 €",
+          "Außenstellplatz"
+        ],
+        [
+          "Parkking Munich",
+          "147,99 €",
+          "Außenstellplatz"
+        ],
+        [
+          "ParkandGo MUC",
+          "160,99 €",
+          "Außenstellplatz"
+        ],
+        [
+          "Parkservice-Unertl",
+          "190 €",
+          "Außenstellplatz"
+        ],
+        [
+          "Flughafen München",
+          "335 € im Standardtarif",
+          "Terminalparkhaus"
+        ]
+      ]
+    },
+    {
+      "url": "https://parkenamflughafen.de/parken-flughafen-muenchen/valet-parken",
+      "status": 200,
+      "final_url": "https://parkenamflughafen.de/parken-flughafen-muenchen/valet-parken",
+      "found_terms": [
+        "airparks",
+        "parkprofi",
+        "valet24muc",
+        "eingezäunt",
+        "beleuchtet",
+        "videoüberwachung",
+        "schlüssel"
+      ]
+    },
+    {
+      "url": "https://www.airparks.de/muenchen-flughafen-parken/airparks-parkplatz-schwaig-valet-parken.html",
+      "status": 200,
+      "final_url": "https://www.airparks.de/muenchen-flughafen-parken/airparks-parkplatz-schwaig-valet-parken.html",
+      "found_terms": [
+        "airparks",
+        "eingezäunt",
+        "beleuchtet",
+        "kilometerstand",
+        "vorschäden"
+      ]
+    },
+    {
+      "url": "https://www.parken-und-fliegen.de/flughafen-parken/muenchen/parkprofi-parkhaus-valet-muenchen.html",
+      "status": 200,
+      "final_url": "https://www.parken-und-fliegen.de/flughafen-parken/muenchen/parkprofi-parkhaus-valet-muenchen.html",
+      "found_terms": [
+        "parkprofi",
+        "eingezäunt",
+        "beleuchtet",
+        "kontrollgänge",
+        "schlüssel"
+      ]
+    },
+    {
+      "url": "https://www.parken-und-fliegen.de/flughafen-parken/muenchen/valet24muc-parkplatz-valet.html",
+      "status": 200,
+      "final_url": "https://www.parken-und-fliegen.de/flughafen-parken/muenchen/valet24muc-parkplatz-valet.html",
+      "found_terms": [
+        "valet24muc",
+        "eingezäunt",
+        "beleuchtet",
+        "videoüberwachung",
+        "kontrollgänge",
+        "schlüssel"
+      ]
+    },
+    {
+      "url": "https://tc.tradetracker.net/?c=27010&m=12&a=518003&r=vpm-parkenamflughafen-valet-allgemein&u=https%3A%2F%2Fparkenamflughafen.de%2Fparken-flughafen-muenchen%2Fvalet-parken",
+      "status": 200,
+      "final_url": "https://parkenamflughafen.de/parken-flughafen-muenchen/valet-parken?utm_source=tradetracker&utm_medium=affiliate&utm_campaign=parkenamflughafen.de&utm_content=Valet-Parken%20Flughafen%20M%C3%BCnchen&agent=OP573",
+      "found_terms": [
+        "airparks",
+        "parkprofi",
+        "valet24muc",
+        "eingezäunt",
+        "beleuchtet",
+        "videoüberwachung",
+        "schlüssel"
+      ]
+    }
+  ]
+}
