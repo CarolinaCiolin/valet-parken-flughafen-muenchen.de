@@ -8,7 +8,7 @@ permissions:
 jobs:
   endpoints:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,11 +22,12 @@ jobs:
           HF_HUB_DISABLE_PROGRESS_BARS: '1'
           TOKENIZERS_PARALLELISM: 'false'
           OMP_NUM_THREADS: '4'
-      - name: Nur Audiokorrektur speichern – kein Deployment
+      - name: Audiokorrektur und Diagnose sichern – kein Deployment
+        if: always()
         run: |
           git config user.name 'VPM Video Preview'
           git config user.email 'video-preview@users.noreply.github.com'
-          git add media/valet-erklaervideo/sprecher-maennlich.wav media/valet-erklaervideo/projekt/sprechpruefung.json media/valet-erklaervideo/projekt/endpunkt-korrektur.json media/valet-erklaervideo/projekt/sprecher-einstieg-korrigiert.wav media/valet-erklaervideo/projekt/sprecher-abschluss-korrigiert.wav
+          git add media/valet-erklaervideo/projekt/sprech-takes media/valet-erklaervideo/sprecher-maennlich.wav media/valet-erklaervideo/projekt/sprechpruefung.json media/valet-erklaervideo/projekt/endpunkt-korrektur.json media/valet-erklaervideo/projekt/sprecher-einstieg-korrigiert.wav media/valet-erklaervideo/projekt/sprecher-abschluss-korrigiert.wav
           git diff --cached --quiet && exit 0
           git commit -m 'Refine narration endpoints while preserving the approved middle waveform'
           git push origin HEAD:preview/affiliate-video-2026-11-21
