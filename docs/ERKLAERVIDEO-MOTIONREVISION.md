@@ -15,3 +15,5 @@ Neue lokal eingebettete Schrift Manrope, OFL-Lizenz im Projekt. Bildherkunft/Has
 Laufzeit weiter rund 53,5 Sekunden; angeglichene ruhige Sprechgeschwindigkeit, keine leere verlängerte Schlussstrecke. Hintergrundmusik bleibt bei ungefähr −26 LUFS, Mischung und Untertitel werden mitgeprüft. MP4, MP3-Hörprobe, SRT/VTT, Thumbnail, Offlinevorschau und Downloadpakete aktualisiert.
 
 Prüfungen: `scripts/test-video-motion.py`, `scripts/test-video-media.py`, zugehörige JSON-Berichte in docs und Browser-Wiedergabe. Nur Vorschauzweig; keine Hostinger- oder YouTube-Veröffentlichung und keine WordPress-Codeänderung.
+
+Aktueller Stand nach erneutem Nutzerfeedback: Das kleine obere Wasserzeichen wurde entfernt; nur das große deckende Schlusslogo bleibt. Details und Aussprachekorrektur: ERKLAERVIDEO-AUSSPRACHE-REVISION.md.

@@ -5,37 +5,38 @@
   "scenes": [
     {
       "scene": 1,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 460279
     },
     {
       "scene": 2,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 389951
     },
     {
       "scene": 3,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 385311
     },
     {
       "scene": 4,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 649210
     },
     {
       "scene": 5,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 511506
     },
     {
       "scene": 6,
-      "watermark_pixels": 3724,
+      "watermark_pixels": 0,
       "independent_moving_pixels": 414783
     }
   ],
   "illustrations": 5,
-  "watermark_source": "Existing VALET PARKEN / MÜNCHEN site wordmark; light and dark variants",
+  "top_watermark_removed": true,
+  "branding": "Large opaque existing VALET PARKEN / MÜNCHEN logo in closing scene only",
   "motion": [
     "Independent illustrated vehicle translation and wheel rotation",
     "Camera push and parallax",

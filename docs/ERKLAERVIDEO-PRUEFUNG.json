@@ -13,6 +13,23 @@
   },
   "voice_model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "recognized_character_coverage": 0.99569,
+  "letter_audio_verified_in_actual_mp4": [
+    {
+      "letter": "D",
+      "actual_mp4_voice_correlation": 0.9995333729493144
+    },
+    {
+      "letter": "E",
+      "actual_mp4_voice_correlation": 0.9995758641371352
+    }
+  ],
+  "accepted_address_and_closing_preserved": true,
+  "domain_suffix_separate_letters": [
+    "D",
+    "E"
+  ],
+  "gap_between_domain_letters_seconds": 0.2,
+  "parkservice_without_hyphen": true,
   "approved_subtitles_unchanged": true,
   "approved_middle_pcm_unchanged": true,
   "requested_spoken_form": "Wallet",
@@ -24,21 +41,21 @@
     0.85175
   ],
   "music_present_in_actual_mp4": {
-    "stereo_side_correlation": 0.9984870224864956,
-    "gain_coefficient": 0.994170069694519
+    "stereo_side_correlation": 0.9984371020161696,
+    "gain_coefficient": 0.9939836859703064
   },
   "loudness": {
     "voice": {
-      "input_i": "-16.91",
-      "input_tp": "-0.52",
-      "input_lra": "2.50",
-      "input_thresh": "-27.35",
-      "output_i": "-16.29",
+      "input_i": "-16.96",
+      "input_tp": "-0.47",
+      "input_lra": "2.70",
+      "input_thresh": "-27.39",
+      "output_i": "-16.37",
       "output_tp": "-1.50",
-      "output_lra": "2.40",
-      "output_thresh": "-26.73",
+      "output_lra": "2.80",
+      "output_thresh": "-26.79",
       "normalization_type": "dynamic",
-      "target_offset": "0.29"
+      "target_offset": "0.37"
     },
     "music": {
       "input_i": "-25.96",
@@ -53,16 +70,16 @@
       "target_offset": "0.13"
     },
     "mix": {
-      "input_i": "-16.36",
-      "input_tp": "-2.87",
-      "input_lra": "2.50",
-      "input_thresh": "-26.90",
-      "output_i": "-16.29",
-      "output_tp": "-2.40",
-      "output_lra": "2.30",
-      "output_thresh": "-26.77",
+      "input_i": "-16.37",
+      "input_tp": "-3.04",
+      "input_lra": "2.70",
+      "input_thresh": "-26.85",
+      "output_i": "-16.33",
+      "output_tp": "-2.19",
+      "output_lra": "2.50",
+      "output_thresh": "-26.76",
       "normalization_type": "dynamic",
-      "target_offset": "0.29"
+      "target_offset": "0.33"
     }
   },
   "limits": [

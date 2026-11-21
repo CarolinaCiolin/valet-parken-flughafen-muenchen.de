@@ -1,0 +1,624 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+  "sample_rate": 24000,
+  "duration": 50.84095833333333,
+  "generation_seconds": 505.2,
+  "speech_only_aliases": {
+    "valet-parken-flughafen-muenchen.de": "Wallet, parken, Flughafen, München, Punkt deh",
+    "Shuttletransfer": "Schattel-Transfer",
+    "Parkservice": "Park-Sörwiss",
+    "Valet-Service": "Wallet-Sörwiss",
+    "Valet-Parken": "Wallet-Parken",
+    "valet-parken": "wallet-parken",
+    "Check-in": "Tschek-in"
+  },
+  "instruction": "Match the approved synthetic narrator reference; Valet is deliberately pronounced like English Wallet at the user’s request.",
+  "reference_text": "Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice.",
+  "reference_origin": "Own synthetic narrator approved by the user; no real-person recording",
+  "tempo_factor": 0.8661764705882353,
+  "recognized_words": [
+    {
+      "start": 0.1413,
+      "end": 0.5871,
+      "text": "Wallet"
+    },
+    {
+      "start": 0.5871,
+      "end": 0.9883,
+      "text": "-Parken"
+    },
+    {
+      "start": 0.9883,
+      "end": 1.1221,
+      "text": "am"
+    },
+    {
+      "start": 1.1221,
+      "end": 1.6793,
+      "text": "Flughafen"
+    },
+    {
+      "start": 1.6793,
+      "end": 2.1697,
+      "text": "München."
+    },
+    {
+      "start": 2.5,
+      "end": 2.62,
+      "text": "sie"
+    },
+    {
+      "start": 2.62,
+      "end": 2.84,
+      "text": "fahren"
+    },
+    {
+      "start": 2.84,
+      "end": 3.08,
+      "text": "direkt"
+    },
+    {
+      "start": 3.08,
+      "end": 3.32,
+      "text": "zum"
+    },
+    {
+      "start": 3.32,
+      "end": 3.84,
+      "text": "Terminal"
+    },
+    {
+      "start": 3.84,
+      "end": 4.02,
+      "text": "und"
+    },
+    {
+      "start": 4.02,
+      "end": 4.48,
+      "text": "übergeben"
+    },
+    {
+      "start": 4.48,
+      "end": 4.66,
+      "text": "ihr"
+    },
+    {
+      "start": 4.66,
+      "end": 5.0,
+      "text": "Auto"
+    },
+    {
+      "start": 5.0,
+      "end": 5.26,
+      "text": "am"
+    },
+    {
+      "start": 5.26,
+      "end": 5.84,
+      "text": "vereinbarten"
+    },
+    {
+      "start": 5.84,
+      "end": 6.44,
+      "text": "Treffpunkt"
+    },
+    {
+      "start": 6.44,
+      "end": 6.72,
+      "text": "an"
+    },
+    {
+      "start": 6.72,
+      "end": 6.86,
+      "text": "den"
+    },
+    {
+      "start": 6.86,
+      "end": 7.36,
+      "text": "gebuchten"
+    },
+    {
+      "start": 7.36,
+      "end": 7.62,
+      "text": "Park"
+    },
+    {
+      "start": 7.62,
+      "end": 8.0,
+      "text": "-Service."
+    },
+    {
+      "start": 8.84,
+      "end": 9.24,
+      "text": "Kein"
+    },
+    {
+      "start": 9.24,
+      "end": 9.7,
+      "text": "Parkplatz"
+    },
+    {
+      "start": 9.7,
+      "end": 9.98,
+      "text": "suchen,"
+    },
+    {
+      "start": 10.36,
+      "end": 10.5,
+      "text": "kein"
+    },
+    {
+      "start": 10.5,
+      "end": 11.32,
+      "text": "Shuttletransfer,"
+    },
+    {
+      "start": 11.92,
+      "end": 12.12,
+      "text": "sie"
+    },
+    {
+      "start": 12.12,
+      "end": 12.32,
+      "text": "gehen"
+    },
+    {
+      "start": 12.32,
+      "end": 12.46,
+      "text": "mit"
+    },
+    {
+      "start": 12.46,
+      "end": 12.66,
+      "text": "ihrem"
+    },
+    {
+      "start": 12.66,
+      "end": 13.04,
+      "text": "Gepäck"
+    },
+    {
+      "start": 13.04,
+      "end": 13.26,
+      "text": "direkt"
+    },
+    {
+      "start": 13.26,
+      "end": 13.52,
+      "text": "zum"
+    },
+    {
+      "start": 13.52,
+      "end": 13.76,
+      "text": "Check"
+    },
+    {
+      "start": 13.76,
+      "end": 13.98,
+      "text": "-in."
+    },
+    {
+      "start": 14.66,
+      "end": 15.18,
+      "text": "Bei"
+    },
+    {
+      "start": 15.18,
+      "end": 15.28,
+      "text": "der"
+    },
+    {
+      "start": 15.28,
+      "end": 15.82,
+      "text": "Übergabe"
+    },
+    {
+      "start": 15.82,
+      "end": 16.04,
+      "text": "wird"
+    },
+    {
+      "start": 16.04,
+      "end": 16.18,
+      "text": "der"
+    },
+    {
+      "start": 16.18,
+      "end": 17.04,
+      "text": "Fahrzeugzustand"
+    },
+    {
+      "start": 17.04,
+      "end": 17.74,
+      "text": "dokumentiert."
+    },
+    {
+      "start": 18.46,
+      "end": 19.02,
+      "text": "Anschließend"
+    },
+    {
+      "start": 19.02,
+      "end": 19.22,
+      "text": "bringt"
+    },
+    {
+      "start": 19.22,
+      "end": 19.46,
+      "text": "ein"
+    },
+    {
+      "start": 19.46,
+      "end": 19.82,
+      "text": "Fahrer"
+    },
+    {
+      "start": 19.82,
+      "end": 19.94,
+      "text": "ihr"
+    },
+    {
+      "start": 19.94,
+      "end": 20.24,
+      "text": "Auto"
+    },
+    {
+      "start": 20.24,
+      "end": 20.5,
+      "text": "zum"
+    },
+    {
+      "start": 20.5,
+      "end": 21.02,
+      "text": "gebuchten"
+    },
+    {
+      "start": 21.02,
+      "end": 21.5,
+      "text": "Stellplatz."
+    },
+    {
+      "start": 22.22,
+      "end": 22.36,
+      "text": "Je"
+    },
+    {
+      "start": 22.36,
+      "end": 22.54,
+      "text": "nach"
+    },
+    {
+      "start": 22.54,
+      "end": 23.0,
+      "text": "Angebot"
+    },
+    {
+      "start": 23.0,
+      "end": 23.18,
+      "text": "steht"
+    },
+    {
+      "start": 23.18,
+      "end": 23.34,
+      "text": "es"
+    },
+    {
+      "start": 23.34,
+      "end": 23.46,
+      "text": "auf"
+    },
+    {
+      "start": 23.46,
+      "end": 23.64,
+      "text": "einem"
+    },
+    {
+      "start": 23.64,
+      "end": 24.56,
+      "text": "Außenstellplatz"
+    },
+    {
+      "start": 24.56,
+      "end": 24.84,
+      "text": "oder"
+    },
+    {
+      "start": 24.84,
+      "end": 25.38,
+      "text": "überdacht"
+    },
+    {
+      "start": 25.38,
+      "end": 25.54,
+      "text": "in"
+    },
+    {
+      "start": 25.54,
+      "end": 25.74,
+      "text": "einer"
+    },
+    {
+      "start": 25.74,
+      "end": 26.18,
+      "text": "Garage,"
+    },
+    {
+      "start": 26.72,
+      "end": 26.96,
+      "text": "einer"
+    },
+    {
+      "start": 26.96,
+      "end": 27.44,
+      "text": "Halle"
+    },
+    {
+      "start": 27.44,
+      "end": 27.64,
+      "text": "oder"
+    },
+    {
+      "start": 27.64,
+      "end": 27.88,
+      "text": "einem"
+    },
+    {
+      "start": 27.88,
+      "end": 28.38,
+      "text": "Parkhaus."
+    },
+    {
+      "start": 29.18,
+      "end": 29.52,
+      "text": "Nach"
+    },
+    {
+      "start": 29.52,
+      "end": 29.78,
+      "text": "ihrer"
+    },
+    {
+      "start": 29.78,
+      "end": 30.26,
+      "text": "Rückkehr"
+    },
+    {
+      "start": 30.26,
+      "end": 30.68,
+      "text": "erhalten"
+    },
+    {
+      "start": 30.68,
+      "end": 30.88,
+      "text": "sie"
+    },
+    {
+      "start": 30.88,
+      "end": 31.04,
+      "text": "ihr"
+    },
+    {
+      "start": 31.04,
+      "end": 31.6,
+      "text": "Fahrzeug"
+    },
+    {
+      "start": 31.6,
+      "end": 31.74,
+      "text": "am"
+    },
+    {
+      "start": 31.74,
+      "end": 32.28,
+      "text": "vereinbarten"
+    },
+    {
+      "start": 32.28,
+      "end": 32.96,
+      "text": "Rückgabeort"
+    },
+    {
+      "start": 32.96,
+      "end": 33.24,
+      "text": "zurück"
+    },
+    {
+      "start": 33.24,
+      "end": 33.86,
+      "text": "und"
+    },
+    {
+      "start": 33.86,
+      "end": 34.1,
+      "text": "können"
+    },
+    {
+      "start": 34.1,
+      "end": 34.42,
+      "text": "direkt"
+    },
+    {
+      "start": 34.42,
+      "end": 34.64,
+      "text": "nach"
+    },
+    {
+      "start": 34.64,
+      "end": 34.92,
+      "text": "Hause"
+    },
+    {
+      "start": 34.92,
+      "end": 35.22,
+      "text": "fahren."
+    },
+    {
+      "start": 36.2,
+      "end": 36.78,
+      "text": "So"
+    },
+    {
+      "start": 36.78,
+      "end": 37.12,
+      "text": "beginnt"
+    },
+    {
+      "start": 37.12,
+      "end": 37.22,
+      "text": "ihr"
+    },
+    {
+      "start": 37.22,
+      "end": 37.58,
+      "text": "Urlaub"
+    },
+    {
+      "start": 37.58,
+      "end": 37.76,
+      "text": "schon"
+    },
+    {
+      "start": 37.76,
+      "end": 37.92,
+      "text": "am"
+    },
+    {
+      "start": 37.92,
+      "end": 38.54,
+      "text": "Flughafen"
+    },
+    {
+      "start": 38.54,
+      "end": 38.9,
+      "text": "mit"
+    },
+    {
+      "start": 38.9,
+      "end": 39.3,
+      "text": "kurzen"
+    },
+    {
+      "start": 39.3,
+      "end": 39.68,
+      "text": "Wegen"
+    },
+    {
+      "start": 39.68,
+      "end": 39.88,
+      "text": "und"
+    },
+    {
+      "start": 39.88,
+      "end": 40.1,
+      "text": "ohne"
+    },
+    {
+      "start": 40.1,
+      "end": 40.56,
+      "text": "Parkplatz"
+    },
+    {
+      "start": 40.56,
+      "end": 40.94,
+      "text": "-Stress."
+    },
+    {
+      "start": 41.795,
+      "end": 42.115,
+      "text": "Buchen"
+    },
+    {
+      "start": 42.115,
+      "end": 42.275,
+      "text": "Sie"
+    },
+    {
+      "start": 42.275,
+      "end": 42.495,
+      "text": "Ihren"
+    },
+    {
+      "start": 42.495,
+      "end": 42.775,
+      "text": "Wallet"
+    },
+    {
+      "start": 42.775,
+      "end": 43.075,
+      "text": "-Service"
+    },
+    {
+      "start": 43.075,
+      "end": 43.295,
+      "text": "am"
+    },
+    {
+      "start": 43.295,
+      "end": 43.855,
+      "text": "Flughafen"
+    },
+    {
+      "start": 43.855,
+      "end": 44.215,
+      "text": "München"
+    },
+    {
+      "start": 44.215,
+      "end": 44.455,
+      "text": "auf"
+    },
+    {
+      "start": 44.455,
+      "end": 45.2085,
+      "text": "www"
+    },
+    {
+      "start": 45.2085,
+      "end": 47.5485,
+      "text": ".walletparkenflughafenmünchen"
+    },
+    {
+      "start": 47.5485,
+      "end": 48.4292,
+      "text": ".de"
+    },
+    {
+      "start": 48.4292,
+      "end": 49.1044,
+      "text": "Den"
+    },
+    {
+      "start": 49.1044,
+      "end": 49.3444,
+      "text": "Link"
+    },
+    {
+      "start": 49.3444,
+      "end": 49.5844,
+      "text": "finden"
+    },
+    {
+      "start": 49.5844,
+      "end": 49.7844,
+      "text": "Sie"
+    },
+    {
+      "start": 49.7844,
+      "end": 49.9244,
+      "text": "in"
+    },
+    {
+      "start": 49.9244,
+      "end": 50.0244,
+      "text": "der"
+    },
+    {
+      "start": 50.0244,
+      "end": 50.8244,
+      "text": "Videobeschreibung."
+    }
+  ],
+  "recognized_text": "Wallet -Parken am Flughafen München. sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Park -Service. Kein Parkplatz suchen, kein Shuttletransfer, sie gehen mit ihrem Gepäck direkt zum Check -in. Bei der Übergabe wird der Fahrzeugzustand dokumentiert. Anschließend bringt ein Fahrer ihr Auto zum gebuchten Stellplatz. Je nach Angebot steht es auf einem Außenstellplatz oder überdacht in einer Garage, einer Halle oder einem Parkhaus. Nach ihrer Rückkehr erhalten sie ihr Fahrzeug am vereinbarten Rückgabeort zurück und können direkt nach Hause fahren. So beginnt ihr Urlaub schon am Flughafen mit kurzen Wegen und ohne Parkplatz -Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
+  "endpoint_revision": true,
+  "address_pacing_adjusted": true
+}

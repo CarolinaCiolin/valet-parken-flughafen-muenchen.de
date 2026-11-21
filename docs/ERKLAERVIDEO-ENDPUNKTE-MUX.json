@@ -4,6 +4,8 @@
   "video_stream_copied": true,
   "scene_composition_unchanged": true,
   "middle_voice_samples_unchanged": true,
-  "video_payload_sha256_before": "SHA256=91ce8fd211a2d400c2497d9566adbb164ec56743ca6d9f7df8d1f78a5fbd9e73",
-  "video_payload_sha256_after": "SHA256=91ce8fd211a2d400c2497d9566adbb164ec56743ca6d9f7df8d1f78a5fbd9e73"
+  "small_top_watermark_removed": true,
+  "animation_reference": "Fresh render of approved motion with only the rejected small top wordmark removed; large closing logo retained",
+  "video_payload_sha256_before": "SHA256=532c96efae52e717737a3b2a4304de769236bbacaada2a598354ddd13f09d895",
+  "video_payload_sha256_after": "SHA256=532c96efae52e717737a3b2a4304de769236bbacaada2a598354ddd13f09d895"
 }

@@ -1,0 +1,38 @@
+{
+  "result": "passed",
+  "previous_commit": "46f38a00b8c34fd6692edd25500702b69305903c",
+  "comparison": "Actual decoded video frames; differences outside the small removed wordmark stay within compression noise",
+  "samples": [
+    {
+      "second": 1,
+      "mean_pixel_difference_outside_removed_logo": 0.964,
+      "mean_pixel_difference_in_removed_logo_area": 4.4612
+    },
+    {
+      "second": 8,
+      "mean_pixel_difference_outside_removed_logo": 1.3037,
+      "mean_pixel_difference_in_removed_logo_area": 4.784
+    },
+    {
+      "second": 16,
+      "mean_pixel_difference_outside_removed_logo": 0.4641,
+      "mean_pixel_difference_in_removed_logo_area": 4.6456
+    },
+    {
+      "second": 24,
+      "mean_pixel_difference_outside_removed_logo": 0.8766,
+      "mean_pixel_difference_in_removed_logo_area": 4.7049
+    },
+    {
+      "second": 34,
+      "mean_pixel_difference_outside_removed_logo": 1.122,
+      "mean_pixel_difference_in_removed_logo_area": 4.6327
+    },
+    {
+      "second": 46,
+      "mean_pixel_difference_outside_removed_logo": 0.3952,
+      "mean_pixel_difference_in_removed_logo_area": 3.4219
+    }
+  ],
+  "large_closing_logo_retained": true
+}

@@ -1,36 +1,45 @@
 {
   "intro": {
-    "context_text": "Ganz entspannt geht es los. Wallet-Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Park-Sörwiss.",
-    "recognized_context": "Ganz entspannt geht es los. Wallet -Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Park -Service.",
-    "selected_words": "Wallet -Parken am Flughafen München.",
-    "tempo_factor": 0.8972602739726028,
-    "duration": 2.35
+    "context_text": "Ganz entspannt geht es los. Wallet-Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice.",
+    "recognized_context": "Ganz entspannt geht es los. Wallet -Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice.",
+    "duration": 8.84,
+    "tempo_factor": 0.8791946308724833,
+    "parkservice_without_hyphen": true
   },
   "closing": {
-    "context_text": "So beginnt Ihr Urlaub schon am Flughafen, mit kurzen Wegen und ohne Parkplatzstress. Buchen Sie Ihren Wallet-Sörwiss am Flughafen München auf: Wallet, parken, Flughafen, München, Punkt deh. Den Link finden Sie in der Videobeschreibung.",
-    "recognized_context": "So beginnt Ihr Urlaub schon am Flughafen, mit kurzen Wegen und ohne Parkplatz Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
-    "selected_words": "Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
-    "tempo_factor": 1.0,
-    "duration": 9.440958333333333
+    "duration": 10.080583333333333,
+    "letter_source_context": "Die Buchstaben einzeln gesprochen: D wie Dora. E wie Emil. Danke.",
+    "letter_source_recognition": "Die Buchstaben einzeln gesprochen. D wie Dora. E wie Emil. Danke.",
+    "separate_letters": [
+      {
+        "letter": "D",
+        "source_word": "D",
+        "duration": 0.2665
+      },
+      {
+        "letter": "E",
+        "source_word": "E",
+        "duration": 0.408125
+      }
+    ],
+    "gap_between_letters_seconds": 0.2,
+    "replaced_old_single_letter": {
+      "start": 47.745,
+      "end": 48.11
+    },
+    "accepted_address_prefix_sha256": "3be79658bb9372ef6b4ac1789ea8a5af8eeba427fced6fb9ed3e4d53488787c6",
+    "accepted_tail_sha256": "304a3e10635eb93bf1425a569302a39ef33162bfd28e81fc1dd17f87183697f5",
+    "only_alphabet_clips_used_from_new_closing": true
   },
   "sample_rate": 24000,
-  "duration": 50.84095833333333,
-  "middle_start": 2.35,
+  "duration": 51.480583333333335,
+  "middle_start": 8.84,
   "middle_end": 41.4,
-  "middle_pcm_sha256_before": "3952a9a27183c452b65f3bc6a3f54f11f26e746c66d860e3bef3ac671ff035ae",
-  "middle_pcm_sha256_after": "3952a9a27183c452b65f3bc6a3f54f11f26e746c66d860e3bef3ac671ff035ae",
+  "middle_pcm_sha256_before": "e6eac46570dafbda5d539c0d63a5ed62f1292d6144316a59578b2e682b1dacf9",
+  "middle_pcm_sha256_after": "e6eac46570dafbda5d539c0d63a5ed62f1292d6144316a59578b2e682b1dacf9",
   "middle_preserved_byte_for_byte": true,
-  "generation_seconds": 297.6,
+  "accepted_closing_preserved": true,
+  "assembly_seconds": 0.3,
   "baseline_file_sha256": "0908f06ccd748cb1a16d67d1f560edad0b3ea85b0c53452f42d8b6e38d3262f5",
-  "timing_note": "Context is removed; retained middle samples and their absolute times are unchanged.",
-  "address_clarity": {
-    "start_before": 44.555,
-    "end_before": 47.655,
-    "duration_before": 3.1,
-    "duration_after": 3.8794,
-    "tempo_factor": 0.7948717948717953,
-    "pause_before": 0.1,
-    "pause_after": 0.13,
-    "changes_confined_to_closing": true
-  }
+  "timing_note": "Accepted title, URL and closing retained; first complete Parkservice sentence repaired; only final letter sound replaced with separate D E."
 }

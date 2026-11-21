@@ -67,7 +67,8 @@ class Motion:
   self.line([(x,y+47*scale),(x+44*scale,y+47*scale)],gold,1*scale);self.line([(x+width-44*scale,y+47*scale),(x+width,y+47*scale)],gold,1*scale)
   old.alpha_composite(layer);self.set(old)
  def watermark(self,t,scene):
-  self.wordmark(1008,34,205,scene in [0,1,4,5],.32 if scene==5 else .67 if scene in [0,1,4] else .46)
+  # The user rejected the small translucent top wordmark. Keep only the large closing logo.
+  return
  def header(self,scene,u):
   entering=ease(u/.65);dy=18*(1-entering);titles=['Valet-Parken am\nFlughafen München','Direkt am Terminal\nabgeben','Fahrzeugzustand\ndokumentieren','Außen oder überdacht','Zurückkommen\nund losfahren']
   self.tx(70,52,'MÜNCHEN  /  MUC',14,GOLD,True);self.line([(70,86),(119,86)],GOLD,3)

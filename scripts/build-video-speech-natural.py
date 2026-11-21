@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'media/valet-erklaervideo';P=O
 MODEL='Qwen/Qwen3-TTS-12Hz-1.7B-Base'
 # Speech-only spelling hints. Public script and subtitles remain unchanged.
 approved=(OUT/'sprechertext.txt').read_text().strip()
-aliases={'valet-parken-flughafen-muenchen.de':'Wallet parken flughafen München punkt de','Shuttletransfer':'Schattel-Transfer','Parkservice':'Park-Sörwiss','Valet-Service':'Wallet-Sörwiss','Valet-Parken':'Wallet-Parken','valet-parken':'wallet-parken','Check-in':'Tschek-in'}
+aliases={'valet-parken-flughafen-muenchen.de':'Wallet parken Flughafen München Punkt D, E','Shuttletransfer':'Schattel-Transfer','Parkservice':'Parkservice','Valet-Service':'Wallet-Sörwiss','Valet-Parken':'Wallet-Parken','valet-parken':'wallet-parken','Check-in':'Tschek-in'}
 spoken=approved
 for original,pronounced in aliases.items():spoken=spoken.replace(original,pronounced)
 # Reuse only our own previously generated, user-approved synthetic narrator.

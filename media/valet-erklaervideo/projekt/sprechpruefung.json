@@ -1,12 +1,12 @@
 {
   "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "sample_rate": 24000,
-  "duration": 50.84095833333333,
+  "duration": 51.480583333333335,
   "generation_seconds": 505.2,
   "speech_only_aliases": {
-    "valet-parken-flughafen-muenchen.de": "Wallet, parken, Flughafen, München, Punkt deh",
+    "valet-parken-flughafen-muenchen.de": "Wallet, parken, Flughafen, München, Punkt D E (zwei einzeln gesprochene Buchstaben)",
     "Shuttletransfer": "Schattel-Transfer",
-    "Parkservice": "Park-Sörwiss",
+    "Parkservice": "Parkservice",
     "Valet-Service": "Wallet-Sörwiss",
     "Valet-Parken": "Wallet-Parken",
     "valet-parken": "wallet-parken",
@@ -43,89 +43,84 @@
       "text": "München."
     },
     {
-      "start": 2.5,
-      "end": 2.62,
-      "text": "sie"
+      "start": 2.4755,
+      "end": 2.6802,
+      "text": "Sie"
     },
     {
-      "start": 2.62,
-      "end": 2.84,
+      "start": 2.6802,
+      "end": 2.976,
       "text": "fahren"
     },
     {
-      "start": 2.84,
-      "end": 3.08,
+      "start": 2.976,
+      "end": 3.3399,
       "text": "direkt"
     },
     {
-      "start": 3.08,
-      "end": 3.32,
+      "start": 3.3399,
+      "end": 3.5902,
       "text": "zum"
     },
     {
-      "start": 3.32,
-      "end": 3.84,
+      "start": 3.5902,
+      "end": 4.1589,
       "text": "Terminal"
     },
     {
-      "start": 3.84,
-      "end": 4.02,
+      "start": 4.1589,
+      "end": 4.3863,
       "text": "und"
     },
     {
-      "start": 4.02,
-      "end": 4.48,
+      "start": 4.3863,
+      "end": 4.864,
       "text": "übergeben"
     },
     {
-      "start": 4.48,
-      "end": 4.66,
+      "start": 4.864,
+      "end": 5.0915,
       "text": "ihr"
     },
     {
-      "start": 4.66,
-      "end": 5.0,
+      "start": 5.0915,
+      "end": 5.3873,
       "text": "Auto"
     },
     {
-      "start": 5.0,
-      "end": 5.26,
+      "start": 5.3873,
+      "end": 5.6375,
       "text": "am"
     },
     {
-      "start": 5.26,
-      "end": 5.84,
+      "start": 5.6375,
+      "end": 6.2062,
       "text": "vereinbarten"
     },
     {
-      "start": 5.84,
-      "end": 6.44,
+      "start": 6.2062,
+      "end": 6.7749,
       "text": "Treffpunkt"
     },
     {
-      "start": 6.44,
-      "end": 6.72,
+      "start": 6.7749,
+      "end": 7.0251,
       "text": "an"
     },
     {
-      "start": 6.72,
-      "end": 6.86,
+      "start": 7.0251,
+      "end": 7.1389,
       "text": "den"
     },
     {
-      "start": 6.86,
-      "end": 7.36,
+      "start": 7.1389,
+      "end": 7.6848,
       "text": "gebuchten"
     },
     {
-      "start": 7.36,
-      "end": 7.62,
-      "text": "Park"
-    },
-    {
-      "start": 7.62,
-      "end": 8.0,
-      "text": "-Service."
+      "start": 7.6848,
+      "end": 8.2763,
+      "text": "Parkservice."
     },
     {
       "start": 8.84,
@@ -578,47 +573,52 @@
       "text": ".walletparkenflughafenmünchen"
     },
     {
-      "start": 47.5485,
-      "end": 48.4292,
-      "text": ".de"
+      "start": 47.795,
+      "end": 48.0615,
+      "text": "D"
     },
     {
-      "start": 48.4292,
-      "end": 49.1044,
+      "start": 48.2615,
+      "end": 48.6696,
+      "text": "E"
+    },
+    {
+      "start": 49.0688,
+      "end": 49.744,
       "text": "Den"
     },
     {
-      "start": 49.1044,
-      "end": 49.3444,
+      "start": 49.744,
+      "end": 49.984,
       "text": "Link"
     },
     {
-      "start": 49.3444,
-      "end": 49.5844,
+      "start": 49.984,
+      "end": 50.224,
       "text": "finden"
     },
     {
-      "start": 49.5844,
-      "end": 49.7844,
+      "start": 50.224,
+      "end": 50.424,
       "text": "Sie"
     },
     {
-      "start": 49.7844,
-      "end": 49.9244,
+      "start": 50.424,
+      "end": 50.564,
       "text": "in"
     },
     {
-      "start": 49.9244,
-      "end": 50.0244,
+      "start": 50.564,
+      "end": 50.664,
       "text": "der"
     },
     {
-      "start": 50.0244,
-      "end": 50.8244,
+      "start": 50.664,
+      "end": 51.464,
       "text": "Videobeschreibung."
     }
   ],
-  "recognized_text": "Wallet -Parken am Flughafen München. sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Park -Service. Kein Parkplatz suchen, kein Shuttletransfer, sie gehen mit ihrem Gepäck direkt zum Check -in. Bei der Übergabe wird der Fahrzeugzustand dokumentiert. Anschließend bringt ein Fahrer ihr Auto zum gebuchten Stellplatz. Je nach Angebot steht es auf einem Außenstellplatz oder überdacht in einer Garage, einer Halle oder einem Parkhaus. Nach ihrer Rückkehr erhalten sie ihr Fahrzeug am vereinbarten Rückgabeort zurück und können direkt nach Hause fahren. So beginnt ihr Urlaub schon am Flughafen mit kurzen Wegen und ohne Parkplatz -Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen .de Den Link finden Sie in der Videobeschreibung.",
+  "recognized_text": "Wallet -Parken am Flughafen München. Sie fahren direkt zum Terminal und übergeben ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice. Kein Parkplatz suchen, kein Shuttletransfer, sie gehen mit ihrem Gepäck direkt zum Check -in. Bei der Übergabe wird der Fahrzeugzustand dokumentiert. Anschließend bringt ein Fahrer ihr Auto zum gebuchten Stellplatz. Je nach Angebot steht es auf einem Außenstellplatz oder überdacht in einer Garage, einer Halle oder einem Parkhaus. Nach ihrer Rückkehr erhalten sie ihr Fahrzeug am vereinbarten Rückgabeort zurück und können direkt nach Hause fahren. So beginnt ihr Urlaub schon am Flughafen mit kurzen Wegen und ohne Parkplatz -Stress. Buchen Sie Ihren Wallet -Service am Flughafen München auf www .walletparkenflughafenmünchen D E Den Link finden Sie in der Videobeschreibung.",
   "endpoint_revision": true,
   "address_pacing_adjusted": true
 }

@@ -1,6 +1,6 @@
 {
   "sample_rate": 24000,
-  "duration": 50.84095833333333,
+  "duration": 51.480583333333335,
   "voice": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "source": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base",
   "alignment_method": "Whisper word timing plus approved-text character alignment",
@@ -9,7 +9,7 @@
     {
       "index": 0,
       "start": 0.2156,
-      "end": 8.0,
+      "end": 8.2763,
       "text": "Valet-Parken am Flughafen München: Sie fahren direkt zum Terminal und übergeben Ihr Auto am vereinbarten Treffpunkt an den gebuchten Parkservice."
     },
     {
@@ -51,13 +51,13 @@
     {
       "index": 7,
       "start": 41.795,
-      "end": 48.4292,
+      "end": 48.6696,
       "text": "Buchen Sie Ihren Valet-Service am Flughafen München auf valet-parken-flughafen-muenchen.de."
     },
     {
       "index": 8,
-      "start": 48.4292,
-      "end": 50.8244,
+      "start": 49.0688,
+      "end": 51.464,
       "text": "Den Link finden Sie in der Videobeschreibung."
     }
   ]

@@ -1,6 +1,6 @@
 # Valet-Parken München – 2D-Erklärvideo
 
-Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (53,52 Sekunden, 1920 × 1080, H.264/AAC, 25 Bilder/Sekunde). Deutsche männliche synthetische Sprecherstimme, als zusammenhängende Aufnahme mit Qwen3-TTS Base an die bereits freigegebene synthetische Referenzstimme angeglichen. Der freigegebene Sprechertext bleibt unverändert. Originale Hintergrundmusik, in der überarbeiteten Fassung auf etwa −26 LUFS angehoben (Sprache etwa −16 LUFS). Das Ende wurde um fünf Sekunden gekürzt.
+Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (53,52 Sekunden, 1920 × 1080, H.264/AAC, 25 Bilder/Sekunde). Deutsche männliche synthetische Sprecherstimme, mit Qwen3-TTS Base an die bereits freigegebene synthetische Referenzstimme angeglichen. Der freigegebene Sprechertext bleibt unverändert. Originale Hintergrundmusik, in der überarbeiteten Fassung auf etwa −26 LUFS angehoben (Sprache etwa −16 LUFS). Das Ende wurde um fünf Sekunden gekürzt.
 
 `sprecher-anhoeren.mp3` enthält die neue Sprecherfassung ohne Hintergrundmusik zum direkten Vergleich.
 
@@ -17,7 +17,7 @@ Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (53,52 Sekunden, 1920
 
     python3 projekt/render.py
 
-Sprecher-Audio und Untertitel liegen daneben. Sprach-Neuerzeugung: im Repository `scripts/build-video-speech-natural.py` (Qwen3-TTS, CPU-Torch und faster-whisper; Modelldownload erforderlich), anschließend `scripts/align-video-narration.py`. Der alte Piper-Generator bleibt nur als historische manuelle Variante erhalten. Nur Bilder exportieren: `python3 projekt/render.py --stills`.
+Sprecher-Audio und Untertitel liegen daneben. Gezielte Aussprachekorrekturen: im Repository `scripts/patch-video-speech-ends.py`; vollständige Sprach-Neuerzeugung nur bei Bedarf mit `scripts/build-video-speech-natural.py` (Qwen3-TTS, CPU-Torch und faster-whisper; Modelldownload erforderlich), anschließend `scripts/align-video-narration.py`. Der alte Piper-Generator bleibt nur als historische manuelle Variante erhalten. Nur Bilder exportieren: `python3 projekt/render.py --stills`.
 
 ## Herkunft und Nutzung
 
@@ -25,10 +25,12 @@ Animation und Musik wurden für dieses Projekt erzeugt, ohne fremdes Film- oder 
 
 ## Illustrations- und Motionrevision
 
-Neue detailreiche 2D-Bildsprache in Navy/Champagnergold/Creme mit räumlicher Kulisse, Fahrzeuganimation einschließlich Rädern, Kamerafahrten, Prüfscan/Checkliste, Flugroute und weich überblendeten Markenübergängen. Die Figuren sind als gezeichnete Ebenen eingebunden, nicht als vollständig skelettanimierte Charaktere. Die bestehende Website-Wortmarke erscheint in allen Szenen als transparentes Wasserzeichen und größer im Schlussbild. Quellen/Einzelillustrationen: `projekt/illustrationen/QUELLEN.json`. Neue Schrift Manrope lokal gebündelt (OFL), keine externen Fonts beim Abspielen.
+Neue detailreiche 2D-Bildsprache in Navy/Champagnergold/Creme mit räumlicher Kulisse, Fahrzeuganimation einschließlich Rädern, Kamerafahrten, Prüfscan/Checkliste, Flugroute und weich überblendeten Markenübergängen. Die Figuren sind als gezeichnete Ebenen eingebunden, nicht als vollständig skelettanimierte Charaktere. Das kleine transparente Wasserzeichen oben wurde auf Nutzerfeedback entfernt. Die bestehende Website-Wortmarke bleibt ausschließlich groß und deckend im Schlussbild. Quellen/Einzelillustrationen: `projekt/illustrationen/QUELLEN.json`. Neue Schrift Manrope lokal gebündelt (OFL), keine externen Fonts beim Abspielen.
 
 Das separate Projekt-ZIP enthält Quellen, Einzelillustrationen, Fonts und Audio. Fertiger MP4-Film, Thumbnail und gerenderte Vorschauen liegen im gesonderten Upload-/Vorschaupaket und werden im Quellprojekt nicht nochmals mitgeliefert.
 
 ## Gezielte letzte Sprachkorrektur
 
-Nur Einstieg und Abschluss wurden überarbeitet, die URL zusätzlich langsamer und mit kurzen Pausen gesprochen. Kurze Hörprobe: sprecher-korrektur-hoerprobe.mp3. Der freigegebene Mittelteil von 2,35 bis 41,40 Sekunden blieb samplegenau erhalten; die Animation wurde ohne Neucodierung übernommen. Nachweise: projekt/endpunkt-korrektur.json und docs/ERKLAERVIDEO-ENDPUNKTE-MUX.json im Repository. Keine YouTube-Veröffentlichung erfolgt.
+Nur Einstieg und Abschluss wurden überarbeitet, die URL zusätzlich langsamer und mit kurzen Pausen gesprochen. Kurze Hörprobe: sprecher-korrektur-hoerprobe.mp3. Nach dem erneuten Aussprachefeedback wurde der erste vollständige Satz mit zusammenhängendem „Parkservice“ erneuert. Der weitere Mittelteil von 8,84 bis 41,40 Sekunden bleibt samplegenau erhalten. Die Endung wird mit zwei einzeln erzeugten Buchstabennamen „D“ und „E“ gesprochen. Die Animation wird lediglich ohne das kleine obere Wasserzeichen neu gerendert. Nachweise: projekt/endpunkt-korrektur.json und docs/ERKLAERVIDEO-ENDPUNKTE-MUX.json im Repository. Keine YouTube-Veröffentlichung erfolgt.
+
+Für den fertigen Schluss wird die bisherige Aufnahme der Adresse beibehalten und ausschließlich die letzte Endung durch die einzeln erzeugten Buchstaben ersetzt (direkt in `scripts/patch-video-speech-ends.py`). Die zugehörige historische Quellaufnahme heißt `projekt/sprecher-vor-aussprachekorrektur.wav`; sie ist nicht die aktuelle Sprecherfassung. Gesicherte neue Rohaufnahmen können ohne erneute Stimmerzeugung mit `scripts/patch-video-speech-ends.py --assemble-only` verarbeitet werden.

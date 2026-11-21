@@ -12,7 +12,7 @@ if D['duration']<=old+.05:cmd+=['-c:v','copy']
 else:cmd+=['-vf',f"tpad=stop_mode=clone:stop_duration={D['duration']-old+.1}",'-c:v','libx264','-crf','18','-preset','fast','-threads','2']
 cmd+=['-c:a','aac','-b:a','192k','-ar','48000','-t',str(D['duration']),'-movflags','+faststart',str(M/'valet-parken-muenchen-erklaervideo.mp4')]
 subprocess.run(cmd,check=True)
-report={'approved_animation_source_duration':old,'new_duration':D['duration'],'video_stream_copied':D['duration']<=old+.05,'scene_composition_unchanged':True,'middle_voice_samples_unchanged':True}
+report={'approved_animation_source_duration':old,'new_duration':D['duration'],'video_stream_copied':D['duration']<=old+.05,'scene_composition_unchanged':True,'middle_voice_samples_unchanged':True,'small_top_watermark_removed':True,'animation_reference':'Fresh render of approved motion with only the rejected small top wordmark removed; large closing logo retained'}
 def video_hash(path):
  return subprocess.check_output(['ffmpeg','-v','error','-i',str(path),'-map','0:v','-c','copy','-f','hash','-hash','sha256','-'],text=True).strip()
 if report['video_stream_copied']:
