@@ -1,7 +1,7 @@
 """Editable 2D motion graphics. Pillow + NumPy + FFmpeg; no stock footage, music or tracking."""
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont,ImageFilter
-import numpy as np,json,math,subprocess,wave,textwrap,sys
+import numpy as np,json,math,subprocess,wave,textwrap,sys,re
 P=Path(__file__).resolve().parent;OUT=P.parent;D=json.loads((P/'design.json').read_text());A=json.loads((P/'sprachzeiten.json').read_text());W,H=D['width'],D['height'];S=W/1280;NAVY=D['navy'];GOLD=D['gold'];CREAM=D['cream'];WHITE=D['white'];BLUE='#c7dbe2';MUTED='#6a6e73';FONTS={};im=None;dr=None
 
 def font(size,bold=False):
@@ -120,7 +120,7 @@ def music():
  for n,start in enumerate(np.arange(0,length,3.2)):
   rel=t-start;mask=(rel>=0)&(rel<6.4);x=rel[mask];env=(1-np.exp(-x*3))*np.exp(-x*.75)
   for f in chords[n%4]:s[mask]+=.038*env*(np.sin(2*np.pi*f*x)+.23*np.sin(2*np.pi*2*f*x)+.08*np.sin(2*np.pi*3*f*x))
- s*=np.minimum(1,t/2)*np.minimum(1,(length-t)/3);s=np.clip(s,-.3,.3)
+ s*=np.minimum(1,t/.8)*np.minimum(1,(length-t)/D.get('ending_fade_seconds',1.3));s=np.clip(s,-.3,.3)
  stereo=np.stack([s,np.roll(s,round(sr*.017))],axis=1)
  with wave.open(str(OUT/'hintergrundmusik-original.wav'),'wb')as w:w.setnchannels(2);w.setsampwidth(2);w.setframerate(sr);w.writeframes((stereo*32767).astype('<i2').tobytes())
 def subtitles():
@@ -138,17 +138,17 @@ def subtitles():
    text=' '.join(g);end=at+(a['end']-a['start'])*len(text)/count
    lines=textwrap.wrap(text,40,break_long_words=False,break_on_hyphens=False);cues.append((at,end,'\n'.join(lines)));at=end
  out='\n\n'.join(f'{i+1}\n{stamp(a)} --> {stamp(b)}\n{s}'for i,(a,b,s)in enumerate(cues))+'\n'
- (OUT/'untertitel-de.srt').write_text(out);assert ' '.join(' '.join(s.split())for a,b,s in cues)==' '.join((OUT/'sprechertext.txt').read_text().split())
+ (OUT/'untertitel-de.srt').write_text(out);(OUT/'untertitel-de.vtt').write_text('WEBVTT\n\n'+re.sub(r'(\d{2}:\d{2}:\d{2}),(\d{3})',r'\1.\2',out));assert ' '.join(' '.join(s.split())for a,b,s in cues)==' '.join((OUT/'sprechertext.txt').read_text().split())
 def main():
  music();subtitles()
- for i,t in enumerate([2.9,7.1,16.4,25.0,33.0,49.5]):frame(t).save(OUT/f'szene-{i+1}.png')
+ for i,t in enumerate([D['chapters'][i]+min(2.9,((D['chapters']+[D['duration']])[i+1]-D['chapters'][i])*.45)for i in range(6)]):frame(t).save(OUT/f'szene-{i+1}.png')
  cols=[]
  for i in range(6):cols.append(Image.open(OUT/f'szene-{i+1}.png').resize((640,360)))
  sheet=Image.new('RGB',(1280,1080),WHITE)
  for i,v in enumerate(cols):sheet.paste(v,((i%2)*640,(i//2)*360))
  sheet.save(OUT/'storyboard.png')
  if '--stills'in sys.argv:return
- log=(P/'render.log').open('w');cmd=['ffmpeg','-y','-loglevel','warning','-f','rawvideo','-vcodec','rawvideo','-pixel_format','rgb24','-video_size',f'{W}x{H}','-framerate',str(D['fps']),'-i','-','-i',str(OUT/'sprecher-maennlich.wav'),'-i',str(OUT/'hintergrundmusik-original.wav'),'-filter_complex','[1:a]loudnorm=I=-16:TP=-1.5:LRA=8[v];[2:a]volume=0.22[m];[v][m]amix=inputs=2:duration=longest:normalize=0,alimiter=limit=0.94[a]','-map','0:v','-map','[a]','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-threads','2','-c:a','aac','-b:a','192k','-ar','48000','-t',str(D['duration']),'-movflags','+faststart',str(OUT/'valet-parken-muenchen-erklaervideo.mp4')]
+ log=(P/'render.log').open('w');cmd=['ffmpeg','-y','-loglevel','warning','-f','rawvideo','-vcodec','rawvideo','-pixel_format','rgb24','-video_size',f'{W}x{H}','-framerate',str(D['fps']),'-i','-','-i',str(OUT/'sprecher-maennlich.wav'),'-i',str(OUT/'hintergrundmusik-original.wav'),'-filter_complex',f"[1:a]loudnorm=I={D.get('voice_lufs',-16)}:TP=-1.5:LRA=8,aformat=channel_layouts=stereo[v];[2:a]loudnorm=I={D.get('music_lufs',-26)}:TP=-3:LRA=5,afade=t=out:st={D['duration']-D.get('ending_fade_seconds',1.3)}:d={D.get('ending_fade_seconds',1.3)}[m];[v][m]amix=inputs=2:duration=longest:normalize=0,alimiter=limit=0.89:level=false:latency=true[a]",'-map','0:v','-map','[a]','-c:v','libx264','-preset','fast','-crf','19','-pix_fmt','yuv420p','-threads','2','-c:a','aac','-b:a','192k','-ar','48000','-t',str(D['duration']),'-movflags','+faststart',str(OUT/'valet-parken-muenchen-erklaervideo.mp4')]
  process=subprocess.Popen(cmd,stdin=subprocess.PIPE,stderr=log)
  for n in range(math.ceil(D['duration']*D['fps'])):process.stdin.write(frame(n/D['fps']).tobytes())
  process.stdin.close();code=process.wait();log.close();assert code==0,(P/'render.log').read_text();print('MP4 rendered:',D['duration'],'seconds,',W,'x',H)

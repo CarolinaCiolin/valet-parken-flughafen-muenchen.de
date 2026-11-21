@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: ['preview/affiliate-video-2026-11-21']
-    paths: ['scripts/build-video-speech-natural.py', '.github/workflows/valet-video-natural-speech.yml']
+    paths: ['scripts/build-video-speech-natural.py', 'media/valet-erklaervideo/sprechertext.txt', 'media/valet-erklaervideo/projekt/sprechsegmente.json']
 permissions:
   contents: write
 jobs:

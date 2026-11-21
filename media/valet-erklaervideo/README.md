@@ -1,6 +1,8 @@
 # Valet-Parken München – 2D-Erklärvideo
 
-Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (58,52 Sekunden, 1920 × 1080, H.264/AAC, 25 Bilder/Sekunde). Deutsche männliche synthetische Sprecherstimme, Modell de_DE-thorsten-high. Der freigegebene Sprechertext bleibt unverändert. Ruhige originale Hintergrundmusik.
+Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (53,52 Sekunden, 1920 × 1080, H.264/AAC, 25 Bilder/Sekunde). Deutsche männliche synthetische Sprecherstimme, neu als zusammenhängende Aufnahme mit Qwen3-TTS VoiceDesign erzeugt. Der freigegebene Sprechertext bleibt unverändert. Originale Hintergrundmusik, in der überarbeiteten Fassung auf etwa −26 LUFS angehoben (Sprache etwa −16 LUFS). Das Ende wurde um fünf Sekunden gekürzt.
+
+`sprecher-anhoeren.mp3` enthält die neue Sprecherfassung ohne Hintergrundmusik zum direkten Vergleich.
 
 ## YouTube-Upload
 
@@ -15,8 +17,8 @@ Fertiger Entwurf: `valet-parken-muenchen-erklaervideo.mp4` (58,52 Sekunden, 1920
 
     python3 projekt/render.py
 
-Sprecher-Audio und Untertitel liegen daneben. Sprach-Neuerzeugung: im Repository `scripts/build-video-speech.py` (Piper; Modelldownload erforderlich). Nur Bilder exportieren: `python3 projekt/render.py --stills`.
+Sprecher-Audio und Untertitel liegen daneben. Sprach-Neuerzeugung: im Repository `scripts/build-video-speech-natural.py` (Qwen3-TTS, CPU-Torch und faster-whisper; Modelldownload erforderlich), anschließend `scripts/align-video-narration.py`. Der alte Piper-Generator bleibt nur als historische manuelle Variante erhalten. Nur Bilder exportieren: `python3 projekt/render.py --stills`.
 
 ## Herkunft und Nutzung
 
-Animation und Musik wurden für dieses Projekt erzeugt, ohne fremdes Film- oder Musikmaterial. Die Terminalzeichnung ist schematisch und zeigt keinen bestätigten Übergabepunkt. Thumbnail KI-generiert als abstrakte 2D-Illustration. Thorsten-Sprachmodell: siehe `projekt/STIMMENMODELL-LIZENZ.txt` (CC0-Datensatz); Schriftlizenzen: `projekt/fonts/LIZENZ.txt`. Keine erfundenen Anbieterbewertungen oder Sicherheitsgarantien im Video. Eine menschenähnliche synthetische Stimme ist kein echter eingesprochener Sprecher.
+Animation und Musik wurden für dieses Projekt erzeugt, ohne fremdes Film- oder Musikmaterial. Die Terminalzeichnung ist schematisch und zeigt keinen bestätigten Übergabepunkt. Thumbnail KI-generiert als abstrakte 2D-Illustration. Qwen-Sprachmodell: siehe `projekt/STIMMENMODELL-LIZENZ.txt` (Apache-2.0); Schriftlizenzen: `projekt/fonts/LIZENZ.txt`. Keine erfundenen Anbieterbewertungen oder Sicherheitsgarantien im Video. Die synthetische Stimme wurde ohne Klonen einer realen Person erzeugt. Die Aussprachehilfen in den Sprachquellen ändern weder den freigegebenen Sprechertext noch die Untertitel. Automatische Transkription prüft Inhalt und Zeitpunkte; die subjektive Natürlichkeit bleibt durch Anhören zu beurteilen.

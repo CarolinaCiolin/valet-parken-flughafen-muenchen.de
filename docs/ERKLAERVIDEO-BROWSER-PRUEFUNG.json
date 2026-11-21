@@ -1,0 +1,26 @@
+{
+  "result": "passed",
+  "checks": [
+    {
+      "page": "index.html",
+      "viewport": 1440,
+      "playback": {
+        "duration": 53.52,
+        "width": 1920,
+        "height": 1080
+      },
+      "subtitles_loaded": true
+    },
+    {
+      "page": "startseite.html",
+      "viewport": 390,
+      "playback": {
+        "duration": 53.52,
+        "width": 1920,
+        "height": 1080
+      },
+      "subtitles_loaded": true
+    }
+  ],
+  "failed_requests": []
+}

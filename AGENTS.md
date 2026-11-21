@@ -89,3 +89,5 @@ Vorbereitetes Paket pakete/vpm-testdomain-installation.zip und docs/TESTDOMAIN-I
 ## Münchner Affiliate-/Video-Vorschau November 2026
 
 Reviewbranch `preview/affiliate-video-2026-11-21`, nicht automatisch veröffentlichen/mergen. Nutzer wünscht 2D und angenehme natürliche männliche Stimme. Fertiges Video/Quellen in media/valet-erklaervideo; reale YouTube-URL fehlt. Neue drei Angebote und exakter gemeinsamer Trackinglink in vpm-content-drafts/updates/affiliate-2026-11.json. VPM Partner-Vorschau erstellt nur separate Entwürfe, keine bestehenden Seiten überschreiben. Siehe docs/AFFILIATE-VIDEO-VORSCHAU.md.
+
+Audiorevision auf Nutzerfeedback: Piper-Stimme als zu roboterhaft abgelehnt; neue zusammenhängende Qwen3-TTS-VoiceDesign-Stimme, Aussprachehilfen nur im Audioinput, sichtbarer Text unverändert. Musik auf etwa −26 LUFS, Laufzeit 53,52 s (fünf Sekunden kürzer). scripts/build-video-speech-natural.py / align-video-narration.py / test-video-media.py; alte Piper-Automatik deaktiviert. Subjektive Sprachqualität nicht aus einer automatischen Transkription ableiten.

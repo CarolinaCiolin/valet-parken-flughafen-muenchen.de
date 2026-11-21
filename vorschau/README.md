@@ -1,5 +1,7 @@
 # Vorschau: neue Anbieter und 2D-Erklärvideo
 
+**Audiorevision:** zusammenhängende neue Männerstimme, überarbeitete Aussprache, hörbarere Musik und fünf Sekunden kürzerer Schluss. [Stimme einzeln anhören](../media/valet-erklaervideo/sprecher-anhoeren.mp3?raw=true).
+
 [Webvorschau als ZIP herunterladen](../pakete/vpm-affiliate-webvorschau.zip?raw=true) – vollständig entpacken und **index.html** öffnen. Keine WordPress-Installation nötig.
 
 [Video als MP4](../media/valet-erklaervideo/valet-parken-muenchen-erklaervideo.mp4?raw=true) · [YouTube-Uploadpaket](../pakete/vpm-youtube-upload.zip?raw=true) · [Bearbeitbare Projektdateien](../pakete/vpm-erklaervideo-projekt.zip?raw=true)

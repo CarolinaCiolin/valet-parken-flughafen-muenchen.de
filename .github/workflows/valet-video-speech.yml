@@ -1,9 +1,6 @@
-name: Valet-Video – männliche Sprecherstimme (nur Vorschau)
+name: Valet-Video – alte Piper-Sprecherfassung (nur manuell)
 on:
   workflow_dispatch:
-  push:
-    branches: ['preview/affiliate-video-2026-11-21']
-    paths: ['scripts/build-video-speech.py', 'media/valet-erklaervideo/sprechertext.txt', 'media/valet-erklaervideo/projekt/sprechsegmente.json', '.github/workflows/valet-video-speech.yml']
 permissions:
   contents: write
 jobs:
