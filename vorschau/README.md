@@ -1,6 +1,6 @@
 # Vorschau: neue Anbieter und 2D-Erklärvideo
 
-**Audiorevision:** zusammenhängende neue Männerstimme, überarbeitete Aussprache, hörbarere Musik und fünf Sekunden kürzerer Schluss. [Stimme einzeln anhören](../media/valet-erklaervideo/sprecher-anhoeren.mp3?raw=true).
+**Neue Bild- und Tonfassung:** detailreichere 2D-Illustrationen, neue Fahrzeug-/Kamera-/Prüfanimationen, vorhandene Wortmarke als Wasserzeichen, Aussprache wie gewünscht „Wallet“, ruhige Männerstimme und hörbare Musik. [Stimme einzeln anhören](../media/valet-erklaervideo/sprecher-anhoeren.mp3?raw=true).
 
 [Webvorschau als ZIP herunterladen](../pakete/vpm-affiliate-webvorschau.zip?raw=true) – vollständig entpacken und **index.html** öffnen. Keine WordPress-Installation nötig.
 

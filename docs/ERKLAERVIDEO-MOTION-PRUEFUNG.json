@@ -1,0 +1,51 @@
+{
+  "result": "passed",
+  "width": 1920,
+  "height": 1080,
+  "scenes": [
+    {
+      "scene": 1,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 460279
+    },
+    {
+      "scene": 2,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 389951
+    },
+    {
+      "scene": 3,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 385311
+    },
+    {
+      "scene": 4,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 649210
+    },
+    {
+      "scene": 5,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 511506
+    },
+    {
+      "scene": 6,
+      "watermark_pixels": 3724,
+      "independent_moving_pixels": 414783
+    }
+  ],
+  "illustrations": 5,
+  "watermark_source": "Existing VALET PARKEN / MÜNCHEN site wordmark; light and dark variants",
+  "motion": [
+    "Independent illustrated vehicle translation and wheel rotation",
+    "Camera push and parallax",
+    "Animated inspection scan, focus markers and documentation checks",
+    "Subtle localized hand/key and tablet-tap gestures with fixed heads/feet",
+    "Drawn flight route and plane",
+    "Brand-colour feathered scene wipes"
+  ],
+  "limitations": [
+    "Layered 2D motion graphics, not a 3D film or fully rigged character animation.",
+    "Scene artwork is schematic and does not identify confirmed provider facilities."
+  ]
+}

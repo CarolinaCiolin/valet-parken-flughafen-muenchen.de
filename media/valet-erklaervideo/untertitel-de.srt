@@ -1,76 +1,76 @@
 1
-00:00:00,400 --> 00:00:04,357
+00:00:00,077 --> 00:00:03,900
 Valet-Parken am Flughafen München: Sie
 fahren direkt zum Terminal und
 
 2
-00:00:04,357 --> 00:00:07,912
+00:00:03,900 --> 00:00:07,335
 übergeben Ihr Auto am vereinbarten
 Treffpunkt an den gebuchten
 
 3
-00:00:07,912 --> 00:00:08,600
+00:00:07,335 --> 00:00:08,000
 Parkservice.
 
 4
-00:00:09,060 --> 00:00:13,070
+00:00:08,840 --> 00:00:12,850
 Kein Parkplatzsuchen, kein
 Shuttletransfer – Sie gehen mit Ihrem
 Gepäck
 
 5
-00:00:13,070 --> 00:00:14,200
+00:00:12,850 --> 00:00:13,980
 direkt zum Check-in.
 
 6
-00:00:14,720 --> 00:00:17,180
+00:00:14,660 --> 00:00:17,740
 Bei der Übergabe wird der
 Fahrzeugzustand dokumentiert.
 
 7
-00:00:17,720 --> 00:00:20,980
+00:00:18,460 --> 00:00:21,500
 Anschließend bringt ein Fahrer Ihr Auto
 zum gebuchten Stellplatz.
 
 8
-00:00:21,640 --> 00:00:25,410
+00:00:22,220 --> 00:00:25,894
 Je nach Angebot steht es auf einem
 Außenstellplatz oder überdacht in
 
 9
-00:00:25,410 --> 00:00:27,960
+00:00:25,894 --> 00:00:28,380
 einer Garage, einer Halle oder einem
 Parkhaus.
 
 10
-00:00:28,700 --> 00:00:32,627
+00:00:29,180 --> 00:00:32,981
 Nach Ihrer Rückkehr erhalten Sie Ihr
 Fahrzeug am vereinbarten Rückgabeort
 
 11
-00:00:32,627 --> 00:00:34,940
+00:00:32,981 --> 00:00:35,220
 zurück und können direkt nach Hause
 fahren.
 
 12
-00:00:35,680 --> 00:00:39,193
+00:00:36,200 --> 00:00:40,037
 So beginnt Ihr Urlaub schon am Flughafen
 – mit kurzen Wegen und ohne
 
 13
-00:00:39,193 --> 00:00:40,020
+00:00:40,037 --> 00:00:40,940
 Parkplatzstress.
 
 14
-00:00:40,960 --> 00:00:44,590
+00:00:41,740 --> 00:00:45,003
 Buchen Sie Ihren Valet-Service am
 Flughafen München auf
 
 15
-00:00:44,590 --> 00:00:46,900
+00:00:45,003 --> 00:00:47,080
 valet-parken-flughafen-muenchen.de.
 
 16
-00:00:47,220 --> 00:00:49,400
+00:00:47,520 --> 00:00:49,460
 Den Link finden Sie in der
 Videobeschreibung.

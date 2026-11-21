@@ -11,29 +11,32 @@
     "codec": "aac",
     "sample_rate": "48000"
   },
-  "voice_model": "Qwen/Qwen3-TTS-12Hz-1.7B-VoiceDesign",
-  "recognized_character_coverage": 1.0,
+  "voice_model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+  "recognized_character_coverage": 0.99569,
   "approved_subtitles_unchanged": true,
-  "closing_cta_seconds": 12.54,
+  "requested_spoken_form": "Wallet",
+  "requested_form_in_recognition": true,
+  "closing_cta_seconds": 11.76,
   "detected_voice_silences_over_850ms": [
-    0.92475
+    1.029,
+    1.319083
   ],
   "music_present_in_actual_mp4": {
-    "stereo_side_correlation": 0.9984478678537209,
-    "gain_coefficient": 0.9940370321273804
+    "stereo_side_correlation": 0.9984885176212249,
+    "gain_coefficient": 0.9937986731529236
   },
   "loudness": {
     "voice": {
-      "input_i": "-17.38",
-      "input_tp": "-1.46",
-      "input_lra": "3.40",
-      "input_thresh": "-27.87",
-      "output_i": "-16.57",
+      "input_i": "-16.46",
+      "input_tp": "-1.49",
+      "input_lra": "2.30",
+      "input_thresh": "-26.87",
+      "output_i": "-16.09",
       "output_tp": "-1.50",
-      "output_lra": "2.70",
-      "output_thresh": "-27.05",
+      "output_lra": "2.50",
+      "output_thresh": "-26.49",
       "normalization_type": "dynamic",
-      "target_offset": "0.57"
+      "target_offset": "0.09"
     },
     "music": {
       "input_i": "-25.96",
@@ -48,16 +51,16 @@
       "target_offset": "0.13"
     },
     "mix": {
-      "input_i": "-16.55",
-      "input_tp": "-2.83",
-      "input_lra": "5.00",
-      "input_thresh": "-27.23",
-      "output_i": "-16.35",
-      "output_tp": "-2.56",
-      "output_lra": "2.50",
-      "output_thresh": "-26.89",
+      "input_i": "-16.11",
+      "input_tp": "-2.84",
+      "input_lra": "2.70",
+      "input_thresh": "-26.80",
+      "output_i": "-16.08",
+      "output_tp": "-2.81",
+      "output_lra": "2.30",
+      "output_thresh": "-26.65",
       "normalization_type": "dynamic",
-      "target_offset": "0.35"
+      "target_offset": "0.08"
     }
   },
   "limits": [

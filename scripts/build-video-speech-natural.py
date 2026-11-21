@@ -1,4 +1,4 @@
-"""Generate an original German male neural voice; no cloning or visitor data."""
+"""Use our approved synthetic narrator; no real-person recordings or visitor data."""
 from pathlib import Path
 import json, os, subprocess, tempfile, time, urllib.request
 import numpy as np

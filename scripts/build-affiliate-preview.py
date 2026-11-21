@@ -56,3 +56,7 @@ shutil.copy(ROOT/'media/valet-erklaervideo/valet-parken-muenchen-erklaervideo.mp
 print('Offline draft preview exported; all cards, links and six responsive layouts checked.')
 
 shutil.copy(ROOT/'media/valet-erklaervideo/szene-2.png',OUT/'video-poster.png')
+
+# Refresh the rendered media and captions that also work from the unpacked ZIP.
+import subprocess,sys
+subprocess.run([sys.executable,str(ROOT/"scripts/refresh-video-review.py")],check=True)

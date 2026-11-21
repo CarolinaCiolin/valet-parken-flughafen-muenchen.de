@@ -4,23 +4,44 @@
     {
       "page": "index.html",
       "viewport": 1440,
-      "playback": {
+      "decoded_video": {
         "duration": 53.52,
         "width": 1920,
-        "height": 1080
+        "height": 1080,
+        "readyState": 4
+      },
+      "subtitles_loaded": true
+    },
+    {
+      "page": "startseite.html",
+      "viewport": 1440,
+      "decoded_video": {
+        "duration": 53.52,
+        "width": 1920,
+        "height": 1080,
+        "readyState": 4
       },
       "subtitles_loaded": true
     },
     {
       "page": "startseite.html",
       "viewport": 390,
-      "playback": {
+      "decoded_video": {
         "duration": 53.52,
         "width": 1920,
-        "height": 1080
+        "height": 1080,
+        "readyState": 4
       },
       "subtitles_loaded": true
+    },
+    {
+      "page": "index.html via file://",
+      "status": "not_verified",
+      "reason": "Cloud Chrome blocks file:// navigation by administrator policy; HTTP playback and Blob-backed captions verified."
     }
   ],
-  "failed_requests": []
+  "failed_requests": [],
+  "limitations": [
+    "Unpacked file:// navigation is blocked by this Cloud browser policy and was not verified."
+  ]
 }

@@ -1,0 +1,36 @@
+{
+  "style": "Clearly illustrated 2D editorial cel shading; no photorealistic provider imagery",
+  "source": "Project-specific image generation",
+  "assets": [
+    {
+      "file": "fahrzeug.png",
+      "sha256": "0384e08357228a540fc5f72092e0baf9af8dfeace85fb68351dd45b3af55772d",
+      "role": "Unbranded illustrated vehicle, independently animated wheels"
+    },
+    {
+      "file": "fahrzeugpruefung.png",
+      "sha256": "40c5f75191780570971aeafa3128f7f633b12b346d00cb6bf9674d748e79f00d",
+      "role": "Illustrated agent using a tablet"
+    },
+    {
+      "file": "parkflaechen.png",
+      "sha256": "f7f872db2663798c3cd14882d98f71bbbc7b56a1aef6f3053220acaae4f906af",
+      "role": "Schematic outside/covered parking options"
+    },
+    {
+      "file": "terminal.png",
+      "sha256": "04b2cae99f6ac4286551d1974c32d13f06f56e1c32e4bbcff240f9bf1e43ac4e",
+      "role": "Schematic backdrop; not a confirmed real meeting location"
+    },
+    {
+      "file": "uebergabe.png",
+      "sha256": "e8f16a63e345cc7fc51c996da746a9bc970c960956ba3b561421cb2513e7bf4f",
+      "role": "Illustrated adult characters exchanging keys"
+    },
+    {
+      "file": "wortmarke.svg",
+      "sha256": "c08407766eadd468cb96a71a1d49cf0eb9277c95b41ab9e2ab85094c45acbbd7",
+      "role": "Website wordmark reconstructed from the existing header/profile typography"
+    }
+  ]
+}

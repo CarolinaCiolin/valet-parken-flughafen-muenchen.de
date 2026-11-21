@@ -12,8 +12,9 @@ def archive(name,items):
         assert not any('.runtime' in n or 'admin-password' in n or n.endswith(('.onnx','.pyc')) for n in z.namelist())
     print(name,(p/name).stat().st_size)
 archive('vpm-affiliate-webvorschau.zip',[(f,str(f.relative_to(o))) for f in sorted(o.rglob('*')) if f.is_file()])
-upload=['valet-parken-muenchen-erklaervideo.mp4','thumbnail-youtube.png','untertitel-de.srt','youtube-titel.txt','youtube-beschreibung.txt','README.md','projekt/STIMMENMODELL-LIZENZ.txt','projekt/fonts/LIZENZ.txt']
+upload=['valet-parken-muenchen-erklaervideo.mp4','thumbnail-youtube.png','untertitel-de.srt','youtube-titel.txt','youtube-beschreibung.txt','README.md','projekt/STIMMENMODELL-LIZENZ.txt','projekt/fonts/LIZENZ.txt','projekt/fonts/MANROPE-LIZENZ.txt']
 archive('vpm-youtube-upload.zip',[(m/n,n) for n in upload])
-archive('vpm-erklaervideo-projekt.zip',[(f,str(f.relative_to(m))) for f in sorted(m.rglob('*')) if f.is_file() and f.name!='render.log'])
+source_names={'README.md','sprechertext.txt','sprecher-maennlich.wav','hintergrundmusik-original.wav','untertitel-de.srt','untertitel-de.vtt','youtube-titel.txt','youtube-beschreibung.txt'}
+archive('vpm-erklaervideo-projekt.zip',[(f,str(f.relative_to(m))) for f in sorted(m.rglob('*')) if f.is_file() and f.name!='render.log' and (f.relative_to(m).parts[0]=='projekt' or f.name in source_names)])
 archive('vpm-affiliate-entwurfspaket.zip',[(p/'vpm-providers.zip','vpm-providers.zip'),(p/'vpm-content-drafts.zip','vpm-content-drafts.zip'),(ROOT/'docs/AFFILIATE-VIDEO-VORSCHAU.md','ANLEITUNG.md')])
 (p/'SHA256SUMS.txt').write_text(''.join(hashlib.sha256(f.read_bytes()).hexdigest()+'  '+f.name+'\n' for f in sorted(p.glob('*.zip'))))
